@@ -1,2 +1,8 @@
 # chebyshev
-A testing library specialized for mathematical functions
+A testing and benchmarking framework specialized for mathematical functions, using error estimation.
+
+## Examples
+The file `example.cpp` contains example code.
+
+## Dependencies
+The library has no dependencies.
