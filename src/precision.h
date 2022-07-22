@@ -15,6 +15,7 @@
 
 #include <cmath>
 #include <ctime>
+#include <cstdlib>
 
 
 #ifndef CHEBYSHEV_INTEGRAL_ITER
@@ -188,13 +189,16 @@ namespace chebyshev {
 
 
 		/// Terminate precision testing
-		void terminate() {
+		void terminate(bool exit = true) {
 
 			if(module_estimates.size()) {
 
-				if(!quiet)
+				if(!quiet) {
+					std::cout << "Precision estimates:" << std::endl;
 					std::cout << "Function\tInt. Min.\tInt. Max.\t" <<
 							 "Mean Err.\tRMS Err.\tMax Err.\tRel. Err.\n" << std::endl;
+				}
+
 				if(output_to_file)
 					output_file << "Function, Int. Min., Int. Max., Mean Err., RMS Err., Max Err., Rel. Err." << std::endl;
 
@@ -209,8 +213,12 @@ namespace chebyshev {
 			}
 
 			if(module_eq_checks.size()) {
-				if(!quiet)
-				std::cout << "Function\tEval. Value\tExp. Value\tDiff.\t\tTol.\n" << std::endl;
+
+				if(!quiet) {
+					std::cout << "Equality checks:" << std::endl;
+					std::cout << "Function\tEval. Value\tExp. Value\tDiff.\t\tTol.\n" << std::endl;
+				}
+				
 				if(output_to_file)
 					output_file << "Function, Eval. Value, Exp. Value, Diff., Tol." << std::endl;
 
@@ -227,8 +235,10 @@ namespace chebyshev {
 				(failed_tests / (double) total_tests) * 100 << "%)" << std::endl;
 			std::cout << "Results have been saved in prec_" << module_name << ".csv" << std::endl;
 			output_file.close();
+			module_name = "unknown";
 
-			exit(failed_tests);
+			if(exit)
+				std::exit(failed_tests);
 		}
 
 

@@ -22,7 +22,7 @@ namespace chebyshev {
 	/// A real function of real argument
 	using RealFunction = std::function<Real(Real)>;
 
-	/// A real function of real argument
-	using RealInputGenerator = std::function<Real(Real, unsigned int)>;
+	/// An input generating function
+	using RealInputGenerator = std::function<Real(unsigned int)>;
 
 }

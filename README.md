@@ -1,4 +1,4 @@
-# chebyshev
+# Chebyshev Testing Framework
 A testing and benchmarking framework specialized for mathematical functions, using error estimation.
 
 ## Examples

@@ -1,4 +1,4 @@
-#include "src/precision.h"
+#include "src/chebyshev.h"
 using namespace chebyshev;
 
 
@@ -45,6 +45,24 @@ int main(int argc, char const *argv[]) {
 		{3, 3}
 	});
 
-	// Stop testing
-	prec::terminate();
+	// Stop precision testing
+	prec::terminate(false);
+	std::cout << std::endl;
+	
+
+	// Setup error checking
+	err::setup("chebyshev");
+
+	// Make an assert
+	err::assert(sqrt(4) == 2, "sqrt(4) is 2");
+
+	// Or using a simple macro
+	AUTOASSERT(sqrt(9) == 3);
+
+	// Check errno value after function call
+	err::check_errno(REAL_LAMBDA(std::sqrt), -1, EDOM);
+
+
+	// Stop error checking
+	err::terminate();
 }
