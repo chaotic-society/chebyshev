@@ -30,7 +30,7 @@
 
 namespace chebyshev {
 
-	/// @namespace chebyshev::prec Precision testing functions
+	/// @namespace chebyshev::prec Precision testing of real functions
 	namespace prec {
 
 

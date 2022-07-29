@@ -7,6 +7,7 @@
 
 #include "./precision.h"
 #include "./error_checking.h"
+#include "./benchmark.h"
 
 
 #define REAL_LAMBDA(f) [](Real x){ return f(x); }

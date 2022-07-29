@@ -6,6 +6,7 @@
 #pragma once
 
 #include <functional>
+#include <cmath>
 
 
 namespace chebyshev {
@@ -24,5 +25,23 @@ namespace chebyshev {
 
 	/// An input generating function
 	using RealInputGenerator = std::function<Real(unsigned int)>;
+
+
+	/// Returns a real random number generator which
+	/// generates uniform numbers inside the interval k
+	RealInputGenerator uniform_generator(interval k) {
+		return [k](unsigned int i) {
+			return (rand() % RAND_MAX) * (k.b - k.a) + k.a;
+		};
+	}
+
+
+	/// Returns a real random number generator which
+	/// generates uniform numbers inside the interval [a, b]
+	RealInputGenerator uniform_generator(Real a, Real b) {
+		return [a, b](unsigned int i) {
+			return (rand() % RAND_MAX) * (b - a) + a;
+		};
+	}
 
 }

@@ -15,7 +15,7 @@
 
 namespace chebyshev {
 
-	/// @namespace chebyshev::err
+	/// @namespace chebyshev::err Error testing
 	namespace err {
 
 		///
@@ -108,7 +108,8 @@ namespace chebyshev {
 			} else {
 
 				if(!quiet) {
-					std::cout << "\tSuccessful assert (n. " << total_checks << ")" << std::endl;
+					std::cout << "\tSuccessful assert (n. " << total_checks
+						<< "): ERRNO was set correctly" << std::endl;
 				}
 
 			}
@@ -141,7 +142,8 @@ namespace chebyshev {
 			} else {
 
 				if(!quiet) {
-					std::cout << "\tSuccessful assert (n. " << total_checks << ")" << std::endl;
+					std::cout << "\tSuccessful assert (n. " << total_checks
+						<< "): ERRNO was set correctly" << std::endl;
 				}
 
 			}
@@ -150,8 +152,43 @@ namespace chebyshev {
 
 
 		/// Check errno value after function call
-		// void check_errno(RealFunction f, RealInputGenerator g, const std::vector<int>& exp_flags) {
-		// }
+		void check_errno(RealFunction f, RealInputGenerator g, const std::vector<int>& exp_flags) {
+
+
+			total_checks++;
+
+			Real x = g(rand());
+			bool all_set = true;
+
+			try {
+				volatile Real r = f(x);
+			} catch(...) {}
+
+			for (int i = 0; i < exp_flags.size(); ++i) {
+				if(!(errno & exp_flags[i]))
+					all_set = false;
+			}
+
+			if(!all_set) {
+
+				failed_checks++;
+
+				if(!quiet) {
+					std::cout << "\tFailed assert (n. " << total_checks
+						<< "): ERRNO was NOT set correctly" << std::endl;
+					std::cout << std::endl;
+				}
+				
+			} else {
+
+				if(!quiet) {
+					std::cout << "\tSuccessful assert (n. " << total_checks
+						<< "): ERRNO was set correctly" << std::endl;
+				}
+
+			}
+
+		}
 
 
 		/// Check that an exception is thrown during a function call
@@ -178,7 +215,8 @@ namespace chebyshev {
 				}
 				
 			} else if(!quiet) {
-				std::cout << "\tSuccessful assert (n. " << total_checks << ")" << std::endl;
+				std::cout << "\tSuccessful assert (n. " << total_checks
+					<< "): Exception was thrown correctly" << std::endl;
 			}
 
 		}
@@ -203,13 +241,14 @@ namespace chebyshev {
 				failed_checks++;
 
 				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << ")" << std::endl;
+					std::cout << "\tFailed assert (n. " << total_checks << "):" << std::endl;
 					std::cout << "\tNo exception was thrown" << std::endl;
 					std::cout << std::endl;
 				}
 				
 			} else if(!quiet) {
-				std::cout << "\tSuccessful assert (n. " << total_checks << ")" << std::endl;
+				std::cout << "\tSuccessful assert (n. " << total_checks
+					<< "): Exception was thrown correctly" << std::endl;
 			}
 
 		}
