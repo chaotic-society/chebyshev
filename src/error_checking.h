@@ -91,6 +91,7 @@ namespace chebyshev {
 
 			try {
 				volatile Real r = f(x);
+				r += 1;
 			} catch(...) {}
 
 			if(errno != exp_errno) {
@@ -126,6 +127,7 @@ namespace chebyshev {
 
 			try {
 				volatile Real r = f(x);
+				r += 1;
 			} catch(...) {}
 
 			if(errno != exp_errno) {
@@ -162,9 +164,10 @@ namespace chebyshev {
 
 			try {
 				volatile Real r = f(x);
+				r += 1;
 			} catch(...) {}
 
-			for (int i = 0; i < exp_flags.size(); ++i) {
+			for (unsigned int i = 0; i < exp_flags.size(); ++i) {
 				if(!(errno & exp_flags[i]))
 					all_set = false;
 			}
@@ -200,6 +203,7 @@ namespace chebyshev {
 
 			try {
 				volatile Real r = f(x);
+				r += 1;
 			} catch(...) {
 				thrown = true;
 			}
@@ -232,6 +236,7 @@ namespace chebyshev {
 
 			try {
 				volatile Real r = f(x);
+				r += 1;
 			} catch(...) {
 				thrown = true;
 			}

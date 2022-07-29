@@ -9,11 +9,19 @@
 #include "./error_checking.h"
 #include "./benchmark.h"
 
-
-#define REAL_LAMBDA(f) [](Real x){ return f(x); }
+	
+/// Construct a lambda from any function
+#define REAL_LAMBDA(f) [](chebyshev::Real x){ return f(x); }
 
 
 namespace chebyshev {
+
+
+	/// Construct a lambda from a real function
+	RealFunction freal(Real(*f)(Real)) {
+		return [f](Real x){ return f(x); };
+	}
+	
 
 	/// Terminate all testing
 	void terminate() {

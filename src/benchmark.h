@@ -136,7 +136,7 @@ namespace chebyshev {
 			std::vector<Real> input;
 			input.resize(n);
 
-			for (int i = 0; i < n; ++i)
+			for (unsigned int i = 0; i < n; ++i)
 				input[i] = g(i);
 
 			// Sum of M runs with N iterations each

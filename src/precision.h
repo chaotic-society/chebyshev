@@ -16,10 +16,11 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#include <iomanip>
 
 
 #ifndef CHEBYSHEV_INTEGRAL_ITER
-#define CHEBYSHEV_INTEGRAL_ITER 1000
+#define CHEBYSHEV_INTEGRAL_ITER 10000
 #endif
 
 
@@ -54,6 +55,9 @@ namespace chebyshev {
 
 		/// Number of failed tests
 		unsigned int failed_tests = 0;
+
+		/// Default number of iterations for integrals
+		unsigned int default_iter = CHEBYSHEV_INTEGRAL_ITER;
 
 		/// @class prec_estimates
 		/// A collection of the estimates of
@@ -137,8 +141,13 @@ namespace chebyshev {
 				return;
 
 			if(!quiet) {
-				std::cout << p.f_name << "\t\t" << p.k.a << "\t\t" << p.k.b << "\t\t" <<
-					p.mean_err << "\t\t" << p.rms_err << "\t\t" << p.max_err << "\t\t" << p.rel_err << std::endl;
+				std::cout << std::left << std::setw(20) << p.f_name << " | "
+				<< std::setw(12) << p.k.a << " | "
+				<< std::setw(12) << p.k.b << " | "
+				<< std::setw(12) << p.mean_err << " | "
+				<< std::setw(12) << p.rms_err << " | "
+				<< std::setw(12) << p.max_err << " | "
+				<< std::setw(12) << p.rel_err << std::endl;
 			}
 
 			if(output_to_file) {
@@ -154,8 +163,11 @@ namespace chebyshev {
 				return;
 
 			if(!quiet) {
-				std::cout << ec.f_name << "\t\t" << ec.evaluated << "\t\t" << ec.expected
-				<< "\t\t" << ec.diff << "\t\t" << ec.tolerance << std::endl;
+				std::cout << std::setw(20) << ec.f_name << " | "
+				<< std::setw(12) << ec.evaluated << " | "
+				<< std::setw(12) << ec.expected << " | "
+				<< std::setw(12) << ec.diff << " | "
+				<< std::setw(12) << ec.tolerance << std::endl;
 			}
 
 			if(output_to_file) {
@@ -194,13 +206,20 @@ namespace chebyshev {
 			if(module_estimates.size()) {
 
 				if(!quiet) {
-					std::cout << "Precision estimates:" << std::endl;
-					std::cout << "Function\tInt. Min.\tInt. Max.\t" <<
-							 "Mean Err.\tRMS Err.\tMax Err.\tRel. Err.\n" << std::endl;
+					std::cout << "Precision estimates:\n" << std::endl;
+					std::cout << std::left << std::setw(20) << "Function" << " | "
+						<< std::setw(12) << "Int. Min." << " | "
+						<< std::setw(12) << "Int. Max." << " | "
+						<< std::setw(12) << "Mean Err." << " | "
+						<< std::setw(12) << "RMS Err." << " | "
+						<< std::setw(12)<< "Max Err." << " | "
+						<< std::setw(12)<< "Rel. Err." << std::endl;
 				}
 
 				if(output_to_file)
 					output_file << "Function, Int. Min., Int. Max., Mean Err., RMS Err., Max Err., Rel. Err." << std::endl;
+
+				std::cout << std::setprecision(6) << std::endl;
 
 				for (const auto& p : module_estimates) {
 					if(!p.quiet)
@@ -215,8 +234,12 @@ namespace chebyshev {
 			if(module_eq_checks.size()) {
 
 				if(!quiet) {
-					std::cout << "Equality checks:" << std::endl;
-					std::cout << "Function\tEval. Value\tExp. Value\tDiff.\t\tTol.\n" << std::endl;
+					std::cout << "Equality checks:\n" << std::endl;
+					std::cout << std::setw(20) << "Function" << " | "
+					 << std::setw(12) << "Eval. Value" << " | "
+					 << std::setw(12) << "Exp. Value" << " | "
+					 << std::setw(12) << "Diff." << " | "
+					 << std::setw(12) << "Tol.\n" << std::endl;
 				}
 				
 				if(output_to_file)
@@ -248,9 +271,9 @@ namespace chebyshev {
 			RealFunction f_approx,
 			RealFunction f_exp,
 			interval k,
-			bool quiet = false,
 			Real tolerance = CHEBYSHEV_TOLERANCE,
-			unsigned int n = CHEBYSHEV_INTEGRAL_ITER) {
+			bool quiet = false,
+			unsigned int n = default_iter) {
 
 			prec_estimates result;
 
@@ -328,9 +351,9 @@ namespace chebyshev {
 			RealFunction f_approx,
 			RealFunction f_exp,
 			std::vector<interval> requested_intervals,
-			bool quiet = false,
 			Real tolerance = CHEBYSHEV_TOLERANCE,
-			unsigned int n = CHEBYSHEV_INTEGRAL_ITER) {
+			bool quiet = false,
+			unsigned int n = default_iter) {
 
 			std::vector<prec_estimates> results;
 			results.resize(requested_intervals.size());
@@ -338,7 +361,7 @@ namespace chebyshev {
 			for (const auto& i : requested_intervals) {
 				
 				// Estimate error on interval
-				results.push_back(estimate(name, f_approx, f_exp, i, quiet, tolerance));
+				results.push_back(estimate(name, f_approx, f_exp, i, tolerance, quiet));
 			}
 
 			return results;
@@ -407,10 +430,11 @@ namespace chebyshev {
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<Real, 2>> values,
-			Real tolerance = CHEBYSHEV_TOLERANCE) {
+			Real tolerance = CHEBYSHEV_TOLERANCE,
+			bool quiet = false) {
 
 			for (const auto& v : values)
-				equals(name, v[0], v[1], tolerance);
+				equals(name, v[0], v[1], tolerance, quiet);
 		}
 
 
@@ -420,10 +444,11 @@ namespace chebyshev {
 			const std::string& name,
 			RealFunction f,
 			std::vector<std::array<Real, 2>> values,
-			Real tolerance = CHEBYSHEV_TOLERANCE) {
+			Real tolerance = CHEBYSHEV_TOLERANCE,
+			bool quiet = false) {
 
 			for (const auto& v : values)
-				equals(name, f(v[0]), v[1], tolerance);
+				equals(name, f(v[0]), v[1], tolerance, quiet);
 		}
 
 	}
