@@ -3,9 +3,9 @@ A testing and benchmarking framework specialized for mathematical functions, usi
 
 ## Structure
 The framework is divided in three different components:
-- chebyshev::prec - Error estimation of real functions
-- chebyshev::benchmark - Function benchmarking
-- chebyshev::err - ERRNO and exception checking
+- **chebyshev::prec** - Error estimation of real functions
+- **chebyshev::benchmark** - Function benchmarking
+- **chebyshev::err** - ERRNO and exception checking
 
 ## Examples
 The file `example.cpp` contains example code.
