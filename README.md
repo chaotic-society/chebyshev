@@ -28,7 +28,7 @@ prec::setup("chebyshev");
 	});
 
         // Or more simply, if the function is the same:
-	prec::equals("f_a", f_a, {
+	prec::equals("f_approx", f_approx, {
 		{1, 1},
 		{2, 4},
 		{3, 3}
