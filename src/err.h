@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "definitions.h"
+#include "core/common.h"
 #include <vector>
 #include <cstdlib>
 
@@ -18,51 +18,57 @@ namespace chebyshev {
 	/// @namespace chebyshev::err Error testing
 	namespace err {
 
-		///
-		std::string module_name = "unknown";
 
-		/// Print to standard output?
-		bool quiet = false;
+		/// @class err_state Global state of error testing
+		struct err_state {
+				
+			/// Name of the module being tested
+			std::string moduleName = "unknown";
 
-		// Total number of checks
-		unsigned int total_checks = 0;
+			/// Print to standard output?
+			bool quiet = false;
 
-		/// Number of failed checks
-		unsigned int failed_checks = 0;
+			// Total number of checks
+			unsigned int totalChecks = 0;
+
+			/// Number of failed checks
+			unsigned int failedChecks = 0;
+
+		} state;
 
 
 		/// Setup error checking
 		void setup(const std::string& module) {
 
-			module_name = module;
+			state.moduleName = module;
 			srand(time(nullptr));
 
-			std::cout << "Starting error checking on " << module_name << " ...\n" << std::endl;
+			std::cout << "Starting error checking on " << state.moduleName << " ...\n" << std::endl;
 		}
 
 
 		/// Terminate error checking
 		void terminate(bool exit = true) {
 
-			std::cout << "\nEnding error checking on " << module_name << " ..." << std::endl;
-			std::cout << total_checks << " total checks, " << failed_checks << " failed ("
-				<< (failed_checks / Real(total_checks) * 100) << "%)" << std::endl;
+			std::cout << "\nEnding error checking on " << state.moduleName << " ..." << std::endl;
+			std::cout << state.totalChecks << " total checks, " << state.failedChecks << " failed ("
+				<< (state.failedChecks / Real(state.totalChecks) * 100) << "%)" << std::endl;
 
 			if(exit)
-				std::exit(failed_checks);
+				std::exit(state.failedChecks);
 		}
 
 
 		/// Assert that an expression is true
 		void assert(bool exp, std::string desc = "") {
 
-			total_checks++;
+			state.totalChecks++;
 
 			if(!exp) {
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << ")";
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks << ")";
 
 					if(desc != "")
 						std::cout << ":\n\t\tDescription: " << desc << std::endl;
@@ -72,8 +78,8 @@ namespace chebyshev {
 					std::cout << std::endl;
 				}
 				
-			} else if(!quiet) {
-				std::cout << "\tSuccessful assert (n. " << total_checks << ")";
+			} else if(!state.quiet) {
+				std::cout << "\tSuccessful assert (n. " << state.totalChecks << ")";
 				if(desc != "")
 					std::cout << ":\n\t\tDescription: " << desc << std::endl;
 				else
@@ -87,7 +93,7 @@ namespace chebyshev {
 		/// Check errno value after function call
 		void check_errno(RealFunction f, Real x, int exp_errno) {
 
-			total_checks++;
+			state.totalChecks++;
 
 			try {
 				volatile Real r = f(x);
@@ -96,10 +102,10 @@ namespace chebyshev {
 
 			if(errno != exp_errno) {
 
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << ")" << std::endl;
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks << ")" << std::endl;
 					std::cout << "\t\tExpected ERRNO: " << exp_errno << std::endl;
 					std::cout << "\t\tEvaluated ERRNO: " << errno << std::endl;
 					std::cout << "\t\tInput: " << x << std::endl;
@@ -108,8 +114,8 @@ namespace chebyshev {
 				
 			} else {
 
-				if(!quiet) {
-					std::cout << "\tSuccessful assert (n. " << total_checks
+				if(!state.quiet) {
+					std::cout << "\tSuccessful assert (n. " << state.totalChecks
 						<< "): ERRNO was set correctly" << std::endl;
 				}
 
@@ -121,7 +127,7 @@ namespace chebyshev {
 		/// Check errno value after function call
 		void check_errno(RealFunction f, RealInputGenerator g, int exp_errno) {
 
-			total_checks++;
+			state.totalChecks++;
 
 			Real x = g(rand());
 
@@ -132,10 +138,10 @@ namespace chebyshev {
 
 			if(errno != exp_errno) {
 
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << ")" << std::endl;
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks << ")" << std::endl;
 					std::cout << "\t\tExpected ERRNO: " << exp_errno << std::endl;
 					std::cout << "\t\tEvaluated ERRNO: " << errno << std::endl;
 					std::cout << std::endl;
@@ -143,8 +149,8 @@ namespace chebyshev {
 				
 			} else {
 
-				if(!quiet) {
-					std::cout << "\tSuccessful assert (n. " << total_checks
+				if(!state.quiet) {
+					std::cout << "\tSuccessful assert (n. " << state.totalChecks
 						<< "): ERRNO was set correctly" << std::endl;
 				}
 
@@ -157,7 +163,7 @@ namespace chebyshev {
 		void check_errno(RealFunction f, RealInputGenerator g, const std::vector<int>& exp_flags) {
 
 
-			total_checks++;
+			state.totalChecks++;
 
 			Real x = g(rand());
 			bool all_set = true;
@@ -174,18 +180,18 @@ namespace chebyshev {
 
 			if(!all_set) {
 
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks
 						<< "): ERRNO was NOT set correctly" << std::endl;
 					std::cout << std::endl;
 				}
 				
 			} else {
 
-				if(!quiet) {
-					std::cout << "\tSuccessful assert (n. " << total_checks
+				if(!state.quiet) {
+					std::cout << "\tSuccessful assert (n. " << state.totalChecks
 						<< "): ERRNO was set correctly" << std::endl;
 				}
 
@@ -197,7 +203,7 @@ namespace chebyshev {
 		/// Check that an exception is thrown during a function call
 		void check_exception(RealFunction f, Real x) {
 
-			total_checks++;
+			state.totalChecks++;
 
 			bool thrown = false;
 
@@ -210,16 +216,16 @@ namespace chebyshev {
 
 			if(!thrown) {
 
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << ")" << std::endl;
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks << ")" << std::endl;
 					std::cout << "\tNo exception was thrown" << std::endl;
 					std::cout << std::endl;
 				}
 				
-			} else if(!quiet) {
-				std::cout << "\tSuccessful assert (n. " << total_checks
+			} else if(!state.quiet) {
+				std::cout << "\tSuccessful assert (n. " << state.totalChecks
 					<< "): Exception was thrown correctly" << std::endl;
 			}
 
@@ -229,7 +235,7 @@ namespace chebyshev {
 		/// Check that an exception is thrown during a function call
 		void check_exception(RealFunction f, RealInputGenerator g) {
 
-			total_checks++;
+			state.totalChecks++;
 
 			bool thrown = false;
 			Real x = g(rand());
@@ -243,16 +249,16 @@ namespace chebyshev {
 
 			if(!thrown) {
 
-				failed_checks++;
+				state.failedChecks++;
 
-				if(!quiet) {
-					std::cout << "\tFailed assert (n. " << total_checks << "):" << std::endl;
+				if(!state.quiet) {
+					std::cout << "\tFailed assert (n. " << state.totalChecks << "):" << std::endl;
 					std::cout << "\tNo exception was thrown" << std::endl;
 					std::cout << std::endl;
 				}
 				
-			} else if(!quiet) {
-				std::cout << "\tSuccessful assert (n. " << total_checks
+			} else if(!state.quiet) {
+				std::cout << "\tSuccessful assert (n. " << state.totalChecks
 					<< "): Exception was thrown correctly" << std::endl;
 			}
 

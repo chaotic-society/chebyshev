@@ -1,34 +1,18 @@
 
 ///
-/// @file chebyshev.h Main file of the testing library
+/// @file chebyshev.h Main include file of the testing library
 ///
 
-#pragma once
+#include "prec.h"
+#include "benchmark.h"
+#include "err.h"
 
-#include "./precision.h"
-#include "./error_checking.h"
-#include "./benchmark.h"
 
-	
-/// Construct a lambda from any function
+/// Construct a RealFunction from any function
 #define REAL_LAMBDA(f) [](chebyshev::Real x){ return f(x); }
 
 
-namespace chebyshev {
-
-
-	/// Construct a lambda from a real function
-	RealFunction freal(Real(*f)(Real)) {
-		return [f](Real x){ return f(x); };
-	}
-	
-
-	/// Terminate all testing
-	void terminate() {
-		exit(prec::failed_tests + err::failed_checks);
-	}
-
-}
+namespace chebyshev {}
 
 
 /// Namespace alias

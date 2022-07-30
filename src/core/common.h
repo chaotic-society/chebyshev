@@ -5,13 +5,15 @@
 
 #pragma once
 
+#include "interval.h"
 #include <functional>
 #include <cmath>
 
 
 namespace chebyshev {
 
-	/// Real number type
+
+	/// Real number type (defaults to double)
 #ifdef CHEBYSHEV_FLOAT
 	using Real = float;
 #elif defined(CHEBYSHEV_LONG_DOUBLE)
@@ -20,8 +22,10 @@ namespace chebyshev {
 	using Real = double;
 #endif
 
+
 	/// A real function of real argument
 	using RealFunction = std::function<Real(Real)>;
+
 
 	/// An input generating function
 	using RealInputGenerator = std::function<Real(unsigned int)>;

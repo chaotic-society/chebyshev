@@ -15,14 +15,15 @@
 #define CHEBYSHEV_RUNS 10
 #endif
 
-#include "timer.h"
+#include "core/timer.h"
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 
 namespace chebyshev {
 
-	/// @namespace chebyshev::benchmark Function benchmarking procedures
+	/// @namespace chebyshev::benchmark Function benchmarking
 	namespace benchmark {
 
 
@@ -39,7 +40,7 @@ namespace chebyshev {
 
 
 		/// Benchmark result, used to store
-		/// information about a benchmark run
+		/// information about a benchmark execution
 		struct benchmark_result {
 			std::string funcName {"unknown"};
 			unsigned int iter {CHEBYSHEV_ITER};
@@ -50,31 +51,36 @@ namespace chebyshev {
 		};
 
 
-		/// List of requested benchmark runs.
-		/// Benchmarks are run in random order
-		/// when the benchmark::run() function is called
-		std::vector<benchmark_request> requests;
+		/// @class benchmark_state Global state of benchmarking
+		struct benchmark_state {
+			
+			/// List of requested benchmark runs.
+			/// Benchmarks are run in random order
+			/// when the benchmark::run() function is called
+			std::vector<benchmark_request> requests;
 
-		/// Print to standard output?
-		bool quiet = false;
+			/// Print to standard output?
+			bool quiet = false;
 
-		/// Name of the module currently being benchmarked
-		std::string module_name;
+			/// Name of the module currently being benchmarked
+			std::string moduleName;
 
-		/// Default number of iterations
-		unsigned int N = CHEBYSHEV_ITER;
+			/// Default number of iterations
+			unsigned int defaultIterations = CHEBYSHEV_ITER;
 
-		/// Default number of runs
-		unsigned int M = CHEBYSHEV_RUNS;
+			/// Default number of runs
+			unsigned int defaultRuns = CHEBYSHEV_RUNS;
 
-		/// Output file for the current module
-		std::ofstream output_file;
+			/// Output file for the current module
+			std::ofstream outputFile;
 
-		/// Benchmark results
-		std::vector<benchmark_result> results;
+			/// Benchmark state.results
+			std::vector<benchmark_result> results;
 
-		/// Number of failed benchmarks
-		unsigned int failed_benchmarks = 0;
+			/// Number of failed benchmarks
+			unsigned int failedBenchmarks = 0;
+
+		} state;
 
 
 		/// Setup a module's benchmark
@@ -82,38 +88,28 @@ namespace chebyshev {
 			unsigned int iter = CHEBYSHEV_ITER,
 			unsigned int runs = CHEBYSHEV_RUNS) {
 
-			module_name = module;
-			N = iter;
-			M = runs;
+			state.moduleName = module;
+			state.defaultIterations = iter;
+			state.defaultRuns = runs;
 			srand(time(nullptr));
 
-			if(output_file.is_open())
-				output_file.close();
+			if(state.outputFile.is_open())
+				state.outputFile.close();
 
-			output_file.open(std::string("benchmark_") + module_name + ".csv");
+			state.outputFile.open(std::string("benchmark_") + state.moduleName + ".csv");
 
-			if(!output_file.is_open()) {
+			if(!state.outputFile.is_open()) {
 				std::cout << "Can't open output file" << std::endl;
 				exit(1);
-			}
-
-			std::cout.precision(8);
-
-			if(!quiet) {
-				std::cout << "Starting benchmark of " << module_name << std::endl;
-				std::cout << "Parameters: N = " << N << ", M = " << M << "\n" << std::endl;
-
-				std::cout << std::left << "Function\t\tTime (ms)\tRuns/sec\n" << std::endl;
-				output_file << "Function, Time(ms), Runs/sec" << std::endl;
 			}
 
 		}
 
 
 		/// Register a function to be benchmarked
-		void register_function(const std::string& f_name,
+		void request(const std::string& f_name,
 			RealFunction f, RealInputGenerator g,
-			unsigned int n = N, unsigned int m = M) {
+			unsigned int n = state.defaultIterations, unsigned int m = state.defaultRuns) {
 
 			benchmark_request r;
 			r.funcName = f_name;
@@ -122,13 +118,13 @@ namespace chebyshev {
 			r.iter = n;
 			r.runs = m;
 
-			requests.push_back(r);
+			state.requests.push_back(r);
 		}
 
 
 		/// Benchmark a function
 		benchmark_result benchmark(const std::string& f_name, RealFunction f, RealInputGenerator g,
-			unsigned int n = N, unsigned int m = M) {
+			unsigned int n = state.defaultIterations, unsigned int m = state.defaultRuns) {
 
 			// Dummy variable
 			__volatile__ Real c = 0;
@@ -139,7 +135,7 @@ namespace chebyshev {
 			for (unsigned int i = 0; i < n; ++i)
 				input[i] = g(i);
 
-			// Sum of M runs with N iterations each
+			// Sum of m runs with n iterations each
 			long double sum = 0;
 
 			for (unsigned int i = 0; i < m; ++i) {
@@ -169,18 +165,18 @@ namespace chebyshev {
 		benchmark_result benchmark(
 			const std::string& f_name, RealFunction f,
 			const std::vector<Real> input,
-			unsigned int n = N, unsigned int m = M) {
+			unsigned int n = state.defaultIterations, unsigned int m = state.defaultRuns) {
 
 			if(input.size() < n) {
 				std::cout << "Wrong input size in benchmark, skipping request ..." << std::endl;
-				failed_benchmarks++;
+				state.failedBenchmarks++;
 				return benchmark_result();
 			}
 
 			// Dummy variable
 			__volatile__ Real c = 0;
 
-			// Sum of M runs with N iterations each
+			// Sum of m runs n iterations each
 			long double sum = 0;
 
 			for (unsigned int i = 0; i < m; ++i) {
@@ -212,44 +208,58 @@ namespace chebyshev {
 		}
 
 
-		/// Print the result of a benchmark
-		void print_benchmark_result(benchmark_result br) {
-
-			std::cout << br.funcName << "\t\t" << br.avg_time << "\t" << br.runs_per_sec << std::endl;
-
-			output_file << br.funcName << ", "
-						<< br.avg_time << ", "
-						<< br.runs_per_sec << std::endl;
-		}
-
-
 		/// Run all registered benchmarks
 		void run() {
-			for (const auto& r : requests) {
-				benchmark_result br = benchmark(r);
-				results.push_back(br);
-				print_benchmark_result(br);
+
+			std::cout.precision(8);
+
+			if(!state.quiet) {
+				std::cout << "Starting benchmark of " << state.moduleName << std::endl;
+				std::cout << "Parameters: Iterations = " << state.defaultIterations << ", Runs = " << state.defaultRuns << "\n" << std::endl;
+
+				std::cout << std::left << std::setw(20) << "Function" << " | "
+				<< std::setw(12) << "Time (ms)" << " | " << std::setw(12) << "Runs/sec" << std::endl;
+				state.outputFile << "Function, Time(ms), Runs/sec" << std::endl;
 			}
+		
+			for (const auto& r : state.requests) {
+
+				benchmark_result br = benchmark(r);
+				state.results.push_back(br);
+				
+				std::cout << std::left << std::setw(20) << br.funcName << " | "
+				<< std::setw(12) << br.avg_time << " | "
+				<< std::setw(10) << std::right << std::floor(br.runs_per_sec) << std::endl;
+
+				state.outputFile << br.funcName << ", "
+							<< br.avg_time << ", "
+							<< br.runs_per_sec << std::endl;
+			}
+
+			state.requests.clear();
 		}
 
 
 		/// End benchmarking of the current module
 		void terminate(bool exit = true) {
 
-			std::cout << "\nFinished benchmark of " << module_name << std::endl;
-			if(failed_benchmarks)
-				std::cout << failed_benchmarks << " benchmarks failed!" << std::endl;
+			if(state.requests.size())
+				run();
+
+			std::cout << "\nFinished benchmark of " << state.moduleName << std::endl;
+			if(state.failedBenchmarks)
+				std::cout << state.failedBenchmarks << " benchmarks failed!" << std::endl;
 
 			std::string filename = "benchmark_";
-			filename += module_name;
+			filename += state.moduleName;
 			filename += ".csv";
 			std::cout << "Results have been saved in " << filename << std::endl;
 
-			module_name = "unknown";
-			output_file.close();
+			state.moduleName = "unknown";
+			state.outputFile.close();
 
 			if(exit)
-				std::exit(failed_benchmarks);
+				std::exit(state.failedBenchmarks);
 		}
 
 	}
