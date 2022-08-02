@@ -7,7 +7,12 @@
 
 #include "interval.h"
 #include <functional>
+#define _hypot(a, b) hypot(a, b)
 #include <cmath>
+
+
+/// Construct a RealFunction from any function
+#define REAL_LAMBDA(f) [](chebyshev::Real x){ return f(x); }
 
 
 namespace chebyshev {
@@ -35,7 +40,7 @@ namespace chebyshev {
 	/// generates uniform numbers inside the interval k
 	RealInputGenerator uniform_generator(interval k) {
 		return [k](unsigned int i) {
-			return (rand() % RAND_MAX) * (k.b - k.a) + k.a;
+			return (rand() / (Real) RAND_MAX) * k.length() + k.a;
 		};
 	}
 
@@ -44,7 +49,7 @@ namespace chebyshev {
 	/// generates uniform numbers inside the interval [a, b]
 	RealInputGenerator uniform_generator(Real a, Real b) {
 		return [a, b](unsigned int i) {
-			return (rand() % RAND_MAX) * (b - a) + a;
+			return (rand() / (Real) RAND_MAX) * (b - a) + a;
 		};
 	}
 

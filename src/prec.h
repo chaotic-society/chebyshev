@@ -69,7 +69,7 @@ namespace chebyshev {
 			uint32_t defaultIterations = CHEBYSHEV_INTEGRAL_ITER;
 
 			/// Default tolerance on max absolute error
-			uint32_t defaultTolerance = CHEBYSHEV_TOLERANCE;
+			Real defaultTolerance = CHEBYSHEV_TOLERANCE;
 
 			/// Recorded estimation requests
 			std::vector<estimate_request> estimation_requests;
@@ -306,8 +306,9 @@ namespace chebyshev {
 			result.mean_err = (sum * dx / 3.0) / measure;
 			result.rms_err = std::sqrt((sum_sqr * dx / 3.0) / measure);
 			result.rel_err = (sum * dx / 3.0) / (sum_abs * dx / 3.0);
+			result.tolerance = tolerance;
 
-			if(result.max_err >= tolerance) {
+			if(result.max_err > tolerance) {
 				state.failedTests++;
 				result.failed = true;
 			} else {
@@ -417,8 +418,12 @@ namespace chebyshev {
 		/// Setup the precision testing environment
 		inline void setup(std::string moduleName) {
 
+			state = prec_state();
+
 			std::cout << "Starting precision testing of the " << moduleName << " module ..." << std::endl;
 			state.moduleName = moduleName;
+			state.failedTests = 0;
+			state.totalTests = 0;
 
 			if(state.outputToFile) {
 
@@ -479,7 +484,12 @@ namespace chebyshev {
 							<< std::setw(12) << res[i].mean_err << " | "
 							<< std::setw(12) << res[i].rms_err << " | "
 							<< std::setw(12) << res[i].max_err << " | "
-							<< std::setw(12) << res[i].rel_err << std::endl;
+							<< std::setw(12) << res[i].rel_err;
+
+							if(res[i].failed)
+								std::cout << "  FAILED";
+
+							std::cout << std::endl;
 						}
 
 						if(state.outputToFile) {
@@ -532,7 +542,12 @@ namespace chebyshev {
 						<< std::setw(12) << res.evaluated << " | "
 						<< std::setw(12) << res.expected << " | "
 						<< std::setw(12) << res.diff << " | "
-						<< std::setw(12) << res.tolerance << std::endl;
+						<< std::setw(12) << res.tolerance;
+
+						if(res.failed)
+								std::cout << std::setw(8) << "  FAILED";
+
+						std::cout << std::endl;
 					}
 
 					if(state.outputToFile) {

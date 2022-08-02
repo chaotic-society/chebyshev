@@ -12,10 +12,11 @@ int main(int argc, char const *argv[]) {
 		// Register a function to be benchmarked
 		benchmark::request("std::sqrt", REAL_LAMBDA(std::sqrt), uniform_generator(0, 1000));
 
-		benchmark::request("std::cbrt", REAL_LAMBDA(std::cbrt), uniform_generator(0, 1000));
+		// Register a function to be benchmarked
+		benchmark::request("std::exp", REAL_LAMBDA(std::exp), uniform_generator(-10, 10));
 
-		benchmark::request("std::exp", REAL_LAMBDA(std::exp), uniform_generator(-100, 10));
-
+		// Or using a simple macro
+		BENCHMARK(std::exp, -10, 10);
 
 	// Stop benchmarking and exit
 	benchmark::terminate();

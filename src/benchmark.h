@@ -14,11 +14,16 @@
 #ifndef CHEBYSHEV_RUNS
 #define CHEBYSHEV_RUNS 10
 #endif
-
+	
+#include "core/common.h"
 #include "core/timer.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+
+
+// Benchmark a real function on uniformly distributed values in [a, b]
+#define BENCHMARK(f, a, b) chebyshev::benchmark::request(#f, [](chebyshev::Real x){ return f(x); }, chebyshev::uniform_generator(a, b))
 
 
 namespace chebyshev {
@@ -120,6 +125,15 @@ namespace chebyshev {
 
 			state.requests.push_back(r);
 		}
+
+
+		// /// Register a function to be benchmarked
+		// void request(const std::string& f_name,
+		// 	Real(*f)(Real), RealInputGenerator g,
+		// 	unsigned int n = state.defaultIterations, unsigned int m = state.defaultRuns) {
+
+		// 	request(f_name, [f](Real x) {return f(x);}, g, n, m);
+		// }
 
 
 		/// Benchmark a function

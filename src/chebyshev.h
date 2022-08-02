@@ -8,10 +8,6 @@
 #include "err.h"
 
 
-/// Construct a RealFunction from any function
-#define REAL_LAMBDA(f) [](chebyshev::Real x){ return f(x); }
-
-
 namespace chebyshev {}
 
 
