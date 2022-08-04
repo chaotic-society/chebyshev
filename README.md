@@ -1,11 +1,23 @@
 # Chebyshev Testing Framework
 A testing and benchmarking framework specialized for mathematical functions, using error estimation.
 
-## Structure
+## Framework Structure
 The framework is divided in three different components:
-- **chebyshev::prec** - Error estimation of real functions
-- **chebyshev::benchmark** - Function benchmarking
-- **chebyshev::err** - ERRNO and exception checking
+
+- ### Precision testing (chebyshev::prec)
+	Functions of real variable are tested and their precision, with respect to an exact function, is estimated by computing the **trapezoid quadrature** of **absolute and RMS error integrals**.
+	The function `chebyshev::prec::estimate()` is used to register a function to be precision tested. All of the tests are then executed when the `chebyshev::prec::run()` function is called or automatically before terminating the test unit, when `chebyshev::prec::terminate()` is called.
+
+- ### Benchmarking (chebyshev::benchmark)
+	Functions' performance is tested by running the functions multiple times with randomized input in their domain and averaging the elapsed time.
+	The function `chebyshev::benchmark::request()` is used to register a function to be benchmarked. All of the tests are then executed when the `chebyshev::benchmark::run()` function is called or automatically before terminating the test unit, when `chebyshev::benchmark::terminate()` is called.
+
+- ### Error checking (chebyshev::err)
+	Correct error reporting through `errno` and exceptions is tested. The function `chebyshev::err::assert` can be used to assert expressions, while `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` can be used to test the behaviour of error reporting.
+
+## Setup and usage
+The library is standalone and needs no dependencies or installation, so you only need to include the header files inside your code. You can automatically include all header files of the library by including `chebyshev.h`. All three modules are initialized and terminated using the `setup()` and `terminate()` functions in their respective namespaces.
+
 
 ## Examples
 The `examples` folder contains example code for all three parts of the framework. Here is a short example of error estimation:
