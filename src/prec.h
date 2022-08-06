@@ -521,7 +521,7 @@ namespace chebyshev {
 		/// Run all requested error estimations and equation evaluations
 		inline void run() {
 
-			if(state.estimationRequests.size()) {
+			if(state.estimationRequests.size() + state.estimationCustomRequests.size()) {
 
 				if(!state.quiet) {
 					std::cout << "\n" << std::left << std::setw(20) << "Function" << " | "
@@ -694,7 +694,9 @@ namespace chebyshev {
 		/// Terminate precision testing
 		inline void terminate(bool exit = true) {
 
-			if(state.equationRequests.size() + state.equationRequests.size())
+			if(state.estimationRequests.size() +
+				state.equationRequests.size() +
+				state.estimationCustomRequests.size())
 				run();
 
 			std::cout << "\nFinished testing " << state.moduleName << std::endl;

@@ -314,7 +314,7 @@ namespace chebyshev {
 		/// End benchmarking of the current module
 		inline void terminate(bool exit = true) {
 
-			if(state.requests.size())
+			if(state.requests.size() + state.customRequests.size())
 				run();
 
 			std::cout << "\nFinished benchmark of " << state.moduleName << std::endl;
