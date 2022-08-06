@@ -42,8 +42,20 @@ int main(int argc, char const *argv[]) {
 		prec::equals("f_a", f_a, {
 			{1, 1},
 			{2, 4},
-			{3, 9}
+			{3, 9},
+			{4, 16}
 		});
+
+		// Custom precision estimates are also supported
+		prec::estimate("custom",
+			[](interval k, Real tol, uint32_t iter){
+				prec::estimate_result r;
+				r.max_err = tol / 2.0;
+				return r;
+			}, {
+				interval(0, 1),
+				interval(2, 3)
+			});
 
 	// Stop precision testing
 	prec::terminate();
