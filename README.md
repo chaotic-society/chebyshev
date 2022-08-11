@@ -34,9 +34,9 @@ prec::setup("chebyshev");
 
 	// Check multiple pairs of values
 	prec::equals("f_approx", {
-		{f_a(1), 1},
-		{f_a(2), 4},
-		{f_a(3), 3}
+		{f_approx(1), 1},
+		{f_approx(2), 4},
+		{f_approx(3), 3}
 	});
 
         // Or more simply, if the function is the same:

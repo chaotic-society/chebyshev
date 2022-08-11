@@ -15,7 +15,7 @@ Real f_a(Real x) {
 int main(int argc, char const *argv[]) {
 
 	// // Setup the precision testing environment
-	prec::setup("chebyshev");
+	prec::setup("chebyshev", argc, argv);
 
 		// Estimate errors on f_a on [0, 10]
 		prec::estimate("f_a", f_a, f, interval(0, 10));

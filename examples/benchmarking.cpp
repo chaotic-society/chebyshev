@@ -7,7 +7,7 @@ using namespace ch;
 int main(int argc, char const *argv[]) {
 
 	// Setup benchmarking
-	benchmark::setup("chebyshev");
+	benchmark::setup("chebyshev", argc, argv);
 
 		// Register a function to be benchmarked
 		benchmark::request("std::sqrt", REAL_LAMBDA(std::sqrt), uniform_generator(0, 1000));

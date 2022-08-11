@@ -128,13 +128,24 @@ namespace chebyshev {
 			/// Number of failed benchmarks
 			unsigned int failedBenchmarks = 0;
 
+			/// Target benchmarks marked for execution
+			/// (all benchmarks will be executed if empty)
+			std::map<std::string, bool> pickedBenchmarks;
 		} state;
 
 
 		/// Setup a module's benchmark
 		inline void setup(const std::string& module = "unknown",
+			int argc = 0, const char** argv = nullptr,
 			unsigned int iter = CHEBYSHEV_ITER,
 			unsigned int runs = CHEBYSHEV_RUNS) {
+
+			// Initialize pick list
+			if(argc && argv) {
+				for (int i = 1; i < argc; ++i) {
+					state.pickedBenchmarks[argv[i]] = true;
+				}
+			}
 
 			state.moduleName = module;
 			state.defaultIterations = iter;
@@ -279,6 +290,9 @@ namespace chebyshev {
 		
 			for (const auto& r : state.requests) {
 
+				if(!state.pickedBenchmarks.empty() && !state.pickedBenchmarks[r.funcName])
+					continue;
+
 				benchmark_result br = benchmark(r);
 				state.results.push_back(br);
 				
@@ -292,6 +306,9 @@ namespace chebyshev {
 			}
 
 			for (const auto& r : state.customRequests) {
+
+				if(!state.pickedBenchmarks.empty() && !state.pickedBenchmarks[r.funcName])
+					continue;
 
 				benchmark_result br = r.f(r.iter, r.runs);
 				br.funcName = r.funcName;
