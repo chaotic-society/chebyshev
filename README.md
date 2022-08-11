@@ -24,7 +24,7 @@ The `examples` folder contains example code for all three parts of the framework
 
 ```c
 // Setup the precision testing environment
-prec::setup("chebyshev");
+prec::setup("chebyshev", argc, argv);
 
 	// Estimate errors on f_a on [0, 10]
 	prec::estimate("approx", f_approx, f, interval(0, 10));

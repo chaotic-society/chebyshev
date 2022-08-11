@@ -17,6 +17,7 @@
 	
 #include "core/common.h"
 #include "core/timer.h"
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -193,7 +194,7 @@ namespace chebyshev {
 		/// Request a custom benchmark
 		inline void custom_request(
 			const std::string& funcName, CustomBenchmarkFunction f,
-			unsigned int n, unsigned int m) {
+			unsigned int n = state.defaultIterations, unsigned int m = state.defaultRuns) {
 
 			benchmark_custom_request r;
 			r.funcName = funcName;
@@ -214,7 +215,7 @@ namespace chebyshev {
 			__volatile__ Real c = 0;
 
 			std::vector<Real> input;
-			input.resize(n);
+			input.reserve(n);
 
 			for (unsigned int i = 0; i < n; ++i)
 				input[i] = g(i);
