@@ -27,7 +27,7 @@ The `examples` folder contains example code for all three parts of the framework
 prec::setup("chebyshev", argc, argv);
 
 	// Estimate errors on f_a on [0, 10]
-	prec::estimate("approx", f_approx, f, interval(0, 10));
+	prec::estimate("f_approx", f_approx, f, interval(0, 10));
 
 	// Check that two values are almost equal
 	prec::equals("f_approx", f_approx(1), 1, 0.2);
