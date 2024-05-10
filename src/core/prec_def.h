@@ -3,6 +3,8 @@
 #include "common.h"
 #include "interval.h"
 #include <vector>
+#include <string>
+#include <cstdint>
 
 
 namespace chebyshev {
