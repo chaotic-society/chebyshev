@@ -8,7 +8,7 @@ The framework is divided in three different components:
 	Functions of real variable are tested and their precision, with respect to an exact function, is estimated by computing the **trapezoid quadrature** of **absolute and RMS error integrals**:
 	$$\epsilon_{abs} = \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
 	$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
-	$$\epsilon_{rms} = \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
+	$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
 	$$\epsilon_{max} = \max_{\Omega} |f_{exact}(x) - f_{approx}(x)|$$
 	
 	The function `chebyshev::prec::estimate()` is used to register a function to be precision tested. All of the tests are then executed when the `chebyshev::prec::run()` function is called or automatically before terminating the test unit, when `chebyshev::prec::terminate()` is called.
