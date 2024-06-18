@@ -1,8 +1,7 @@
 default_target: all
-.PHONY: all precision benchmarking errors
 all: precision benchmarking errors
 
-CXXFLAGS = -std=c++11 -I./src/ -Wall
+CXXFLAGS = -std=c++14 -I./src/ -Wall
 
 precision:
 	@echo Compiling \"precision\" example program ...

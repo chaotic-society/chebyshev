@@ -1,56 +1,50 @@
 
 ///
-/// @file definitions.h General definitions
+/// @file common.h Common definitions for the framework.
 ///
 
-#pragma once
+#ifndef CHEBYSHEV_COMMON_H
+#define CHEBYSHEV_COMMON_H
 
-#include "interval.h"
-#include <functional>
-#define _hypot(a, b) hypot(a, b)
-#include <cmath>
+#ifndef CHEBYSHEV_PREC_ITER
+/// Default number of function evaluations
+/// in precision testing.
+#define CHEBYSHEV_PREC_ITER 1E+06
+#endif
+
+#ifndef CHEBYSHEV_PREC_TOLERANCE
+/// Default tolerance in precision testing.
+#define CHEBYSHEV_PREC_TOLERANCE 1E-08
+#endif
+
+#ifndef CHEBYSHEV_BENCHMARK_ITER
+/// Default number of benchmark iterations.
+#define CHEBYSHEV_BENCHMARK_ITER 100
+#endif
+
+#ifndef CHEBYSHEV_BENCHMARK_RUNS
+/// Default number of benchmark runs.
+#define CHEBYSHEV_BENCHMARK_RUNS 10
+#endif
 
 
-/// Construct a RealFunction from any function
-#define REAL_LAMBDA(f) [](chebyshev::Real x){ return f(x); }
+#include <limits>
 
 
 namespace chebyshev {
 
 
-	/// Real number type (defaults to double)
-#ifdef CHEBYSHEV_FLOAT
-	using Real = float;
-#elif defined(CHEBYSHEV_LONG_DOUBLE)
-	using Real = long double;
-#else
-	using Real = double;
-#endif
+	/// A real function of real variable.
+	template<typename FloatType = double>
+	using RealFunction = std::function<FloatType(FloatType)>;
 
 
-	/// A real function of real argument
-	using RealFunction = std::function<Real(Real)>;
-
-
-	/// An input generating function
-	using RealInputGenerator = std::function<Real(unsigned int)>;
-
-
-	/// Returns a real random number generator which
-	/// generates uniform numbers inside the interval k
-	RealInputGenerator uniform_generator(interval k) {
-		return [k](unsigned int i) {
-			return (rand() / (Real) RAND_MAX) * k.length() + k.a;
-		};
+	/// Get a quiet NaN of the specified floating point type.
+	template<typename FloatType = long double>
+	inline constexpr FloatType get_nan() {
+		return std::numeric_limits<FloatType>::quiet_NaN();
 	}
-
-
-	/// Returns a real random number generator which
-	/// generates uniform numbers inside the interval [a, b]
-	RealInputGenerator uniform_generator(Real a, Real b) {
-		return [a, b](unsigned int i) {
-			return (rand() / (Real) RAND_MAX) * (b - a) + a;
-		};
-	}
-
+	
 }
+
+#endif
