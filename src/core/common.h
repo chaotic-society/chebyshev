@@ -49,6 +49,13 @@ namespace chebyshev {
 	inline constexpr FloatType get_nan() {
 		return std::numeric_limits<FloatType>::quiet_NaN();
 	}
+
+
+	/// Generate a pseudorandom number following
+	/// a uniform distribution over the interval.
+	inline long double random_uniform(long double a, long double b) {
+		return (rand() / (long double) RAND_MAX) * (b - a) + a;
+	}
 	
 }
 

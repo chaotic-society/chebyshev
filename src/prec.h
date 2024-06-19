@@ -308,8 +308,8 @@ namespace chebyshev {
 		}
 
 
-		/// Estimate error integrals over a function
-		/// with respect to an exact function.
+		/// Estimate error integrals over a real function
+		/// of real variable, with respect to an exact function.
 		///
 		/// @param name The name of the test case.
 		/// @param f_approx The approximation to test.
@@ -331,7 +331,7 @@ namespace chebyshev {
 			unsigned int iterations = CHEBYSHEV_PREC_ITER,
 			FailFunction fail = fail::fail_on_max_err,
 			Estimator<estimate_options<double, double>, double, double>
-			estimator = estimator::trapezoid<double>,
+			estimator = estimator::quadrature1D<double>,
 			bool quiet = false) {
 
 			estimate_options<double, double> opt {};

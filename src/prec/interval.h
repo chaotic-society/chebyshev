@@ -30,7 +30,7 @@ namespace chebyshev {
 
 
 			/// Returns the length of the interval
-			inline long double measure() const {
+			inline long double length() const {
 				const long double diff = b - a;
 				return diff > 0 ? diff : -diff;
 			}
