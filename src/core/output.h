@@ -21,14 +21,13 @@ namespace chebyshev {
 	namespace output {
 
 
-		// struct field_options {
+		struct field_options {
 			
-		// 	// Width for the column of the field
-		// 	unsigned int columnWidth = 12;
+			// Width for the column of the field
+			unsigned int columnWidth = CHEBYSHEV_OUTPUT_WIDTH;
 
-		// 	// ...
-
-		// };
+			// ...
+		};
 
 
 		/// Global state of printing results to standard output.
@@ -49,7 +48,7 @@ namespace chebyshev {
 			};
 
 			/// Options for the different fields.
-			// std::map<std::string, field_options> fieldOptions;
+			std::map<std::string, field_options> fieldOptions {};
 
 			/// Default width for a field.
 			unsigned int defaultColumnWidth = CHEBYSHEV_OUTPUT_WIDTH;
@@ -80,6 +79,8 @@ namespace chebyshev {
 			state.fieldNames["difference"] = "Difference";
 			state.fieldNames["evaluated"] = "Evaluated";
 			state.fieldNames["expected"] = "Expected";
+
+			state.fieldOptions["funcName"].columnWidth = 16;
 
 			state.wasSetup = true;
 		}
@@ -176,15 +177,22 @@ namespace chebyshev {
 			std::vector<std::string> columns = state.estimateColumns) {
 
 			// Print the chosen columns by using state.fieldNames
-			for (const std::string& column : columns) {
+			for (size_t i = 0; i < columns.size(); ++i) {
 
-				if(adjustWidth)
-					outputStream << std::setw(state.defaultColumnWidth);
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
 
-				if(state.fieldNames.find(column) == state.fieldNames.end())
-					outputStream << column << separator;
+				if(state.fieldNames.find(columns[i]) == state.fieldNames.end())
+					outputStream << columns[i];
 				else
-					outputStream << state.fieldNames[column] << separator;
+					outputStream << state.fieldNames[columns[i]];
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
 			}
 
 			outputStream << std::endl;
@@ -200,15 +208,22 @@ namespace chebyshev {
 			std::vector<std::string> columns = state.equationColumns) {
 
 			// Print the chosen columns by using state.fieldNames
-			for (const std::string& column : columns) {
+			for (size_t i = 0; i < columns.size(); ++i) {
 
-				if(adjustWidth)
-					outputStream << std::setw(state.defaultColumnWidth);
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
 
-				if(state.fieldNames.find(column) == state.fieldNames.end())
-					outputStream << column << separator;
+				if(state.fieldNames.find(columns[i]) == state.fieldNames.end())
+					outputStream << columns[i];
 				else
-					outputStream << state.fieldNames[column] << separator;
+					outputStream << state.fieldNames[columns[i]];
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
 			}
 
 			outputStream << std::endl;
@@ -224,12 +239,19 @@ namespace chebyshev {
 			std::vector<std::string> columns = state.estimateColumns) {
 
 			// Print the chosen columns
-			for (const std::string& column : columns) {
+			for (size_t i = 0; i < columns.size(); ++i) {
 
-				if(adjustWidth)
-					outputStream << std::setw(state.defaultColumnWidth);
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
 
-				outputStream << resolve_field(column, res) << separator;
+				outputStream << resolve_field(columns[i], res);
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
 			}
 
 			outputStream << std::endl;
@@ -246,12 +268,20 @@ namespace chebyshev {
 			std::vector<std::string> columns = state.equationColumns) {
 
 			// Print the chosen columns
-			for (const std::string& column : columns) {
+			for (size_t i = 0; i < columns.size(); ++i) {
 
-				if(adjustWidth)
-					outputStream << std::setw(state.defaultColumnWidth);
 
-				outputStream << resolve_field(column, res) << separator;
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
+
+				outputStream << resolve_field(columns[i], res);
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
 			}
 
 			outputStream << std::endl;
