@@ -11,9 +11,11 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 #include "prec/prec_structures.h"
 #include "prec/fail.h"
+#include "prec/estimator.h"
 
 
 namespace chebyshev {
@@ -74,7 +76,7 @@ namespace chebyshev {
 			/// Target tests marked for execution,
 			/// can be picked by passing test case names
 			/// by command line. (all tests will be executed if empty)
-			std::map<std::string, bool> pickedTests;
+			std::map<std::string, bool> pickedTests {};
 
 		} state;
 
@@ -128,7 +130,33 @@ namespace chebyshev {
 		inline void terminate(bool exit = true) {
 
 
-			// Print results ...
+			// Print header for estimates
+			if(!state.quiet) {
+				std::cout << "\n" << std::left << std::setw(20) << "Function" << " | "
+					<< std::setw(12) << "Int. Min." << " | "
+					<< std::setw(12) << "Int. Max." << " | "
+					<< std::setw(12) << "Mean Err." << " | "
+					<< std::setw(12) << "RMS Err." << " | "
+					<< std::setw(12)<< "Max Err." << " | "
+					<< std::setw(12)<< "Rel. Err." << std::endl;
+			}
+
+			if(state.outputToFile)
+				state.outputFile << "Function, Int. Min., Int. Max., Mean Err., "
+					<< "RMS Err., Max Err., Rel. Err." << std::endl;
+
+
+			// Print estimate results
+			for (const auto& p : state.estimateResults) {
+
+				const auto res_list = p.second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+
+
+				}
+			}
 
 
 			std::cout << "\nFinished testing " << state.moduleName << '\n';
@@ -154,18 +182,118 @@ namespace chebyshev {
 		/// Estimate error integrals over a function
 		/// with respect to an exact function,
 		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param f_approx The approximation to test
+		/// @param f_expected The expected result
+		/// @param opt The options for the estimation
 		template<typename R, typename ...Args>
 		inline void estimate(
 			const std::string& name,
-			std::function<R(Args...)> f_evaluated,
+			std::function<R(Args...)> f_approx,
 			std::function<R(Args...)> f_expected,
 			estimate_options<R, Args...> opt) {
 
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
 			// Use the estimator to estimate error integrals.
-			auto res = opt.estimator(f_evaluated, f_expected, opt);
+			auto res = opt.estimator(f_approx, f_expected, opt);
 
 			// Use the fail function to determine whether the test failed.
 			res.failed = opt.fail(res);
+			res.quiet = opt.quiet;
+
+			state.totalTests++;
+			if(res.failed)
+				state.failedTests++;
+
+			state.estimateResults[name].push_back(res);
+		}
+
+
+		/// Estimate error integrals over a function
+		/// with respect to an exact function.
+		///
+		/// @param name The name of the test case.
+		/// @param f_approx The approximation to test.
+		/// @param f_expected The expected result.
+		/// @param intervals The (potentially multidimensional)
+		/// domain of estimation.
+		/// @param iterations The number of function evaluations.
+		/// @param fail The fail function to determine whether
+		/// the test failed.
+		/// @param estimator The precision estimator to use.
+		/// @param quiet Whether to output the result.
+		template<typename R, typename ...Args>
+		inline void estimate(
+			const std::string& name,
+			std::function<R(Args...)> f_approx,
+			std::function<R(Args...)> f_expected,
+			std::vector<interval> intervals,
+			long double tolerance, unsigned int iterations,
+			FailFunction fail,
+			Estimator<estimate_options<R, Args...>, R, Args...> estimator,
+			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
+			estimate_options<R, Args...> opt {};
+
+			opt.domain = intervals;
+			opt.tolerance = tolerance;
+			opt.iterations = iterations;
+			opt.estimator = estimator;
+			opt.fail = fail;
+			opt.quiet = quiet;
+
+			// Use the estimator to estimate error integrals.
+			auto res = opt.estimator(f_approx, f_expected, opt);
+
+			// Use the fail function to determine whether the test failed.
+			res.failed = opt.fail(res);
+			res.quiet = quiet;
+
+			state.totalTests++;
+			if(res.failed)
+				state.failedTests++;
+
+			state.estimateResults[name].push_back(res);
+		}
+
+
+		inline void estimate(
+			const std::string& name,
+			RealFunction<double> f_approx,
+			RealFunction<double> f_expected,
+			interval domain,
+			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
+			unsigned int iterations = CHEBYSHEV_PREC_ITER,
+			FailFunction fail = fail::fail_on_max_err,
+			Estimator<estimate_options<double, double>, double, double>
+			estimator = estimator::trapezoid<double>,
+			bool quiet = false) {
+
+			estimate_options<double, double> opt {};
+			opt.quiet = quiet;
+			opt.estimator = estimator;
+			opt.fail = fail;
+			opt.domain.push_back(domain);
+			opt.iterations = iterations;
+			opt.tolerance = tolerance;
+
+			estimate_result res = estimator(f_approx, f_expected, opt);
+
+			// Use the fail function to determine whether the test failed.
+			res.failed = fail(res);
+			res.quiet = quiet;
 
 			state.totalTests++;
 			if(res.failed)
@@ -177,11 +305,22 @@ namespace chebyshev {
 
 		/// Test an equivalence up to a tolerance,
 		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param opt The options for the evaluation
 		template<typename T = double>
 		inline void equals(
 			const std::string& name,
 			const T& evaluated, const T& expected,
 			equation_options<T> opt) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
 
 			equation_result res {};
 
@@ -208,13 +347,26 @@ namespace chebyshev {
 
 		/// Test an equivalence up to a tolerance,
 		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param distance The distance function to use
+		/// @param tolerance The tolerance for the evaluation
+		/// @param quiet Whether to output the result
 		template<typename T = double>
 		inline void equals(
 			const std::string& name,
 			const T& evaluated, const T& expected,
+			long double tolerance,
 			DistanceFunction<T> distance,
-			long double tolerance = state.defaultTolerance,
 			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
 
 			equation_result res {};
 
@@ -241,11 +393,23 @@ namespace chebyshev {
 
 		/// Test an equivalence up to a tolerance,
 		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param tolerance The tolerance for the evaluation
+		/// @param quiet Whether to output the result
 		inline void equals(
 			const std::string& name,
 			long double evaluated, long double expected,
 			long double tolerance = state.defaultTolerance,
 			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
 
 			equation_result res {};
 
@@ -261,6 +425,9 @@ namespace chebyshev {
 			res.tolerance = tolerance;
 			res.quiet = quiet;
 
+			res.evaluated = evaluated;
+			res.expected = expected;
+
 			state.totalTests++;
 			if(res.failed)
 				state.failedTests++;
@@ -270,12 +437,19 @@ namespace chebyshev {
 		}
 
 
-		/// Register different equation evaluations
+		/// Evaluate multiple pairs of values for equivalence
+		/// up to the given tolerance.
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<long double, 2>> values,
 			long double tolerance = state.defaultTolerance,
 			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
 
 			for (const auto& v : values)
 				equals(name, v[0], v[1], tolerance, quiet);

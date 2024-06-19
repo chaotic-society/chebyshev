@@ -25,7 +25,7 @@ namespace prec {
 		estimate_result trapezoid(
 			RealFunction<FloatType> f_approx,
 			RealFunction<FloatType> f_exp,
-			estimate_options options) {
+			estimate_options<FloatType, FloatType> options) {
 
 
 			estimate_result res;
@@ -37,18 +37,18 @@ namespace prec {
 
 
 		/// Use crude Monte Carlo integration to approximate error integrals.
-		template<typename FloatType = double>
-		estimate_result montecarlo(
-			RealFunction<FloatType> f_approx, RealFunction<FloatType> f_exp,
-			estimate_options options) {
+		// template<typename FloatType = double>
+		// estimate_result montecarlo(
+		// 	RealFunction<FloatType> f_approx, RealFunction<FloatType> f_exp,
+		// 	estimate_options<FloatType, FloatType> options) {
 
 
-			estimate_result res;
+		// 	estimate_result res;
 
-			/// ...
+		// 	/// ...
 
-			return res;
-		}
+		// 	return res;
+		// }
 
 
 	}
