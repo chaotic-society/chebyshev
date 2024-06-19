@@ -34,19 +34,23 @@ namespace chebyshev {
 			long double tolerance = 0;
 
 			/// Estimated maximum absolute error on interval.
-			long double max_err = get_nan<long double>();
+			long double maxErr = get_nan<long double>();
 
 			/// Estimated mean error on interval.
-			long double mean_err = get_nan<long double>();
+			long double meanErr = get_nan<long double>();
 
 			/// Estimated RMS error on interval.
-			long double rms_err = get_nan<long double>();
+			long double rmsErr = get_nan<long double>();
 
 			/// Estimated relative error on interval.
-			long double rel_err = get_nan<long double>();
+			long double relErr = get_nan<long double>();
 
 			/// Estimated absolute error on interval.
-			long double abs_err = get_nan<long double>();
+			long double absErr = get_nan<long double>();
+
+			/// Additional fields by name,
+			/// as a floating point value.
+			std::map<std::string, long double> additionalFields {};
 
 			/// Whether the test failed.
 			bool failed = false;
@@ -116,6 +120,10 @@ namespace chebyshev {
 			
 			/// Evaluated difference between expected and evaluated values.
 			long double difference = get_nan<long double>();
+
+			/// Additional fields by name,
+			/// as a floating point value.
+			std::map<std::string, long double> additionalFields {};
 
 			/// Tolerance on the absolute difference.
 			long double tolerance = 0;

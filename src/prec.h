@@ -11,11 +11,11 @@
 #include <map>
 #include <fstream>
 #include <iostream>
-#include <iomanip>
 
 #include "prec/prec_structures.h"
 #include "prec/fail.h"
 #include "prec/estimator.h"
+#include "core/output.h"
 
 
 namespace chebyshev {
@@ -71,7 +71,7 @@ namespace chebyshev {
 			std::map<std::string, std::vector<estimate_result>> estimateResults {};
 			
 			/// Results of equations
-			std::map<std::string, std::vector<equation_result>> equalsResults {};
+			std::map<std::string, std::vector<equation_result>> equationResults {};
 
 			/// Target tests marked for execution,
 			/// can be picked by passing test case names
@@ -121,6 +121,8 @@ namespace chebyshev {
 					state.outputToFile = false;
 				}
 			}
+
+			output::setup();
 		}
 
 
@@ -130,20 +132,18 @@ namespace chebyshev {
 		inline void terminate(bool exit = true) {
 
 
-			// Print header for estimates
-			if(!state.quiet) {
-				std::cout << "\n" << std::left << std::setw(20) << "Function" << " | "
-					<< std::setw(12) << "Int. Min." << " | "
-					<< std::setw(12) << "Int. Max." << " | "
-					<< std::setw(12) << "Mean Err." << " | "
-					<< std::setw(12) << "RMS Err." << " | "
-					<< std::setw(12)<< "Max Err." << " | "
-					<< std::setw(12)<< "Rel. Err." << std::endl;
-			}
+			if(state.estimateResults.size()) {
 
-			if(state.outputToFile)
-				state.outputFile << "Function, Int. Min., Int. Max., Mean Err., "
-					<< "RMS Err., Max Err., Rel. Err." << std::endl;
+				// Print header for estimates
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_estimate();
+				}
+
+				// Print to file as CSV
+				if(state.outputToFile)
+					output::header_estimate(state.outputFile, ",", false);
+			}
 
 
 			// Print estimate results
@@ -153,11 +153,42 @@ namespace chebyshev {
 
 				for (size_t i = 0; i < res_list.size(); ++i) {
 
-
-
+					if(!state.quiet)
+						output::print_estimate(res_list[i]);
+				
+					if(state.outputToFile)
+						output::print_estimate(
+							res_list[i], state.outputFile, ",", false);
 				}
 			}
 
+			if(state.equationResults.size()) {
+
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_equation();
+				}
+
+				if(state.outputToFile)
+					output::header_equation(state.outputFile, ",", false);
+			}
+
+
+			// Print equation results
+			for (const auto& p : state.equationResults) {
+
+				const auto res_list = p.second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					if(!state.quiet)
+						output::print_equation(res_list[i]);
+				
+					if(state.outputToFile)
+						output::print_equation(
+							res_list[i], state.outputFile, ",", false);
+				}
+			}
 
 			std::cout << "\nFinished testing " << state.moduleName << '\n';
 			std::cout << state.totalTests << " total tests, "
@@ -203,9 +234,13 @@ namespace chebyshev {
 			// Use the estimator to estimate error integrals.
 			auto res = opt.estimator(f_approx, f_expected, opt);
 
+			res.funcName = name;
+			res.domain = opt.domain;
+			res.tolerance = opt.tolerance;
+			res.quiet = opt.quiet;
+
 			// Use the fail function to determine whether the test failed.
 			res.failed = opt.fail(res);
-			res.quiet = opt.quiet;
 
 			state.totalTests++;
 			if(res.failed)
@@ -233,7 +268,7 @@ namespace chebyshev {
 			const std::string& name,
 			std::function<R(Args...)> f_approx,
 			std::function<R(Args...)> f_expected,
-			std::vector<interval> intervals,
+			std::vector<interval> domain,
 			long double tolerance, unsigned int iterations,
 			FailFunction fail,
 			Estimator<estimate_options<R, Args...>, R, Args...> estimator,
@@ -246,8 +281,7 @@ namespace chebyshev {
 					return;
 
 			estimate_options<R, Args...> opt {};
-
-			opt.domain = intervals;
+			opt.domain = domain;
 			opt.tolerance = tolerance;
 			opt.iterations = iterations;
 			opt.estimator = estimator;
@@ -256,6 +290,11 @@ namespace chebyshev {
 
 			// Use the estimator to estimate error integrals.
 			auto res = opt.estimator(f_approx, f_expected, opt);
+
+			res.funcName = name;
+			res.domain = domain;
+			res.tolerance = tolerance;
+			res.iterations = iterations;
 
 			// Use the fail function to determine whether the test failed.
 			res.failed = opt.fail(res);
@@ -269,6 +308,20 @@ namespace chebyshev {
 		}
 
 
+		/// Estimate error integrals over a function
+		/// with respect to an exact function.
+		///
+		/// @param name The name of the test case.
+		/// @param f_approx The approximation to test.
+		/// @param f_expected The expected result.
+		/// @param intervals The (potentially multidimensional)
+		/// domain of estimation.
+		/// @param iterations The number of function evaluations.
+		/// @param fail The fail function to determine whether
+		/// the test failed (defaults to fail_on_max_err).
+		/// @param estimator The precision estimator to use
+		/// (defaults to the trapezoid<double> estimator).
+		/// @param quiet Whether to output the result.
 		inline void estimate(
 			const std::string& name,
 			RealFunction<double> f_approx,
@@ -293,7 +346,12 @@ namespace chebyshev {
 
 			// Use the fail function to determine whether the test failed.
 			res.failed = fail(res);
+
+			res.funcName = name;
 			res.quiet = quiet;
+			res.domain = { domain };
+			res.tolerance = tolerance;
+			res.iterations = iterations;
 
 			state.totalTests++;
 			if(res.failed)
@@ -341,7 +399,7 @@ namespace chebyshev {
 				state.failedTests++;
 
 			// Register the result of the equation by name
-			state.equalsResults[name].push_back(res);
+			state.equationResults[name].push_back(res);
 		}
 
 
@@ -387,7 +445,7 @@ namespace chebyshev {
 				state.failedTests++;
 
 			// Register the result of the equation by name
-			state.equalsResults[name].push_back(res);
+			state.equationResults[name].push_back(res);
 		}
 
 
@@ -433,7 +491,7 @@ namespace chebyshev {
 				state.failedTests++;
 
 			// Register the result of the equation by name
-			state.equalsResults[name].push_back(res);
+			state.equationResults[name].push_back(res);
 		}
 
 

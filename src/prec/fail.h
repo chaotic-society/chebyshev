@@ -19,28 +19,28 @@ namespace prec {
 		/// Default fail function which marks the test as failed
 		/// if the maximum error on the domain is bigger than the tolerance
 		auto fail_on_max_err = [](estimate_result r) -> bool {
-			return (r.max_err > r.tolerance) || (r.max_err != r.max_err);
+			return (r.maxErr > r.tolerance) || (r.maxErr != r.maxErr);
 		};
 
 
 		/// Marks the test as failed if the mean error on the domain
 		/// is bigger than the tolerance or the error is NaN.
 		auto fail_on_mean_err = [](estimate_result r) -> bool {
-			return (r.mean_err > r.tolerance) || (r.mean_err != r.mean_err);
+			return (r.meanErr > r.tolerance) || (r.meanErr != r.meanErr);
 		};
 
 
 		/// Marks the test as failed if the RMS error on the domain
 		/// is bigger than the tolerance or the error is NaN.
 		auto fail_on_rms_err = [](estimate_result r) -> bool {
-			return (r.rms_err > r.tolerance) || (r.rms_err != r.rms_err);
+			return (r.rmsErr > r.tolerance) || (r.rmsErr != r.rmsErr);
 		};
 
 
 		/// Marks the test as failed if the relative error on the
 		/// domain is bigger than the tolerance or the error is NaN.
 		auto fail_on_rel_err = [](estimate_result r) -> bool {
-			return (r.rel_err > r.tolerance) || (r.rel_err != r.rel_err);
+			return (r.relErr > r.tolerance) || (r.relErr != r.relErr);
 		};
 
 	}

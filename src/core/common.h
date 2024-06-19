@@ -27,6 +27,11 @@
 #define CHEBYSHEV_BENCHMARK_RUNS 10
 #endif
 
+#ifndef CHEBYSHEV_OUTPUT_WIDTH
+/// Default width of output columns
+#define CHEBYSHEV_OUTPUT_WIDTH 12
+#endif
+
 
 #include <limits>
 

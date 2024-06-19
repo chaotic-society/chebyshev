@@ -50,7 +50,7 @@ int main(int argc, char const *argv[]) {
 		prec::estimate("custom",
 			[](interval k, Real tol, uint32_t iter){
 				prec::estimate_result r;
-				r.max_err = tol / 2.0;
+				r.maxErr = tol / 2.0;
 				return r;
 			}, {
 				interval(0, 1),
