@@ -123,9 +123,7 @@ namespace prec {
 
 				for (int i = 0; i < options.iterations; ++i) {
 					
-					for (int i = 0; i < dimensions; ++i)
-						x[i] = random_uniform(
-							options.domain[i].a, options.domain[i].a);
+					sample_uniform(x, options.domain);
 
 					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
 

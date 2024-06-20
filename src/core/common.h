@@ -34,6 +34,8 @@
 
 
 #include <limits>
+#include <vector>
+#include "../prec/interval.h"
 
 
 namespace chebyshev {
@@ -55,6 +57,20 @@ namespace chebyshev {
 	/// a uniform distribution over the interval.
 	inline long double random_uniform(long double a, long double b) {
 		return (rand() / (long double) RAND_MAX) * (b - a) + a;
+	}
+
+	/// Generate a pseudorandom vector
+	/// with uniformly distributed elements,
+	/// overwriting the argument.
+	template<typename Vector>
+	inline void sample_uniform(Vector& x, const std::vector<prec::interval> domain) {
+
+		if(x.size() != domain.size())
+			throw std::runtime_error(
+				"Vector and domain size mismatch in chebyshev::sample_uniform");
+
+		for (int i = 0; i < x.size(); ++i)
+			x[i] = random_uniform(domain[i].a, domain[i].b);
 	}
 	
 }
