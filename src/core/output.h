@@ -309,13 +309,15 @@ namespace chebyshev {
 		}
 
 
-		/// Print an estimate result as a table row.
-		inline void print_estimate(
-			prec::estimate_result res,
-			std::ostream& outputStream = std::cout,
-			const std::string& separator = " | ",
-			bool adjustWidth = true,
-			std::vector<std::string> columns = state.estimateColumns) {
+		/// Print a row of information about
+		/// a result of arbitrary type.
+		template<typename ResultType>
+		inline void print_result(
+			ResultType res,
+			std::ostream& outputStream,
+			const std::string& separator,
+			bool adjustWidth,
+			std::vector<std::string> columns) {
 
 			// Print the chosen columns
 			for (size_t i = 0; i < columns.size(); ++i) {
@@ -329,12 +331,25 @@ namespace chebyshev {
 
 				outputStream << resolve_field(columns[i], res);
 
+				// Avoid printing a separator for the last element,
+				// fundamental for CSV files.
 				if(i != columns.size() - 1)
 					outputStream << separator;
 			}
 
 			outputStream << std::endl;
+		}
 
+
+		/// Print an estimate result as a table row.
+		inline void print_estimate(
+			prec::estimate_result res,
+			std::ostream& outputStream = std::cout,
+			const std::string& separator = " | ",
+			bool adjustWidth = true,
+			std::vector<std::string> columns = state.estimateColumns) {
+
+			print_result(res, outputStream, separator, adjustWidth, columns);
 		}
 
 
@@ -346,24 +361,7 @@ namespace chebyshev {
 			bool adjustWidth = true,
 			std::vector<std::string> columns = state.equationColumns) {
 
-			// Print the chosen columns
-			for (size_t i = 0; i < columns.size(); ++i) {
-
-
-				if(adjustWidth) {
-					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
-						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
-					else
-						outputStream << std::setw(state.defaultColumnWidth);
-				}
-
-				outputStream << resolve_field(columns[i], res);
-
-				if(i != columns.size() - 1)
-					outputStream << separator;
-			}
-
-			outputStream << std::endl;
+			print_result(res, outputStream, separator, adjustWidth, columns);
 		}
 
 
@@ -375,24 +373,7 @@ namespace chebyshev {
 			bool adjustWidth = true,
 			std::vector<std::string> columns = state.benchmarkColumns) {
 
-			// Print the chosen columns
-			for (size_t i = 0; i < columns.size(); ++i) {
-
-
-				if(adjustWidth) {
-					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
-						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
-					else
-						outputStream << std::setw(state.defaultColumnWidth);
-				}
-
-				outputStream << resolve_field(columns[i], res);
-
-				if(i != columns.size() - 1)
-					outputStream << separator;
-			}
-
-			outputStream << std::endl;
+			print_result(res, outputStream, separator, adjustWidth, columns);
 		}
 
 

@@ -123,7 +123,6 @@ namespace chebyshev {
 
 			if(state.benchmarkResults.size()) {
 
-				// Print header for estimates
 				if(!state.quiet) {
 					std::cout << "\n";
 					output::header_benchmark();
@@ -135,7 +134,6 @@ namespace chebyshev {
 			}
 
 
-			// Print estimate results
 			for (const auto& p : state.benchmarkResults) {
 
 				const auto res_list = p.second;
