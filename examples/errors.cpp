@@ -1,7 +1,16 @@
 
+///
+/// @file errors.h Example program for error checking.
+///
+
 #include "chebyshev.h"
 #include <cmath>
 using namespace ch;
+
+
+double f(double x) {
+	return std::sqrt(x);
+}
 
 
 int main(int argc, char const *argv[]) {
@@ -12,11 +21,8 @@ int main(int argc, char const *argv[]) {
 		// Make an assert
 		err::assert(sqrt(4) == 2, "sqrt(4) is 2");
 
-		// Or using a simple macro
-		AUTOASSERT(sqrt(9) == 3);
-
 		// Check errno value after function call
-		err::check_errno(REAL_LAMBDA(std::sqrt), -1, EDOM);
+		err::check_errno(f, -1, EDOM);
 
 	// Stop error checking
 	err::terminate();
