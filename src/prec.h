@@ -11,6 +11,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <ctime>
 
 #include "prec/prec_structures.h"
 #include "prec/fail.h"
@@ -108,7 +109,7 @@ namespace chebyshev {
 			if(state.outputToFile) {
 
 				std::string filename;
-				filename = state.outputFolder + "prec_" + moduleName + ".csv";
+				filename = state.outputFolder + state.filenamePrefix + moduleName + ".csv";
 
 				if(state.outputFile.is_open())
 					state.outputFile.close();
@@ -121,6 +122,8 @@ namespace chebyshev {
 					state.outputToFile = false;
 				}
 			}
+
+			srand(time(nullptr));
 
 			output::setup();
 		}
@@ -215,14 +218,14 @@ namespace chebyshev {
 		/// with the given options.
 		///
 		/// @param name The name of the test case
-		/// @param f_approx The approximation to test
-		/// @param f_expected The expected result
+		/// @param funcApprox The approximation to test
+		/// @param funcExpected The expected result
 		/// @param opt The options for the estimation
 		template<typename R, typename ...Args>
 		inline void estimate(
 			const std::string& name,
-			std::function<R(Args...)> f_approx,
-			std::function<R(Args...)> f_expected,
+			std::function<R(Args...)> funcApprox,
+			std::function<R(Args...)> funcExpected,
 			estimate_options<R, Args...> opt) {
 
 			// Skip the test case if any tests have been picked
@@ -232,7 +235,7 @@ namespace chebyshev {
 					return;
 
 			// Use the estimator to estimate error integrals.
-			auto res = opt.estimator(f_approx, f_expected, opt);
+			auto res = opt.estimator(funcApprox, funcExpected, opt);
 
 			res.funcName = name;
 			res.domain = opt.domain;
@@ -254,8 +257,8 @@ namespace chebyshev {
 		/// with respect to an exact function.
 		///
 		/// @param name The name of the test case.
-		/// @param f_approx The approximation to test.
-		/// @param f_expected The expected result.
+		/// @param funcApprox The approximation to test.
+		/// @param funcExpected The expected result.
 		/// @param intervals The (potentially multidimensional)
 		/// domain of estimation.
 		/// @param iterations The number of function evaluations.
@@ -266,45 +269,23 @@ namespace chebyshev {
 		template<typename R, typename ...Args>
 		inline void estimate(
 			const std::string& name,
-			std::function<R(Args...)> f_approx,
-			std::function<R(Args...)> f_expected,
+			std::function<R(Args...)> funcApprox,
+			std::function<R(Args...)> funcExpected,
 			std::vector<interval> domain,
 			long double tolerance, unsigned int iterations,
 			FailFunction fail,
 			Estimator<estimate_options<R, Args...>, R, Args...> estimator,
 			bool quiet = false) {
 
-			// Skip the test case if any tests have been picked
-			// and this one was not picked.
-			if(state.pickedTests.size())
-				if(state.pickedTests.find(name) == state.pickedTests.end())
-					return;
-
 			estimate_options<R, Args...> opt {};
 			opt.domain = domain;
 			opt.tolerance = tolerance;
 			opt.iterations = iterations;
-			opt.estimator = estimator;
 			opt.fail = fail;
+			opt.estimator = estimator;
 			opt.quiet = quiet;
 
-			// Use the estimator to estimate error integrals.
-			auto res = opt.estimator(f_approx, f_expected, opt);
-
-			res.funcName = name;
-			res.domain = domain;
-			res.tolerance = tolerance;
-			res.iterations = iterations;
-
-			// Use the fail function to determine whether the test failed.
-			res.failed = opt.fail(res);
-			res.quiet = quiet;
-
-			state.totalTests++;
-			if(res.failed)
-				state.failedTests++;
-
-			state.estimateResults[name].push_back(res);
+			estimate(name, funcApprox, funcExpected, opt);
 		}
 
 
@@ -312,8 +293,8 @@ namespace chebyshev {
 		/// of real variable, with respect to an exact function.
 		///
 		/// @param name The name of the test case.
-		/// @param f_approx The approximation to test.
-		/// @param f_expected The expected result.
+		/// @param funcApprox The approximation to test.
+		/// @param funcExpected The expected result.
 		/// @param intervals The (potentially multidimensional)
 		/// domain of estimation.
 		/// @param iterations The number of function evaluations.
@@ -324,8 +305,8 @@ namespace chebyshev {
 		/// @param quiet Whether to output the result.
 		inline void estimate(
 			const std::string& name,
-			RealFunction<double> f_approx,
-			RealFunction<double> f_expected,
+			RealFunction<double> funcApprox,
+			RealFunction<double> funcExpected,
 			interval domain,
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
 			unsigned int iterations = CHEBYSHEV_PREC_ITER,
@@ -335,29 +316,14 @@ namespace chebyshev {
 			bool quiet = false) {
 
 			estimate_options<double, double> opt {};
-			opt.quiet = quiet;
-			opt.estimator = estimator;
-			opt.fail = fail;
-			opt.domain.push_back(domain);
-			opt.iterations = iterations;
+			opt.domain = { domain };
 			opt.tolerance = tolerance;
+			opt.iterations = iterations;
+			opt.fail = fail;
+			opt.estimator = estimator;
+			opt.quiet = quiet;
 
-			estimate_result res = estimator(f_approx, f_expected, opt);
-
-			// Use the fail function to determine whether the test failed.
-			res.failed = fail(res);
-
-			res.funcName = name;
-			res.quiet = quiet;
-			res.domain = { domain };
-			res.tolerance = tolerance;
-			res.iterations = iterations;
-
-			state.totalTests++;
-			if(res.failed)
-				state.failedTests++;
-
-			state.estimateResults[name].push_back(res);
+			estimate(name, funcApprox, funcExpected, opt);
 		}
 
 
@@ -420,32 +386,12 @@ namespace chebyshev {
 			DistanceFunction<T> distance,
 			bool quiet = false) {
 
-			// Skip the test case if any tests have been picked
-			// and this one was not picked.
-			if(state.pickedTests.size())
-				if(state.pickedTests.find(name) == state.pickedTests.end())
-					return;
+			equation_options<T> opt {};
+			opt.tolerance = tolerance;
+			opt.distance = distance;
+			opt.quiet = quiet;
 
-			equation_result res {};
-
-			long double diff = distance(evaluated, expected);
-
-			// Mark the test as failed if the
-			// distance between the two values
-			// is bigger than the tolerance.
-			res.failed = (diff > tolerance);
-
-			res.funcName = name;
-			res.difference = diff;
-			res.tolerance = tolerance;
-			res.quiet = quiet;
-
-			state.totalTests++;
-			if(res.failed)
-				state.failedTests++;
-
-			// Register the result of the equation by name
-			state.equationResults[name].push_back(res);
+			equals(name, evaluated, expected, opt);
 		}
 
 

@@ -13,6 +13,7 @@
 #include <iomanip>
 
 #include "../prec/prec_structures.h"
+#include "../benchmark/benchmark_structures.h"
 
 
 namespace chebyshev {
@@ -42,9 +43,14 @@ namespace chebyshev {
 				"funcName", "meanErr", "rmsErr", "maxErr", "failed"
 			};
 
-			/// Default columns to print for precision estimates.
+			/// Default columns to print for equations.
 			std::vector<std::string> equationColumns = {
 				"funcName", "difference", "tolerance", "failed"
+			};
+
+			/// Default columns to print for benchmarks.
+			std::vector<std::string> benchmarkColumns = {
+				"funcName", "averageRuntime", "runsPerSecond"
 			};
 
 			/// Options for the different fields.
@@ -74,13 +80,22 @@ namespace chebyshev {
 			state.fieldNames["absErr"] = "Abs. Err.";
 			state.fieldNames["tolerance"] = "Tolerance";
 			state.fieldNames["failed"] = "Failed";
+			state.fieldNames["iterations"] = "Iterations";
 
 			// Equation fields
 			state.fieldNames["difference"] = "Difference";
 			state.fieldNames["evaluated"] = "Evaluated";
 			state.fieldNames["expected"] = "Expected";
 
+			// Benchmark fields
+			state.fieldNames["totalRuntime"] = "Tot. Time (ms)";
+			state.fieldNames["averageRuntime"] = "Avg. Time (ms)";
+			state.fieldNames["runsPerSecond"] = "Runs per Sec.";
+			state.fieldNames["runs"] = "Runs";
+
+			// Set wider column width for some fields
 			state.fieldOptions["funcName"].columnWidth = 16;
+			state.fieldOptions["averageRuntime"].columnWidth = 14;
 
 			state.wasSetup = true;
 		}
@@ -133,7 +148,7 @@ namespace chebyshev {
 		}
 
 
-		/// Resolve the field of an estimate result by name,
+		/// Resolve the field of an equation result by name,
 		/// returning the value as a string.
 		inline std::string resolve_field(
 			const std::string& fieldName, prec::equation_result r) {
@@ -154,6 +169,39 @@ namespace chebyshev {
 				value << std::scientific
 					<< std::setprecision(state.outputPrecision)
 					<< r.tolerance;
+			} else if(fieldName == "failed") {
+				value << r.failed;
+			} else {
+				
+				if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+					return "";
+
+				value << r.additionalFields[fieldName];
+			}
+
+			return value.str();
+		}
+
+
+		/// Resolve the field of a benchmark result by name,
+		/// returning the value as a string.
+		inline std::string resolve_field(
+			const std::string& fieldName, benchmark::benchmark_result r) {
+
+			std::stringstream value;
+
+			if(fieldName == "funcName") {
+				value << r.funcName;
+			} else if(fieldName == "runs") {
+				value << r.runs;
+			} else if(fieldName == "iterations") {
+				value << r.iterations;
+			} else if(fieldName == "totalRuntime") {
+				value << r.totalRuntime;
+			} else if(fieldName == "averageRuntime") {
+				value << r.averageRuntime;
+			} else if(fieldName == "runsPerSecond") {
+				value << r.runsPerSecond;
 			} else if(fieldName == "failed") {
 				value << r.failed;
 			} else {
@@ -230,6 +278,37 @@ namespace chebyshev {
 		}
 
 
+		/// Print the header of a table for benchmark results,
+		/// with the given column names.
+		inline void header_benchmark(
+			std::ostream& outputStream = std::cout,
+			const std::string& separator = " | ",
+			bool adjustWidth = true,
+			std::vector<std::string> columns = state.benchmarkColumns) {
+
+			// Print the chosen columns by using state.fieldNames
+			for (size_t i = 0; i < columns.size(); ++i) {
+
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
+
+				if(state.fieldNames.find(columns[i]) == state.fieldNames.end())
+					outputStream << columns[i];
+				else
+					outputStream << state.fieldNames[columns[i]];
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
+			}
+
+			outputStream << std::endl;
+		}
+
+
 		/// Print an estimate result as a table row.
 		inline void print_estimate(
 			prec::estimate_result res,
@@ -266,6 +345,35 @@ namespace chebyshev {
 			const std::string& separator = " | ",
 			bool adjustWidth = true,
 			std::vector<std::string> columns = state.equationColumns) {
+
+			// Print the chosen columns
+			for (size_t i = 0; i < columns.size(); ++i) {
+
+
+				if(adjustWidth) {
+					if(state.fieldOptions.find(columns[i]) != state.fieldOptions.end())
+						outputStream << std::setw(state.fieldOptions[columns[i]].columnWidth);
+					else
+						outputStream << std::setw(state.defaultColumnWidth);
+				}
+
+				outputStream << resolve_field(columns[i], res);
+
+				if(i != columns.size() - 1)
+					outputStream << separator;
+			}
+
+			outputStream << std::endl;
+		}
+
+
+		/// Print a benchmark result as a table row.
+		inline void print_benchmark(
+			benchmark::benchmark_result res,
+			std::ostream& outputStream = std::cout,
+			const std::string& separator = " | ",
+			bool adjustWidth = true,
+			std::vector<std::string> columns = state.benchmarkColumns) {
 
 			// Print the chosen columns
 			for (size_t i = 0; i < columns.size(); ++i) {

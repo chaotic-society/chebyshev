@@ -19,7 +19,7 @@
 
 #ifndef CHEBYSHEV_BENCHMARK_ITER
 /// Default number of benchmark iterations.
-#define CHEBYSHEV_BENCHMARK_ITER 100
+#define CHEBYSHEV_BENCHMARK_ITER 1000
 #endif
 
 #ifndef CHEBYSHEV_BENCHMARK_RUNS
