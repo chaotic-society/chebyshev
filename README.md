@@ -9,20 +9,23 @@ The different modules are contained in their respective namespaces and are initi
 ### Precision testing
 The precision testing module, implemented in the `prec` namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, the following integrals:
 
-$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
-$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
-$$\epsilon_{max} = \max_{\Omega} |f_{exact}(x) - f_{approx}(x)|$$
-$$\epsilon_{rel} = \frac{\int_\Omega |f_{exact}(x) - f_{approx}(x)| dx}{\int_\Omega |f_{exact}(x)|dx}$$
+$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f(x) - f'(x)| dx$$
 
-The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors. The estimates are computed and the single test units are validated through a _fail function_, which determines whether the test failed, depending on its results.
+$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f(x) - f'(x)|^2 dx}$$
+
+$$\epsilon_{max} = \max_{\Omega} |f(x) - f'(x)|$$
+
+$$\epsilon_{rel} = \frac{\int_\Omega |f(x) - f'(x)| dx}{\int_\Omega |f(x)|dx}$$
+
+The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test units are validated through a _fail function_, which determines whether the test failed, depending on its results.
 
 
 ### Benchmarks
-The `benchmark` module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. This module is crucial for identifying performance bottlenecks and improving the overall performance of scientific computing applications. The `benchmark::benchmark()` function works by running the function under consideration for multiple _runs_ and _iterations_, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function with can be fully customized using, for example, randomized input over the domain of the function.
+The `benchmark` module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. The `benchmark::benchmark()` function works by running the function under consideration for multiple _runs_ and _iterations_, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function can be fully customized using, for example, randomized input over the domain of the function.
 
 
 ### Error checking
-The `err` module makes it possible to test that functions correctly set `errno` or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The functions `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` are used for these type of checks.
+The `err` module makes it possible to test that functions correctly set `errno` or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The functions `err::check_errno` and `err::check_exception()` are used for these type of checks.
 
 
 ### Output customization
@@ -30,15 +33,15 @@ The additional `output` module, not directly used for testing, makes it possible
 
 
 ## Features
-- *Header-only:* Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
+- **Header-only:** Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
 
-- *Error integral approximation:* Chebyshev provides estimators for the precision of functions over their domain.
+- **Error integral approximation:** Chebyshev provides estimators for the precision of functions over their domain.
 
-- *Modular design:* The framework is composed of three independent modules, allowing developers to use only the components they need.
+- **Modular design:** The framework is composed of three independent modules, allowing developers to use only the components they need.
 
-- *Flexible testing:* Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
+- **Flexible testing:** Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
 
-- *Multi-platform support:* Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS.
+- **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS.
 
 
 ## Getting Started
@@ -47,7 +50,7 @@ To use Chebyshev, simply include the relevant header file for the module that yo
 ```c
 prec::setup("example", argc, argv);
 
-	// Estimate errors on f on [0, 1000]
+	// Estimate errors on f on [0, 100]
 	prec::estimate("f", f, g, prec::interval(0, 100));
 
 	// Check that two values are equal up to a tolerance
