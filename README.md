@@ -1,60 +1,64 @@
-# Chebyshev Testing Framework
-A C++ testing and benchmark header-only framework specialized in precision testing for scientific software.
-
-## Framework Structure
-The framework is divided in three different components:
-
-- ### Precision testing (chebyshev::prec)
-	Functions of real variable are tested and their precision, with respect to an exact function, is estimated by computing the **trapezoid quadrature** of **absolute and RMS error integrals**:
-	$$\epsilon_{abs} = \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
-	$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
-	$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
-	$$\epsilon_{max} = \max_{\Omega} |f_{exact}(x) - f_{approx}(x)|$$
-	$$\epsilon_{rel} = \frac{\int_\Omega |f_{exact}(x) - f_{approx}(x)| dx}{\int_\Omega |f_{exact}(x)|dx}$$
-	
-	The function `chebyshev::prec::estimate()` is used to estimate the error integrals for a generic function. The results of precision testing are displayed once `chebyshev::prec::terminate()` is called.
-
-- ### Benchmarking (chebyshev::benchmark)
-	Functions' performance is tested by running the functions multiple times with randomized input in their domain and averaging the elapsed time. The function `chebyshev::benchmark::benchmark()` is used to benchmark a generic function with a given random input generator. The results of the benchmarks are displayed once `chebyshev::benchmark::terminate()` is called.
-
-- ### Error checking (chebyshev::err)
-	Check for correct error reporting through `errno` and exceptions. The function `chebyshev::err::assert` can be used to assert expressions, while `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` can be used to test the behaviour of error reporting.
-
-## Setup and usage
-The library is standalone and needs no dependencies or installation, so you only need to include the header files inside your code. You can automatically include all header files of the library by including `chebyshev.h`. All three modules are initialized and terminated using the `<module>::setup()` and `<module>::terminate()` functions in their respective namespaces.
+# Chebyshev Test
+Chebyshev is a header-only C++ testing framework designed for testing scientific software and scientific computing libraries. It is part of the larger Theoretica project, a mathematical library that is thoroughly tested using Chebyshev. The framework is composed of three modules: a `prec` module for precision testing, a `benchmark` module for benchmarks, and the `err` module for error checking. Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications.
 
 
-## Examples
-The `examples` folder contains example code for all three parts of the framework. Here is a short example of error estimation:
+## Interface
+The different modules are contained in their respective namespaces and are initialized through the `<module>::setup()` function and are terminated with the `<module>::terminate()` function, which outputs the results. The behavior of a module may be customized and extended by modifying the fields of the `<module>::state` structure after the module has been initialized. The results of testing are also output to file in CSV format for easy analysis and manipulation as a data table.
+
+
+### Precision testing
+The precision testing module, implemented in the `prec` namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, the following integrals:
+
+$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
+$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
+$$\epsilon_{max} = \max_{\Omega} |f_{exact}(x) - f_{approx}(x)|$$
+$$\epsilon_{rel} = \frac{\int_\Omega |f_{exact}(x) - f_{approx}(x)| dx}{\int_\Omega |f_{exact}(x)|dx}$$
+
+The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors. The estimates are computed and the single test units are validated through a _fail function_, which determines whether the test failed, depending on its results.
+
+
+### Benchmarks
+The `benchmark` module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. This module is crucial for identifying performance bottlenecks and improving the overall performance of scientific computing applications. The `benchmark::benchmark()` function works by running the function under consideration for multiple _runs_ and _iterations_, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function with can be fully customized using, for example, randomized input over the domain of the function.
+
+
+### Error checking
+The `err` module makes it possible to test that functions correctly set `errno` or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The functions `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` are used for these type of checks.
+
+
+### Output customization
+The additional `output` module, not directly used for testing, makes it possible to customize the output of the tests, such as which fields to print and how to display them. Customization options are available through the `output::state` structure and are automatically applied to the other modules.
+
+
+## Features
+- *Header-only:* Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
+
+- *Error integral approximation:* Chebyshev provides estimators for the precision of functions over their domain.
+
+- *Modular design:* The framework is composed of three independent modules, allowing developers to use only the components they need.
+
+- *Flexible testing:* Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
+
+- *Multi-platform support:* Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS.
+
+
+## Getting Started
+To use Chebyshev, simply include the relevant header file for the module that you need in your project and start writing tests. You can alternatively include the `chebyshev.h` header file which automatically includes all functionalities. The framework is designed to be easy to use, with a minimal learning curve and customization options to shape it according to your needs. This example code sets up precision testing for the "example" test unit and estimates the error over a fictitious function with respect to an exact function:
 
 ```c
-// Setup the precision testing environment
-prec::setup("chebyshev", argc, argv);
+prec::setup("example", argc, argv);
 
-	// Estimate errors on f_a on [0, 10]
-	prec::estimate("f_approx", f_approx, f, interval(0, 10));
+	// Estimate errors on f on [0, 1000]
+	prec::estimate("f", f, g, prec::interval(0, 100));
 
-	// Check that two values are almost equal,
-	// up to a tolerance
-	prec::equals("f_approx", f_approx(1), 1, 0.2);
+	// Check that two values are equal up to a tolerance
+	prec::equals("f", f(1), 1, 0.2);
 
-	// Check multiple pairs of values
-	prec::equals("f_approx", {
-		{f_approx(1), 1},
-		{f_approx(2), 4},
-		{f_approx(3), 3}
-	});
-
-        // Or more simply, if the function is the same:
-	prec::equals("f_approx", f_approx, {
-		{1, 1},
-		{2, 4},
-		{3, 3}
-	});
-
-// Stop precision testing
 prec::terminate();
 ```
 
-## Dependencies
-The library has no dependencies. Only a compiler supporting C++14 is needed.
+## Setup and Usage
+Chebyshev is a header-only library, so there is no need to build or install it separately. Simply include the relevant header files in your project and start using the framework straightaway. Only a compiler with C++14 support is needed to use the framework.
+
+
+## Contributing
+Chebyshev is a collaborative open-source project, and contributions are welcome. If you'd like to contribute to the framework, please submit a pull request.
