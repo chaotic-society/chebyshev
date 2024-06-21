@@ -1,5 +1,5 @@
 # Chebyshev Testing Framework
-A testing and benchmarking framework specialized for mathematical functions, using error estimation.
+A C++ testing and benchmark header-only framework specialized in precision testing for scientific software.
 
 ## Framework Structure
 The framework is divided in three different components:
@@ -10,18 +10,18 @@ The framework is divided in three different components:
 	$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f_{exact}(x) - f_{approx}(x)| dx$$
 	$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f_{exact}(x) - f_{approx}(x)|^2 dx}$$
 	$$\epsilon_{max} = \max_{\Omega} |f_{exact}(x) - f_{approx}(x)|$$
+	$$\epsilon_{rel} = \frac{\int_\Omega |f_{exact}(x) - f_{approx}(x)| dx}{\int_\Omega |f_{exact}(x)|dx}$$
 	
-	The function `chebyshev::prec::estimate()` is used to register a function to be precision tested. All of the tests are then executed when the `chebyshev::prec::run()` function is called or automatically before terminating the test unit, when `chebyshev::prec::terminate()` is called.
+	The function `chebyshev::prec::estimate()` is used to estimate the error integrals for a generic function. The results of precision testing are displayed once `chebyshev::prec::terminate()` is called.
 
 - ### Benchmarking (chebyshev::benchmark)
-	Functions' performance is tested by running the functions multiple times with randomized input in their domain and averaging the elapsed time.
-	The function `chebyshev::benchmark::request()` is used to register a function to be benchmarked. All of the tests are then executed when the `chebyshev::benchmark::run()` function is called or automatically before terminating the test unit, when `chebyshev::benchmark::terminate()` is called.
+	Functions' performance is tested by running the functions multiple times with randomized input in their domain and averaging the elapsed time. The function `chebyshev::benchmark::benchmark()` is used to benchmark a generic function with a given random input generator. The results of the benchmarks are displayed once `chebyshev::benchmark::terminate()` is called.
 
 - ### Error checking (chebyshev::err)
-	Correct error reporting through `errno` and exceptions is tested. The function `chebyshev::err::assert` can be used to assert expressions, while `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` can be used to test the behaviour of error reporting.
+	Check for correct error reporting through `errno` and exceptions. The function `chebyshev::err::assert` can be used to assert expressions, while `chebyshev::err::check_errno` and `chebyshev::err::check_exception()` can be used to test the behaviour of error reporting.
 
 ## Setup and usage
-The library is standalone and needs no dependencies or installation, so you only need to include the header files inside your code. You can automatically include all header files of the library by including `chebyshev.h`. All three modules are initialized and terminated using the `setup()` and `terminate()` functions in their respective namespaces.
+The library is standalone and needs no dependencies or installation, so you only need to include the header files inside your code. You can automatically include all header files of the library by including `chebyshev.h`. All three modules are initialized and terminated using the `<module>::setup()` and `<module>::terminate()` functions in their respective namespaces.
 
 
 ## Examples
@@ -34,7 +34,8 @@ prec::setup("chebyshev", argc, argv);
 	// Estimate errors on f_a on [0, 10]
 	prec::estimate("f_approx", f_approx, f, interval(0, 10));
 
-	// Check that two values are almost equal
+	// Check that two values are almost equal,
+	// up to a tolerance
 	prec::equals("f_approx", f_approx(1), 1, 0.2);
 
 	// Check multiple pairs of values
@@ -56,4 +57,4 @@ prec::terminate();
 ```
 
 ## Dependencies
-The library has no dependencies. Only a compiler supporting C++11 is needed.
+The library has no dependencies. Only a compiler supporting C++14 is needed.

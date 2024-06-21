@@ -1,41 +1,31 @@
 
 ///
-/// @file prec.h Precision estimation of real functions
+/// @file prec.h Precision testing module.
 ///
 
-#pragma once
+#ifndef CHEBYSHEV_PREC_H
+#define CHEBYSHEV_PREC_H
 
-#include "core/common.h"
-#include "core/interval.h"
-#include "core/prec_def.h"
-
-#include <cmath>
-#include <iostream>
-#include <cstdlib>
-#include <iomanip>
+#include <string>
 #include <vector>
 #include <map>
-#include <array>
 #include <fstream>
-#include <string>
+#include <iostream>
+#include <ctime>
 
-
-#ifndef CHEBYSHEV_INTEGRAL_ITER
-#define CHEBYSHEV_INTEGRAL_ITER 10000
-#endif
-
-
-#ifndef CHEBYSHEV_TOLERANCE
-#define CHEBYSHEV_TOLERANCE 0.00000001
-#endif
+#include "prec/prec_structures.h"
+#include "prec/fail.h"
+#include "prec/estimator.h"
+#include "core/output.h"
 
 
 namespace chebyshev {
-	
+
+	/// @namespace chebyshev::prec Precision testing module.
 	namespace prec {
 
 
-		/// Global state of precision testing
+		/// Global state of the precision testing module.
 		struct prec_state {
 			
 			/// Name of the module being tested
@@ -59,6 +49,10 @@ namespace chebyshev {
 			/// Relative or absolute path to output folder
 			std::string outputFolder = "";
 
+			/// Prefix to prepend to the filename, in addition
+			/// to the module name.
+			std::string filenamePrefix = "prec_";
+
 			/// Total number of tests run
 			uint32_t totalTests = 0;
 
@@ -66,309 +60,48 @@ namespace chebyshev {
 			uint32_t failedTests = 0;
 
 			/// Default number of iterations for integral quadrature
-			uint32_t defaultIterations = CHEBYSHEV_INTEGRAL_ITER;
+			uint32_t defaultIterations = CHEBYSHEV_PREC_ITER;
 
 			/// Default fail function
-			FailFunction defaultFailFunction = fail_on_max_err;
+			FailFunction defaultFailFunction = fail::fail_on_max_err;
 
 			/// Default tolerance on max absolute error
-			Real defaultTolerance = CHEBYSHEV_TOLERANCE;
-
-			/// Recorded estimation requests
-			std::vector<estimate_request> estimationRequests;
-
-			/// Recorded custom estimation requests
-			std::vector<estimate_custom_request> estimationCustomRequests;
-
-			/// Recorded equation requests
-			std::vector<equation_request> equationRequests;
+			long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
 
 			/// Results of precision testing
-			std::map<std::string, std::vector<estimate_result>> estimationResults;
+			std::map<std::string, std::vector<estimate_result>> estimateResults {};
 			
 			/// Results of equations
-			std::map<std::string, std::vector<equation_result>> equationResults;
+			std::map<std::string, std::vector<equation_result>> equationResults {};
 
-			/// Target tests marked for execution
-			/// (all tests will be executed if empty)
-			std::map<std::string, bool> pickedTests;
+			/// Target tests marked for execution,
+			/// can be picked by passing test case names
+			/// by command line. (all tests will be executed if empty)
+			std::map<std::string, bool> pickedTests {};
 
 		} state;
 
 
-		/// Register a function for error estimation
-		inline void estimate(
-			const std::string& name,
-			RealFunction fApprox,
-			RealFunction fExp,
-			interval k,
-			Real tolerance = state.defaultTolerance,
-			bool quiet = false,
-			unsigned int n = state.defaultIterations,
-			FailFunction fail = state.defaultFailFunction) {
-
-			estimate_request r;
-			r.funcName = name;
-			r.func = fApprox;
-			r.funcExpected = fExp;
-			r.intervals.push_back(k);
-			r.tolerance = tolerance;
-			r.quiet = quiet;
-			r.iterations = n;
-			r.fail = fail;
-
-			state.estimationRequests.push_back(r);
-		}
+		/// Setup the precision testing environment.
+		///
+		/// @param moduleName Name of the module under test.
+		/// @param argc The number of command line arguments
+		/// @param argv A list of C-style strings containing
+		/// the command line arguments.
+		inline void setup(
+			std::string moduleName,
+			int argc = 0,
+			const char** argv = nullptr) {
 
 
-		/// Register a function for error estimation on multiple intervals
-		inline void estimate(
-			const std::string& name,
-			RealFunction fApprox,
-			RealFunction fExp,
-			std::vector<interval> intervals,
-			Real tolerance = state.defaultTolerance,
-			bool quiet = false,
-			unsigned int n = state.defaultIterations,
-			FailFunction fail = state.defaultFailFunction) {
-
-			estimate_request r;
-			r.funcName = name;
-			r.func = fApprox;
-			r.funcExpected = fExp;
-			r.intervals = intervals;
-			r.tolerance = tolerance;
-			r.quiet = quiet;
-			r.iterations = n;
-			r.fail = fail;
-
-			state.estimationRequests.push_back(r);
-		}
-
-
-		inline void estimate(
-			const std::string& name,
-			CustomEstimateFunction f,
-			interval k,
-			Real tolerance = state.defaultTolerance,
-			bool quiet = false,
-			unsigned int n = state.defaultIterations,
-			FailFunction fail = state.defaultFailFunction) {
-
-			estimate_custom_request r;
-			r.funcName = name;
-			r.f = f;
-			r.intervals.push_back(k);
-			r.tolerance = tolerance;
-			r.quiet = quiet;
-			r.iterations = n;
-
-			state.estimationCustomRequests.push_back(r);
-		}
-
-
-		inline void estimate(
-			const std::string& name,
-			CustomEstimateFunction f,
-			std::vector<interval> intervals,
-			Real tolerance = state.defaultTolerance,
-			bool quiet = false,
-			unsigned int n = state.defaultIterations,
-			FailFunction fail = state.defaultFailFunction) {
-
-			estimate_custom_request r;
-			r.funcName = name;
-			r.f = f;
-			r.intervals = intervals;
-			r.tolerance = tolerance;
-			r.quiet = quiet;
-			r.iterations = n;
-
-			state.estimationCustomRequests.push_back(r);
-		}
-
-
-		/// Estimate the precision of a real function on a single interval
-		inline estimate_result compute_estimate(
-			std::string name,
-			RealFunction fApprox,
-			RealFunction fExp,
-			interval k,
-			Real tolerance = state.defaultTolerance,
-			bool quiet = false,
-			unsigned int n = state.defaultIterations,
-			FailFunction fail = state.defaultFailFunction) {
-
-			estimate_result result;
-
-			Real sum = 0;
-			Real sum_sqr = 0;
-			Real sum_abs = 0;
-			Real max = 0;
-
-			Real measure = k.length();
-			Real dx = measure / n;
-			Real x, coeff;
-
-			Real diff = std::abs(fApprox(k.a) - fExp(k.a));
-
-			sum += diff;
-			sum_sqr += diff * diff;
-			sum_abs += std::abs(fExp(k.a));
-			max = diff;
-
-			for (unsigned int i = 1; i < n; ++i) {
-
-				x = k.a + i * dx;
-				diff = std::abs(fApprox(x) - fExp(x));
-
-				if(diff > max)
-					max = diff;
-
-				if(i % 2 == 0)
-					coeff = 2;
-				else
-					coeff = 4;
-
-				sum += coeff * diff;
-				sum_sqr += coeff * diff * diff;
-				sum_abs += coeff * fExp(x);
-			}
-
-			diff = std::abs(fApprox(k.b) - fExp(k.b));
-
-			sum += diff;
-			sum_sqr += diff * diff;
-			sum_abs += std::abs(fExp(k.b));
-			
-			if(diff > max)
-				max = diff;
-
-			result.funcName = name;
-			result.quiet = quiet;
-			result.k = k;
-			result.iterations = n;
-			result.abs_err = sum;
-			result.max_err = max;
-			result.mean_err = (sum * dx / 3.0) / measure;
-			result.rms_err = std::sqrt((sum_sqr * dx / 3.0) / measure);
-			result.rel_err = std::abs((sum * dx / 3.0) / (sum_abs * dx / 3.0));
-			result.tolerance = tolerance;
-
-			result.failed = fail(result);
-
-			state.estimationResults[result.funcName].push_back(result);
-			state.totalTests++;
-
-			return result;
-		}
-
-
-		inline std::vector<estimate_result> compute_estimate(estimate_request r) {
-
-			std::vector<estimate_result> res;
-
-			for (const auto& k : r.intervals)
-				res.push_back(compute_estimate(
-					r.funcName, r.func,
-					r.funcExpected, k,
-					r.tolerance, r.quiet,
-					r.iterations, r.fail
-					));
-
-			return res;
-		}
-
-
-		/// Register an equation for evaluation
-		inline void equals(
-			const std::string& name,
-			Real evaluated, Real expected,
-			Real tolerance = CHEBYSHEV_TOLERANCE, bool quiet = false) {
-
-			equation_request r;
-			r.funcName = name;
-			r.evaluated = evaluated;
-			r.expected = expected;
-			r.tolerance = tolerance;
-			r.quiet = quiet;
-
-			state.equationRequests.push_back(r);
-		}
-
-
-		/// Register different equation evaluations
-		inline void equals(
-			const std::string& name,
-			std::vector<std::array<Real, 2>> values,
-			Real tolerance = CHEBYSHEV_TOLERANCE,
-			bool quiet = false) {
-
-			for (const auto& v : values)
-				equals(name, v[0], v[1], tolerance, quiet);
-		}
-
-
-		/// Register a function for equation evaluation
-		inline void equals(
-			const std::string& name,
-			RealFunction f,
-			std::vector<std::array<Real, 2>> values,
-			Real tolerance = CHEBYSHEV_TOLERANCE,
-			bool quiet = false) {
-
-			for (const auto& v : values)
-				equals(name, f(v[0]), v[1], tolerance, quiet);
-		}
-
-
-		/// Test whether two real values are almost equal, to the given tolerance
-		inline equation_result eval_equation(
-			const std::string& name,
-			Real evaluated, Real expected,
-			Real tolerance = CHEBYSHEV_TOLERANCE, bool quiet = false) {
-
-			equation_result eq;
-			Real diff = std::abs(expected - evaluated);
-
-			if(diff > tolerance || (diff != diff)) {
-				state.failedTests++;
-				eq.failed = true;
-			} else {
-			 	eq.failed = false;
-			}
-
-			state.totalTests++;
-
-			eq.funcName = name;
-			eq.diff = diff;
-			eq.expected = expected;
-			eq.evaluated = evaluated;
-			eq.tolerance = tolerance;
-			eq.quiet = quiet;
-
-			state.equationResults[eq.funcName].push_back(eq);
-			return eq;
-		}
-
-
-		inline equation_result eval_equation(equation_request er) {
-			return eval_equation(er.funcName, er.evaluated, er.expected, er.tolerance, er.quiet);
-		}
-
-
-		/// Setup the precision testing environment
-		inline void setup(std::string moduleName, int argc = 0, const char** argv = nullptr) {
-
-
-			// Initialize pick list
-			if(argc && argv) {
-				for (int i = 1; i < argc; ++i) {
+			// Initialize list of picked tests
+			if(argc && argv)
+				for (int i = 1; i < argc; ++i)
 					state.pickedTests[argv[i]] = true;
-				}
-			}
 
-			std::cout << "Starting precision testing of the " << moduleName << " module ..." << std::endl;
+			std::cout << "Starting precision testing of the "
+				<< moduleName << " module ..." << std::endl;
+
 			state.moduleName = moduleName;
 			state.failedTests = 0;
 			state.totalTests = 0;
@@ -376,7 +109,7 @@ namespace chebyshev {
 			if(state.outputToFile) {
 
 				std::string filename;
-				filename = state.outputFolder + "prec_" + moduleName + ".csv";
+				filename = state.outputFolder + state.filenamePrefix + moduleName + ".csv";
 
 				if(state.outputFile.is_open())
 					state.outputFile.close();
@@ -384,217 +117,350 @@ namespace chebyshev {
 				state.outputFile.open(filename);
 
 				if(!state.outputFile.is_open()) {
-					std::cout << "Unable to open output file, results will NOT be saved!" << std::endl;
+					std::cout << "Unable to open output file,"
+						" results will NOT be saved!" << std::endl;
 					state.outputToFile = false;
 				}
 			}
+
+			srand(time(nullptr));
+
+			output::setup();
 		}
 
 
-		/// Print an estimation result
-		inline void print_estimate(const estimate_result& r, size_t i = 0) {
-
-			std::cout << std::left << std::setw(20);
-
-			if(i)	std::cout << "                    ";
-			else	std::cout << r.funcName;
-			
-			std::cout << " | "
-			<< std::setw(12) << r.k.a << " | "
-			<< std::setw(12) << r.k.b << " | "
-			<< std::setw(12) << r.mean_err << " | "
-			<< std::setw(12) << r.rms_err << " | "
-			<< std::setw(12) << r.max_err << " | "
-			<< std::setw(12) << r.rel_err;
-
-			if(r.failed)
-				std::cout << "  FAILED";
-
-			std::cout << std::endl;
-		}
-
-
-		/// Print an equation result
-		inline void print_equation(const equation_result& r, size_t i = 0) {
-
-			std::cout << std::setw(20);
-
-			if(i) {
-				if(state.equationRequests[i - 1].funcName == r.funcName)
-					std::cout << "                    ";
-				else
-					std::cout << r.funcName;
-			} else {
-				std::cout << r.funcName;
-			}
-
-			std::cout << " | "
-			<< std::setw(12) << r.evaluated << " | "
-			<< std::setw(12) << r.expected << " | "
-			<< std::setw(12) << r.diff << " | "
-			<< std::setw(12) << r.tolerance;
-
-			if(r.failed)
-					std::cout << std::setw(8) << "  FAILED";
-
-			std::cout << std::endl;
-		}
-
-
-		/// Run all requested error estimations and equation evaluations
-		inline void run() {
-
-			if(state.estimationRequests.size() + state.estimationCustomRequests.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n" << std::left << std::setw(20) << "Function" << " | "
-						<< std::setw(12) << "Int. Min." << " | "
-						<< std::setw(12) << "Int. Max." << " | "
-						<< std::setw(12) << "Mean Err." << " | "
-						<< std::setw(12) << "RMS Err." << " | "
-						<< std::setw(12)<< "Max Err." << " | "
-						<< std::setw(12)<< "Rel. Err." << std::endl;
-				}
-
-				if(state.outputToFile)
-					state.outputFile << "Function, Int. Min., Int. Max., Mean Err., "
-						<< "RMS Err., Max Err., Rel. Err." << std::endl;
-
-				for(const auto& r : state.estimationRequests) {
-
-					if(!state.pickedTests.empty() && !state.pickedTests[r.funcName])
-						continue;
-					
-					auto res = compute_estimate(r);
-
-					for(size_t i = 0; i < res.size(); i++) {
-
-						if(res[i].failed)
-							state.failedTests++;
-
-						// Skip test if only picked tests are to be executed
-						if(state.estimateOnlyFailed && !res[i].failed)
-							continue;
-
-						if(!state.quiet)
-							print_estimate(res[i], i);
-
-						if(state.outputToFile) {
-							state.outputFile << res[i].funcName << ", " << res[i].k.a << ", " << res[i].k.b << ", "
-								<< res[i].mean_err << ", " << res[i].rms_err << ", "
-								<< res[i].max_err << ", " << res[i].rel_err << std::endl;
-						}
-
-					}
-
-				}
-				state.estimationRequests.clear();
-
-				for(const auto& r : state.estimationCustomRequests) {
-
-					// Skip test if only picked tests are to be executed
-					if(!state.pickedTests.empty() && !state.pickedTests[r.funcName])
-						continue;
-					
-					std::vector<estimate_result> res;
-
-					for (size_t j = 0; j < r.intervals.size(); ++j) {
-
-						res.push_back(r.f(r.intervals[j], r.tolerance, r.iterations));
-						res[j].funcName = r.funcName;
-						res[j].k = r.intervals[j];
-						res[j].tolerance = r.tolerance;
-						res[j].iterations = r.iterations;
-						res[j].quiet = r.quiet;
-
-						state.totalTests++;
-
-						if(res[j].failed)
-							state.failedTests++;
-					}
-
-					for(size_t i = 0; i < res.size(); i++) {
-
-						if(state.estimateOnlyFailed && !res[i].failed)
-							continue;
-
-						if(!state.quiet)
-							print_estimate(res[i], i);
-
-						if(state.outputToFile) {
-							state.outputFile << res[i].funcName << ", " << res[i].k.a << ", " << res[i].k.b << ", "
-								<< res[i].mean_err << ", " << res[i].rms_err << ", "
-								<< res[i].max_err << ", " << res[i].rel_err << std::endl;
-						}
-
-					}
-
-				}
-				state.estimationCustomRequests.clear();
-			}
-
-
-			if(state.equationRequests.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n" << std::setw(20) << "Function" << " | "
-					 << std::setw(12) << "Eval. Value" << " | "
-					 << std::setw(12) << "Exp. Value" << " | "
-					 << std::setw(12) << "Diff." << " | "
-					 << std::setw(12) << "Tol." << std::endl;
-				}
-				
-				if(state.outputToFile)
-					state.outputFile << "Function, Eval. Value, Exp. Value, Diff., Tol." << std::endl;
-
-				for (size_t i = 0; i < state.equationRequests.size(); i++) {
-
-					// Skip test if only picked tests are to be executed
-					if( !state.pickedTests.empty() &&
-						!state.pickedTests[state.equationRequests[i].funcName])
-						continue;
-					
-					equation_result res = eval_equation(state.equationRequests[i]);
-
-					if(state.equalsOnlyFailed && !res.failed)
-						return;
-
-					if(!state.quiet)
-						print_equation(res, i);
-
-					if(state.outputToFile) {
-						state.outputFile << res.funcName << ", " << res.evaluated << ", " << res.expected
-						<< ", " << res.diff << ", " << res.tolerance << std::endl;
-					}
-				}
-			
-				state.equationRequests.clear();
-			}
-		}
-
-
-		/// Terminate precision testing
+		/// Terminate the precision testing environment.
+		///
+		/// @param exit Whether to exit after terminating testing.
 		inline void terminate(bool exit = true) {
 
-			if(state.estimationRequests.size() +
-				state.equationRequests.size() +
-				state.estimationCustomRequests.size())
-				run();
 
-			std::cout << "\nFinished testing " << state.moduleName << std::endl;
-			std::cout << state.totalTests << " total tests, " << state.failedTests << " failed (" <<
-				(state.failedTests / (double) state.totalTests) * 100 << "%)" << std::endl;
+			if(state.estimateResults.size()) {
+
+				// Print header for estimates
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_estimate();
+				}
+
+				// Print to file as CSV
+				if(state.outputToFile)
+					output::header_estimate(state.outputFile, ",", false);
+			}
+
+
+			// Print estimate results
+			for (const auto& p : state.estimateResults) {
+
+				const auto res_list = p.second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					if(!state.quiet)
+						output::print_estimate(res_list[i]);
+				
+					if(state.outputToFile)
+						output::print_estimate(
+							res_list[i], state.outputFile, ",", false);
+				}
+			}
+
+			if(state.equationResults.size()) {
+
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_equation();
+				}
+
+				if(state.outputToFile)
+					output::header_equation(state.outputFile, ",", false);
+			}
+
+
+			// Print equation results
+			for (const auto& p : state.equationResults) {
+
+				const auto res_list = p.second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					if(!state.quiet)
+						output::print_equation(res_list[i]);
+				
+					if(state.outputToFile)
+						output::print_equation(
+							res_list[i], state.outputFile, ",", false);
+				}
+			}
+
+			std::cout << "\nFinished testing " << state.moduleName << '\n';
+			std::cout << state.totalTests << " total tests, "
+				<< state.failedTests << " failed (" <<
+				(state.failedTests / (double) state.totalTests) * 100 << "%)"
+				<< '\n';
 				
 			std::cout << "Results have been saved in "
-				<< state.outputFolder << "prec_" << state.moduleName << ".csv" << std::endl;
-			state.outputFile.close();
-			
+				<< state.outputFolder << state.filenamePrefix
+				<< state.moduleName << ".csv" << std::endl;
+
+			if(state.outputFile.is_open())
+				state.outputFile.close();
+
 			state = prec_state();
 
 			if(exit)
 				std::exit(state.failedTests);
 		}
 
-	}
 
+		/// Estimate error integrals over a function
+		/// with respect to an exact function,
+		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param funcApprox The approximation to test
+		/// @param funcExpected The expected result
+		/// @param opt The options for the estimation
+		template<typename R, typename ...Args>
+		inline void estimate(
+			const std::string& name,
+			std::function<R(Args...)> funcApprox,
+			std::function<R(Args...)> funcExpected,
+			estimate_options<R, Args...> opt) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
+			// Use the estimator to estimate error integrals.
+			auto res = opt.estimator(funcApprox, funcExpected, opt);
+
+			res.funcName = name;
+			res.domain = opt.domain;
+			res.tolerance = opt.tolerance;
+			res.quiet = opt.quiet;
+
+			// Use the fail function to determine whether the test failed.
+			res.failed = opt.fail(res);
+
+			state.totalTests++;
+			if(res.failed)
+				state.failedTests++;
+
+			state.estimateResults[name].push_back(res);
+		}
+
+
+		/// Estimate error integrals over a function
+		/// with respect to an exact function.
+		///
+		/// @param name The name of the test case.
+		/// @param funcApprox The approximation to test.
+		/// @param funcExpected The expected result.
+		/// @param intervals The (potentially multidimensional)
+		/// domain of estimation.
+		/// @param iterations The number of function evaluations.
+		/// @param fail The fail function to determine whether
+		/// the test failed.
+		/// @param estimator The precision estimator to use.
+		/// @param quiet Whether to output the result.
+		template<typename R, typename ...Args>
+		inline void estimate(
+			const std::string& name,
+			std::function<R(Args...)> funcApprox,
+			std::function<R(Args...)> funcExpected,
+			std::vector<interval> domain,
+			long double tolerance, unsigned int iterations,
+			FailFunction fail,
+			Estimator<estimate_options<R, Args...>, R, Args...> estimator,
+			bool quiet = false) {
+
+			estimate_options<R, Args...> opt {};
+			opt.domain = domain;
+			opt.tolerance = tolerance;
+			opt.iterations = iterations;
+			opt.fail = fail;
+			opt.estimator = estimator;
+			opt.quiet = quiet;
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Estimate error integrals over a real function
+		/// of real variable, with respect to an exact function.
+		///
+		/// @param name The name of the test case.
+		/// @param funcApprox The approximation to test.
+		/// @param funcExpected The expected result.
+		/// @param intervals The (potentially multidimensional)
+		/// domain of estimation.
+		/// @param iterations The number of function evaluations.
+		/// @param fail The fail function to determine whether
+		/// the test failed (defaults to fail_on_max_err).
+		/// @param estimator The precision estimator to use
+		/// (defaults to the trapezoid<double> estimator).
+		/// @param quiet Whether to output the result.
+		inline void estimate(
+			const std::string& name,
+			RealFunction<double> funcApprox,
+			RealFunction<double> funcExpected,
+			interval domain,
+			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
+			unsigned int iterations = CHEBYSHEV_PREC_ITER,
+			FailFunction fail = fail::fail_on_max_err,
+			Estimator<estimate_options<double, double>, double, double>
+			estimator = estimator::quadrature1D<double>,
+			bool quiet = false) {
+
+			estimate_options<double, double> opt {};
+			opt.domain = { domain };
+			opt.tolerance = tolerance;
+			opt.iterations = iterations;
+			opt.fail = fail;
+			opt.estimator = estimator;
+			opt.quiet = quiet;
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Test an equivalence up to a tolerance,
+		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param opt The options for the evaluation
+		template<typename T = double>
+		inline void equals(
+			const std::string& name,
+			const T& evaluated, const T& expected,
+			equation_options<T> opt) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
+			equation_result res {};
+
+			long double diff = opt.distance(evaluated, expected);
+
+			// Mark the test as failed if the
+			// distance between the two values
+			// is bigger than the tolerance.
+			res.failed = (diff > opt.tolerance);
+
+			res.funcName = name;
+			res.difference = diff;
+			res.tolerance = opt.tolerance;
+			res.quiet = opt.quiet;
+
+			state.totalTests++;
+			if(res.failed)
+				state.failedTests++;
+
+			// Register the result of the equation by name
+			state.equationResults[name].push_back(res);
+		}
+
+
+		/// Test an equivalence up to a tolerance,
+		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param distance The distance function to use
+		/// @param tolerance The tolerance for the evaluation
+		/// @param quiet Whether to output the result
+		template<typename T = double>
+		inline void equals(
+			const std::string& name,
+			const T& evaluated, const T& expected,
+			long double tolerance,
+			DistanceFunction<T> distance,
+			bool quiet = false) {
+
+			equation_options<T> opt {};
+			opt.tolerance = tolerance;
+			opt.distance = distance;
+			opt.quiet = quiet;
+
+			equals(name, evaluated, expected, opt);
+		}
+
+
+		/// Test an equivalence up to a tolerance,
+		/// with the given options.
+		///
+		/// @param name The name of the test case
+		/// @param evaluate The evaluated value
+		/// @param expected The expected value
+		/// @param tolerance The tolerance for the evaluation
+		/// @param quiet Whether to output the result
+		inline void equals(
+			const std::string& name,
+			long double evaluated, long double expected,
+			long double tolerance = state.defaultTolerance,
+			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
+			equation_result res {};
+
+			long double diff = distance::abs_distance(evaluated, expected);
+
+			// Mark the test as failed if the
+			// distance between the two values
+			// is bigger than the tolerance.
+			res.failed = (diff > tolerance);
+
+			res.funcName = name;
+			res.difference = diff;
+			res.tolerance = tolerance;
+			res.quiet = quiet;
+
+			res.evaluated = evaluated;
+			res.expected = expected;
+
+			state.totalTests++;
+			if(res.failed)
+				state.failedTests++;
+
+			// Register the result of the equation by name
+			state.equationResults[name].push_back(res);
+		}
+
+
+		/// Evaluate multiple pairs of values for equivalence
+		/// up to the given tolerance.
+		inline void equals(
+			const std::string& name,
+			std::vector<std::array<long double, 2>> values,
+			long double tolerance = state.defaultTolerance,
+			bool quiet = false) {
+
+			// Skip the test case if any tests have been picked
+			// and this one was not picked.
+			if(state.pickedTests.size())
+				if(state.pickedTests.find(name) == state.pickedTests.end())
+					return;
+
+			for (const auto& v : values)
+				equals(name, v[0], v[1], tolerance, quiet);
+		}
+
+
+	}
 }
+
+#endif
