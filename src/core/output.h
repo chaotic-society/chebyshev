@@ -108,12 +108,12 @@ namespace chebyshev {
 
 			/// Default output format which prints the fields
 			/// separated by the separator string and padding, if enabled.
-			/// The format is returned as a lambda function.
+			/// The OutputFormat is returned as a lambda function.
 			///
 			/// @param separator The string to print between different fields.
 			/// @param horizontal A character to print horizontal lines.
 			/// @param adjustWidth Whether to add padding to the fields.
-			inline auto default_format(
+			inline OutputFormat simple(
 				const std::string& separator = " | ",
 				bool adjustWidth = true) {
 
@@ -126,7 +126,7 @@ namespace chebyshev {
 					if(values.size() != fields.size()) {
 						throw std::runtime_error(
 							"values and fields arguments must have the "
-							"same size in format::default_format");
+							"same size in format::simple");
 					}
 
 					std::stringstream s;
@@ -166,12 +166,12 @@ namespace chebyshev {
 			}
 
 
-			/// Print a table in CSV format.
-			/// The format is returned as a lambda function.
+			/// Format function for CSV format files.
+			/// The OutputFormat is returned as a lambda function.
 			///
 			/// @param separator The string to print between
 			/// different fields (defaults to ",").
-			inline auto csv_format(
+			inline OutputFormat csv(
 				const std::string& separator = ",") {
 
 				return [=](
@@ -183,7 +183,7 @@ namespace chebyshev {
 					if(values.size() != fields.size()) {
 						throw std::runtime_error(
 							"values and fields arguments must have the "
-							"same size in format::csv_format");
+							"same size in format::csv");
 					}
 
 					std::stringstream s;
@@ -199,6 +199,71 @@ namespace chebyshev {
 					return s.str();
 				};
 			}
+
+
+			/// Format the table as Markdown.
+			/// The OutputFormat is returned as a lambda function.
+			inline OutputFormat markdown() {
+
+				return [=](
+					const std::vector<std::string>& values,
+					const std::vector<std::string>& fields,
+					unsigned int row_index,
+					const output_state& state) -> std::string {
+
+					if(values.size() != fields.size()) {
+						throw std::runtime_error(
+							"values and fields arguments must have the "
+							"same size in format::csv");
+					}
+
+					std::stringstream s;
+					s << "|";
+
+					for (unsigned int i = 0; i < values.size(); ++i) {
+
+						const auto opt_it = state.fieldOptions.find(fields[i]);
+
+						if(opt_it != state.fieldOptions.end())
+								s << std::setw(opt_it->second.columnWidth);
+							else
+								s << std::setw(state.defaultColumnWidth);
+
+						s << values[i] << "|";
+					}
+
+
+					// Print header underline
+					if(row_index == 0) {
+
+						std::string line = "|";						
+
+						for (unsigned int i = 0; i < values.size(); ++i) {
+
+							int width = state.defaultColumnWidth;;
+
+							const auto opt_it = state.fieldOptions.find(fields[i]);
+
+							if(opt_it != state.fieldOptions.end())
+								width = opt_it->second.columnWidth;
+
+							line += " ";
+
+							for (int l = 0; l < width - 2; ++l)
+								line += "-";
+							
+							line += " ";
+							line += "|";
+						}
+
+						s << "\n" << line;
+					}
+
+
+					return s.str();
+				};
+			}
+
 		}
 
 
@@ -232,8 +297,8 @@ namespace chebyshev {
 			state.fieldOptions["averageRuntime"].columnWidth = 14;
 
 			// Set the default formats
-			state.outputFormat = format::default_format();
-			state.fileOutputFormat = format::csv_format();
+			state.outputFormat = format::simple();
+			state.fileOutputFormat = format::csv();
 
 			state.wasSetup = true;
 		}
@@ -366,11 +431,11 @@ namespace chebyshev {
 
 				const auto field_it = state.fieldNames.find(columns[i]);
 
-				// Associate string to field name, defaults to empty string.
+				// Associate string to field name
 				if(field_it != state.fieldNames.end())
 					titles[i] = field_it->second;
 				else
-					titles[i] = "";
+					titles[i] = columns[i];
 			}
 
 			// row_index = 0 is used for the header row

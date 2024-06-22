@@ -17,7 +17,7 @@ $$\epsilon_{max} = \max_{\Omega} |f(x) - f'(x)|$$
 
 $$\epsilon_{rel} = \frac{\int_\Omega |f(x) - f'(x)| dx}{\int_\Omega |f(x)|dx}$$
 
-The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test units are validated through a _fail function_, which determines whether the test failed, depending on its results.
+The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test cases are validated through a _fail function_, which determines whether the test failed, depending on its results.
 
 
 ### Benchmarks
