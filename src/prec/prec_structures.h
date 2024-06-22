@@ -72,17 +72,16 @@ namespace chebyshev {
 		using DistanceFunction = std::function<long double(Type, Type)>;
 
 
-		/// Generic estimator function signature
-		/// (Param should generally be equal to estimate_options).
-		template<typename Param, typename R, typename ...Args>
-		using Estimator = std::function<
-		estimate_result(std::function<R(Args...)>, std::function<R(Args...)>, Param)>;
-
-
 		/// @class estimate_options
 		/// A structure holding the options for precision estimation.
 		template<typename R, typename ...Args>
 		struct estimate_options {
+
+			using Estimator_t = std::function<
+				estimate_result(
+					std::function<R(Args...)>,
+					std::function<R(Args...)>,
+					estimate_options)>;
 
 			/// The domain of estimation.
 			std::vector<interval> domain {};
@@ -97,12 +96,17 @@ namespace chebyshev {
 			FailFunction fail;
 
 			/// The precision estimator to use.
-			Estimator<estimate_options, R, Args...> estimator;
+			Estimator_t estimator;
 
 			/// Whether to show the test result or not.
 			bool quiet = false;
 			
 		};
+
+
+		/// Generic precision estimator function signature.
+		template<typename R, typename ...Args>
+		using Estimator = typename estimate_options<R, Args...>::Estimator_t;
 
 
 		/// @class equation_result
