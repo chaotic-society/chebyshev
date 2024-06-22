@@ -124,7 +124,6 @@ namespace chebyshev {
 			}
 
 			srand(time(nullptr));
-
 			output::setup();
 		}
 
@@ -145,7 +144,7 @@ namespace chebyshev {
 
 				// Print to file as CSV
 				if(state.outputToFile)
-					output::header_estimate(state.outputFile, ",", false);
+					output::header_estimate(state.outputFile);
 			}
 
 
@@ -161,7 +160,7 @@ namespace chebyshev {
 				
 					if(state.outputToFile)
 						output::print_estimate(
-							res_list[i], state.outputFile, ",", false);
+							res_list[i], state.outputFile);
 				}
 			}
 
@@ -173,7 +172,7 @@ namespace chebyshev {
 				}
 
 				if(state.outputToFile)
-					output::header_equation(state.outputFile, ",", false);
+					output::header_equation(state.outputFile);
 			}
 
 
@@ -189,7 +188,7 @@ namespace chebyshev {
 				
 					if(state.outputToFile)
 						output::print_equation(
-							res_list[i], state.outputFile, ",", false);
+							res_list[i], state.outputFile);
 				}
 			}
 
@@ -274,7 +273,7 @@ namespace chebyshev {
 			std::vector<interval> domain,
 			long double tolerance, unsigned int iterations,
 			FailFunction fail,
-			Estimator<estimate_options<R, Args...>, R, Args...> estimator,
+			Estimator<R, Args...> estimator,
 			bool quiet = false) {
 
 			estimate_options<R, Args...> opt {};
@@ -311,8 +310,7 @@ namespace chebyshev {
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
 			unsigned int iterations = CHEBYSHEV_PREC_ITER,
 			FailFunction fail = fail::fail_on_max_err,
-			Estimator<estimate_options<double, double>, double, double>
-			estimator = estimator::quadrature1D<double>,
+			Estimator<double, double> estimator = estimator::quadrature1D<double>,
 			bool quiet = false) {
 
 			estimate_options<double, double> opt {};

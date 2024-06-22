@@ -110,7 +110,6 @@ namespace chebyshev {
 			}
 
 			srand(time(nullptr));
-
 			output::setup();
 		}
 
@@ -130,7 +129,7 @@ namespace chebyshev {
 
 				// Print to file as CSV
 				if(state.outputToFile)
-					output::header_benchmark(state.outputFile, ",", false);
+					output::header_benchmark(state.outputFile);
 			}
 
 
@@ -145,7 +144,7 @@ namespace chebyshev {
 				
 					if(state.outputToFile)
 						output::print_benchmark(
-							res_list[i], state.outputFile, ",", false);
+							res_list[i], state.outputFile);
 				}
 			}
 
