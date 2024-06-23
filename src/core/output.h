@@ -14,6 +14,7 @@
 
 #include "../prec/prec_structures.h"
 #include "../benchmark/benchmark_structures.h"
+#include "../err/err_structures.h"
 
 
 namespace chebyshev {
@@ -89,6 +90,21 @@ namespace chebyshev {
 			/// Default columns to print for benchmarks.
 			std::vector<std::string> benchmarkColumns = {
 				"funcName", "averageRuntime", "runsPerSecond"
+			};
+
+			/// Default columns to print for assertions.
+			std::vector<std::string> assertColumns = {
+				"funcName", "evaluated", "failed", "description"
+			};
+
+			/// Default columns to print for errno checks.
+			std::vector<std::string> errnoColumns = {
+				"funcName", "evaluated", "expectedFlags", "failed"
+			};
+
+			/// Default columns to print for exception checks.
+			std::vector<std::string> exceptionColumns = {
+				"funcName", "thrown", "correctType", "failed"
 			};
 
 			/// Options for the different fields.
@@ -371,10 +387,17 @@ namespace chebyshev {
 			state.fieldNames["runsPerSecond"] = "Runs per Sec.";
 			state.fieldNames["runs"] = "Runs";
 
+			// Error checking
+			state.fieldNames["correctType"] = "Correct Type";
+			state.fieldNames["description"] = "Description";
+			state.fieldNames["expectedFlags"] = "Exp. Flags";
+			state.fieldNames["thrown"] = "Has Thrown";
+
 			// Set wider column width for some fields
 			state.fieldOptions["funcName"].columnWidth = 16;
 			state.fieldOptions["averageRuntime"].columnWidth = 14;
 			state.fieldOptions["runsPerSecond"].columnWidth = 14;
+			state.fieldOptions["description"].columnWidth = 20;
 
 			// Set the default formats
 			state.outputFormat = format::simple();
@@ -499,6 +522,81 @@ namespace chebyshev {
 		}
 
 
+		/// Resolve the field of an assertion result by name,
+		/// returning the value as a string.
+		inline std::string resolve_field(
+			const std::string& fieldName, err::assert_result r) {
+
+			std::stringstream value;
+
+			if(fieldName == "funcName") {
+				value << r.funcName;
+			} else if(fieldName == "evaluated") {
+				value << r.evaluated;
+			} else if(fieldName == "description") {
+				value << r.description;
+			} else if(fieldName == "failed") {
+				value << r.failed;
+			} else {
+				return "";
+			}
+
+			return value.str();
+		}
+
+
+		/// Resolve the field of an errno checking result by name,
+		/// returning the value as a string.
+		inline std::string resolve_field(
+			const std::string& fieldName, err::errno_result r) {
+
+			std::stringstream value;
+
+			if(fieldName == "funcName") {
+				value << r.funcName;
+			} else if(fieldName == "evaluated") {
+				value << r.evaluated;
+			} else if(fieldName == "expectedFlags") {
+
+				int res_flag = 0xFFFFFFFF;
+				for (int flag : r.expectedFlags)
+					res_flag &= flag;
+
+				value << res_flag;
+
+			} else if(fieldName == "failed") {
+				value << r.failed;
+			} else {
+				return "";
+			}
+
+			return value.str();
+		}
+
+
+		/// Resolve the field of an exception checking result by name,
+		/// returning the value as a string.
+		inline std::string resolve_field(
+			const std::string& fieldName, err::exception_result r) {
+
+			std::stringstream value;
+
+			if(fieldName == "funcName") {
+				value << r.funcName;
+			} else if(fieldName == "thrown") {
+				value << r.thrown;
+			} else if(fieldName == "correctType") {
+				value << r.correctType;
+			} else if(fieldName == "failed") {
+				value << r.failed;
+			} else {
+				return "";
+			}
+
+			return value.str();
+		}
+
+
 		inline void header(
 			const table_state& table,
 			std::ostream& outputStream,
@@ -596,6 +694,78 @@ namespace chebyshev {
 		}
 
 
+		/// Print the header of a table for assertion results,
+		/// with the given column names.
+		inline void header_assert(
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.assertColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
+		/// Print the header of a table for assertion results,
+		/// with the given column names.
+		inline void header_assert(
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.assertColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
+		/// Print the header of a table for errno checking results,
+		/// with the given column names.
+		inline void header_errno(
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.errnoColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
+		/// Print the header of a table for errno checking results,
+		/// with the given column names.
+		inline void header_errno(
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.errnoColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
+		/// Print the header of a table for exception checking results,
+		/// with the given column names.
+		inline void header_exception(
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.exceptionColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
+		/// Print the header of a table for exception checking results,
+		/// with the given column names.
+		inline void header_exception(
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.exceptionColumns) {
+
+			header(table, outputStream, format, columns);
+		}
+
+
 		/// Print a row of information about
 		/// a result of arbitrary type.
 		template<typename ResultType>
@@ -685,6 +855,78 @@ namespace chebyshev {
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.benchmarkColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a assert result as a table row.
+		inline void print_assert(
+			err::assert_result res,
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.assertColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a assert result as a table row.
+		inline void print_assert(
+			err::assert_result res,
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.assertColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a errno result as a table row.
+		inline void print_errno(
+			err::errno_result res,
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.errnoColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a errno result as a table row.
+		inline void print_errno(
+			err::errno_result res,
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.errnoColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a exception result as a table row.
+		inline void print_exception(
+			err::exception_result res,
+			const table_state& table,
+			std::ostream& outputStream = std::cout,
+			OutputFormat format = state.outputFormat,
+			std::vector<std::string> columns = state.exceptionColumns) {
+
+			print_result(res, table, outputStream, format, columns);
+		}
+
+
+		/// Print a exception result as a table row.
+		inline void print_exception(
+			err::exception_result res,
+			const table_state& table,
+			std::ofstream& outputStream,
+			OutputFormat format = state.fileOutputFormat,
+			std::vector<std::string> columns = state.exceptionColumns) {
 
 			print_result(res, table, outputStream, format, columns);
 		}

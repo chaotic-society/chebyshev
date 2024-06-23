@@ -6,9 +6,11 @@
 #ifndef CHEBYSHEV_ERR_H
 #define CHEBYSHEV_ERR_H
 
-#include "core/common.h"
 #include <vector>
 #include <cstdlib>
+
+#include "./core/common.h"
+#include "./err/err_structures.h"
 
 
 namespace chebyshev {
@@ -30,6 +32,37 @@ namespace chebyshev {
 			/// Number of failed checks
 			unsigned int failedChecks = 0;
 
+			/// Output file
+			std::ofstream outputFile;
+
+			/// Relative or absolute path to output folder
+			std::string outputFolder = "";
+
+			/// Prefix to prepend to the filename, in addition
+			/// to the module name.
+			std::string filenamePrefix = "err_";
+
+			/// Suffix to append to the filename, in addition
+			/// to the module name.
+			std::string filenameSuffix = ".csv";
+
+			/// Whether to print to an output file.
+			bool outputToFile = true;
+
+			/// Results of checking assertions
+			std::map<std::string, std::vector<assert_result>> assertResults {};
+
+			/// Results of checking errno
+			std::map<std::string, std::vector<errno_result>> errnoResults {};
+
+			/// Results of exception testing
+			std::map<std::string, std::vector<exception_result>> exceptionResults {};
+
+			/// Target checks marked for execution,
+			/// can be picked by passing test case names
+			/// by command line. (all tests will be executed if empty)
+			std::map<std::string, bool> pickedChecks {};
+
 			/// Whether to print to standard output
 			bool quiet = false;
 
@@ -38,18 +71,160 @@ namespace chebyshev {
 
 		/// Setup error checking module.
 		void setup(
-			const std::string& module, int argc = 0, const char** argv = nullptr) {
+			const std::string& moduleName, int argc = 0, const char** argv = nullptr) {
 
-			state.moduleName = module;
-			srand(time(nullptr));
+			if(argc && argv)
+				for (int i = 1; i < argc; ++i)
+					state.pickedChecks[argv[i]] = true;
 
 			std::cout << "Starting error checking on "
-				<< state.moduleName << " ...\n" << std::endl;
+				<< moduleName << " ...\n" << std::endl;
+
+			state.moduleName = moduleName;
+			state.failedChecks = 0;
+			state.totalChecks = 0;
+
+			srand(time(nullptr));
+			output::setup();
 		}
 
 
 		/// Terminate error checking
 		void terminate(bool exit = true) {
+
+			if(state.outputToFile) {
+
+				std::string filename;
+				filename = state.outputFolder + state.filenamePrefix
+					+ state.moduleName + state.filenameSuffix;
+
+				if(state.outputFile.is_open())
+					state.outputFile.close();
+
+				state.outputFile.open(filename);
+
+				if(!state.outputFile.is_open()) {
+					std::cout << "Unable to open output file,"
+						" results will NOT be saved!" << std::endl;
+					state.outputToFile = false;
+				}
+			}
+
+
+			output::table_state assertTable {};
+			output::table_state errnoTable {};
+			output::table_state exceptionTable {};
+
+
+			// Print results of assertions
+			if(state.assertResults.size()) {
+
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_assert(assertTable);
+				}
+
+				if(state.outputToFile)
+					output::header_assert(assertTable, state.outputFile);
+			}
+
+
+			for (auto it = state.assertResults.begin();
+				it != state.assertResults.end(); ++it) {
+
+				const auto res_list = it->second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					assertTable.rowIndex++;
+
+					if(it != state.assertResults.end()
+					&& std::next(it) == state.assertResults.end()
+					&& (i == res_list.size() - 1))
+						assertTable.isLastRow = true;
+
+					if(!state.quiet)
+						output::print_assert(res_list[i], assertTable);
+				
+					if(state.outputToFile)
+						output::print_assert(
+							res_list[i], assertTable, state.outputFile);
+				}
+			}
+
+
+			// Print results of errno checking
+			if(state.errnoResults.size()) {
+
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_errno(errnoTable);
+				}
+
+				if(state.outputToFile)
+					output::header_errno(errnoTable, state.outputFile);
+			}
+
+			for (auto it = state.errnoResults.begin();
+				it != state.errnoResults.end(); ++it) {
+
+				const auto res_list = it->second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					errnoTable.rowIndex++;
+
+					if(it != state.errnoResults.end()
+					&& std::next(it) == state.errnoResults.end()
+					&& (i == res_list.size() - 1))
+						errnoTable.isLastRow = true;
+
+					if(!state.quiet)
+						output::print_errno(res_list[i], errnoTable);
+				
+					if(state.outputToFile)
+						output::print_errno(
+							res_list[i], errnoTable, state.outputFile);
+				}
+			}
+
+
+			// Print results of exception checking
+			if(state.exceptionResults.size()) {
+
+				if(!state.quiet) {
+					std::cout << "\n";
+					output::header_exception(exceptionTable);
+				}
+
+				if(state.outputToFile)
+					output::header_exception(exceptionTable, state.outputFile);
+			}
+
+
+			for (auto it = state.exceptionResults.begin();
+				it != state.exceptionResults.end(); ++it) {
+
+				const auto res_list = it->second;
+
+				for (size_t i = 0; i < res_list.size(); ++i) {
+
+					exceptionTable.rowIndex++;
+
+					if(it != state.exceptionResults.end()
+					&& std::next(it) == state.exceptionResults.end()
+					&& (i == res_list.size() - 1))
+						exceptionTable.isLastRow = true;
+
+					if(!state.quiet)
+						output::print_exception(res_list[i], exceptionTable);
+				
+					if(state.outputToFile)
+						output::print_exception(
+							res_list[i], exceptionTable, state.outputFile);
+				}
+			}
+
 
 			std::cout << "\nEnding error checking on "
 				<< state.moduleName
@@ -67,162 +242,117 @@ namespace chebyshev {
 
 
 		/// Assert that an expression is true
-		void assert(bool exp, std::string desc = "") {
+		///
+		/// @param name Name of the check (function name or test case name).
+		/// @param exp Expression to test for truth.
+		/// @param description Description of the assertion.
+		void assert(const std::string& name, bool exp, std::string description = "") {
+
+			assert_result res {};
+
+			res.funcName = name;
+			res.evaluated = exp;
+			res.failed = !exp;
+			res.description = description;
 
 			state.totalChecks++;
 
-			if(!exp) {
+			if(!exp)
 				state.failedChecks++;
 
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks << ")";
-
-					if(desc != "")
-						std::cout << ":\n\t\tDescription: " << desc << std::endl;
-					else
-						std::cout << " (no description provided)" << std::endl;
-
-					std::cout << std::endl;
-				}
-				
-			} else if(!state.quiet) {
-				std::cout << "\tSuccessful assert (n. " << state.totalChecks << ")";
-				if(desc != "")
-					std::cout << ":\n\t\tDescription: " << desc << std::endl;
-				else
-					std::cout << " (no description provided)" << std::endl;
-
-				std::cout << std::endl;
-			}
-		}
-
-
-		/// Check errno value after function call
-		template<typename Function, typename InputType>
-		void check_errno(Function f, InputType x, int exp_errno) {
-
-			state.totalChecks++;
-
-			try {
-				volatile auto r = f(x);
-				r = *(&r);
-			} catch(...) {}
-
-			if(errno != exp_errno) {
-
-				state.failedChecks++;
-
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks << ")\n";
-					std::cout << "\t\tExpected ERRNO: " << exp_errno << std::endl;
-					std::cout << "\t\tEvaluated ERRNO: " << errno << std::endl;
-					std::cout << "\t\tInput: " << x << std::endl;
-					std::cout << std::endl;
-				}
-				
-			} else {
-
-				if(!state.quiet) {
-					std::cout << "\tSuccessful assert (n. "
-					<< state.totalChecks
-						<< "): ERRNO was set correctly" << std::endl;
-				}
-
-			}
-
+			state.assertResults[name].push_back(res);
 		}
 
 
 		/// Check errno value after function call
 		template<typename Function, typename InputType>
 		void check_errno(
-			Function f,
-			std::function<InputType(unsigned int)> generator,
-			int exp_errno) {
+			const std::string& name, Function f,
+			InputType x, int expected_errno) {
 
-			state.totalChecks++;
-
-			auto x = generator(rand());
+			errno_result res {};
+			errno = 0;
 
 			try {
 				volatile auto r = f(x);
 				r = *(&r);
 			} catch(...) {}
 
-			if(errno != exp_errno) {
+			res.funcName = name;
+			res.evaluated = errno;
+			res.expectedFlags = { expected_errno };
+			res.failed = (errno != expected_errno);
 
+
+			state.totalChecks++;
+
+			if(res.failed)
 				state.failedChecks++;
 
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks << ")\n";
-					std::cout << "\t\tExpected ERRNO: " << exp_errno << std::endl;
-					std::cout << "\t\tEvaluated ERRNO: " << errno << std::endl;
-					std::cout << std::endl;
-				}
-				
-			} else {
-
-				if(!state.quiet) {
-					std::cout << "\tSuccessful assert (n. " << state.totalChecks
-						<< "): ERRNO was set correctly" << std::endl;
-				}
-
-			}
-
+			state.errnoResults[name].push_back(res);
 		}
 
 
 		/// Check errno value after function call
 		template<typename Function, typename InputType>
 		void check_errno(
-			Function f,
+			const std::string& name, Function f,
 			std::function<InputType(unsigned int)> generator,
-			const std::vector<int>& exp_flags) {
+			int expected_errno) {
+
+			check_errno(name, f, generator(rand()), expected_errno);
+		}
 
 
-			state.totalChecks++;
+		/// Check errno value after function call
+		template<typename Function, typename InputType>
+		void check_errno(
+			const std::string& name, Function f,
+			InputType x, std::vector<int>& expected_flags) {
 
-			auto x = generator(rand());
-			bool all_set = true;
+
+			errno_result res {};
+			errno = 0;
 
 			try {
 				volatile auto r = f(x);
 				r = *(&r);
 			} catch(...) {}
 
-			for (unsigned int i = 0; i < exp_flags.size(); ++i) {
-				if(!(errno & exp_flags[i]))
-					all_set = false;
-			}
+			res.funcName = name;
+			res.evaluated = errno;
+			res.expectedFlags = expected_flags;
+			
+			res.failed = false;
+			for (int flag : expected_flags)
+				if(!(errno & flag))
+					res.failed = true;
 
-			if(!all_set) {
+			state.totalChecks++;
 
+			if(res.failed)
 				state.failedChecks++;
 
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks
-						<< "): ERRNO was NOT set correctly" << std::endl;
-					std::cout << std::endl;
-				}
-				
-			} else {
+			state.errnoResults[name].push_back(res);
+		}
 
-				if(!state.quiet) {
-					std::cout << "\tSuccessful assert (n. " << state.totalChecks
-						<< "): ERRNO was set correctly" << std::endl;
-				}
 
-			}
+		/// Check errno value after function call
+		template<typename Function, typename InputType>
+		void check_errno(
+			const std::string& name, Function f,
+			std::function<InputType(unsigned int)> generator,
+			std::vector<int>& expected_flags) {
 
+			check_errno(name, f, generator(rand()), expected_flags);
 		}
 
 
 		/// Check that an exception is thrown during a function call
 		template<typename Function, typename InputType>
-		void check_exception(Function f, InputType x) {
+		void check_exception(const std::string& name, Function f, InputType x) {
 
-			state.totalChecks++;
-
+			exception_result res {};
 			bool thrown = false;
 
 			try {
@@ -232,56 +362,67 @@ namespace chebyshev {
 				thrown = true;
 			}
 
-			if(!thrown) {
+			res.funcName = name;
+			res.thrown = thrown;
+			res.failed = !thrown;
+			res.correctType = true;
 
+			state.totalChecks++;
+			if(!thrown)
 				state.failedChecks++;
 
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks << ")\n";
-					std::cout << "\tNo exception was thrown" << std::endl;
-					std::cout << std::endl;
-				}
-				
-			} else if(!state.quiet) {
-				std::cout << "\tSuccessful assert (n. " << state.totalChecks
-					<< "): Exception was thrown correctly" << std::endl;
-			}
-
+			state.exceptionResults[name].push_back(res);
 		}
 
 
 		/// Check that an exception is thrown during a function call
 		template<typename Function, typename InputType>
 		void check_exception(
-			Function f, std::function<InputType(unsigned int)> generator) {
+			const std::string& name, Function f,
+			std::function<InputType(unsigned int)> generator) {
 
-			state.totalChecks++;
+			check_exception(name, f, generator(rand()));
+		}
 
+
+		template<typename ExceptionType, typename Function, typename InputType>
+		void check_exception(const std::string& name, Function f, InputType x) {
+
+			exception_result res {};
 			bool thrown = false;
-			auto x = generator(rand());
+			bool correctType = false;
 
 			try {
 				volatile auto r = f(x);
 				r = *(&r);
+			} catch(ExceptionType& exc) {
+
+				correctType = true;
+				thrown = true;
+
 			} catch(...) {
 				thrown = true;
 			}
 
-			if(!thrown) {
+			res.funcName = name;
+			res.thrown = thrown;
+			res.failed = !(thrown && correctType);
+			res.correctType = correctType;
 
+			state.totalChecks++;
+			if(!thrown)
 				state.failedChecks++;
 
-				if(!state.quiet) {
-					std::cout << "\tFailed assert (n. " << state.totalChecks << "):\n";
-					std::cout << "\tNo exception was thrown" << std::endl;
-					std::cout << std::endl;
-				}
-				
-			} else if(!state.quiet) {
-				std::cout << "\tSuccessful assert (n. " << state.totalChecks
-					<< "): Exception was thrown correctly" << std::endl;
-			}
+			state.exceptionResults[name].push_back(res);
+		}
 
+
+		template<typename ExceptionType, typename Function, typename InputType>
+		void check_exception(
+			const std::string& name, Function f,
+			std::function<InputType(unsigned int)> generator) {
+
+			check_exception(name, f, generator(rand()));
 		}
 
 	}

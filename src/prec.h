@@ -58,13 +58,13 @@ namespace chebyshev {
 			std::string filenameSuffix = ".csv";
 
 			/// Total number of tests run
-			uint32_t totalTests = 0;
+			unsigned int totalTests = 0;
 
 			/// Number of failed tests
-			uint32_t failedTests = 0;
+			unsigned int failedTests = 0;
 
 			/// Default number of iterations for integral quadrature
-			uint32_t defaultIterations = CHEBYSHEV_PREC_ITER;
+			unsigned int defaultIterations = CHEBYSHEV_PREC_ITER;
 
 			/// Default fail function
 			FailFunction defaultFailFunction = fail::fail_on_max_err;
