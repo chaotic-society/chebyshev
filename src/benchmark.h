@@ -47,6 +47,10 @@ namespace chebyshev {
 			/// to the module name.
 			std::string filenamePrefix = "benchmark_";
 
+			/// Suffix to append to the filename, in addition
+			/// to the module name.
+			std::string filenameSuffix = ".csv";
+
 			/// Whether to output results to a file.
 			bool outputToFile = true;
 
@@ -92,10 +96,22 @@ namespace chebyshev {
 			state.moduleName = moduleName;
 			state.failedBenchmarks = 0;
 
+			srand(time(nullptr));
+			output::setup();
+		}
+
+
+		/// Terminate the precision testing environment.
+		///
+		/// @param exit Whether to exit after terminating testing.
+		inline void terminate(bool exit = true) {
+
+
 			if(state.outputToFile) {
 
 				std::string filename;
-				filename = state.outputFolder + state.filenamePrefix + moduleName + ".csv";
+				filename = state.outputFolder + state.filenamePrefix
+					+ state.moduleName + state.filenameSuffix;
 
 				if(state.outputFile.is_open())
 					state.outputFile.close();
@@ -109,42 +125,42 @@ namespace chebyshev {
 				}
 			}
 
-			srand(time(nullptr));
-			output::setup();
-		}
 
-
-		/// Terminate the precision testing environment.
-		///
-		/// @param exit Whether to exit after terminating testing.
-		inline void terminate(bool exit = true) {
-
+			output::table_state benchmarkTable {};
 
 			if(state.benchmarkResults.size()) {
 
 				if(!state.quiet) {
 					std::cout << "\n";
-					output::header_benchmark();
+					output::header_benchmark(benchmarkTable);
 				}
 
 				// Print to file as CSV
 				if(state.outputToFile)
-					output::header_benchmark(state.outputFile);
+					output::header_benchmark(benchmarkTable, state.outputFile);
 			}
 
 
-			for (const auto& p : state.benchmarkResults) {
+			for (auto it = state.benchmarkResults.begin();
+				it != state.benchmarkResults.end(); ++it) {
 
-				const auto res_list = p.second;
+				const auto res_list = it->second;
 
 				for (size_t i = 0; i < res_list.size(); ++i) {
 
+					benchmarkTable.rowIndex++;
+
+					if(it != state.benchmarkResults.end()
+					&& std::next(it) == state.benchmarkResults.end()
+					&& (i == res_list.size() - 1))
+						benchmarkTable.isLastRow = true;
+
 					if(!state.quiet)
-						output::print_benchmark(res_list[i]);
+						output::print_benchmark(res_list[i], benchmarkTable);
 				
 					if(state.outputToFile)
 						output::print_benchmark(
-							res_list[i], state.outputFile);
+							res_list[i], benchmarkTable, state.outputFile);
 				}
 			}
 
@@ -156,7 +172,7 @@ namespace chebyshev {
 				
 			std::cout << "Results have been saved in "
 				<< state.outputFolder << state.filenamePrefix
-				<< state.moduleName << ".csv" << std::endl;
+				<< state.moduleName << state.filenameSuffix << std::endl;
 
 			if(state.outputFile.is_open())
 				state.outputFile.close();

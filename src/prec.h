@@ -53,6 +53,10 @@ namespace chebyshev {
 			/// to the module name.
 			std::string filenamePrefix = "prec_";
 
+			/// Suffix to append to the filename, in addition
+			/// to the module name.
+			std::string filenameSuffix = ".csv";
+
 			/// Total number of tests run
 			uint32_t totalTests = 0;
 
@@ -106,10 +110,21 @@ namespace chebyshev {
 			state.failedTests = 0;
 			state.totalTests = 0;
 
+			srand(time(nullptr));
+			output::setup();
+		}
+
+
+		/// Terminate the precision testing environment.
+		///
+		/// @param exit Whether to exit after terminating testing.
+		inline void terminate(bool exit = true) {
+
 			if(state.outputToFile) {
 
 				std::string filename;
-				filename = state.outputFolder + state.filenamePrefix + moduleName + ".csv";
+				filename = state.outputFolder + state.filenamePrefix
+					+ state.moduleName + state.filenameSuffix;
 
 				if(state.outputFile.is_open())
 					state.outputFile.close();
@@ -123,15 +138,9 @@ namespace chebyshev {
 				}
 			}
 
-			srand(time(nullptr));
-			output::setup();
-		}
 
-
-		/// Terminate the precision testing environment.
-		///
-		/// @param exit Whether to exit after terminating testing.
-		inline void terminate(bool exit = true) {
+			output::table_state estimateTable {};
+			output::table_state equationTable {};
 
 
 			if(state.estimateResults.size()) {
@@ -139,28 +148,36 @@ namespace chebyshev {
 				// Print header for estimates
 				if(!state.quiet) {
 					std::cout << "\n";
-					output::header_estimate();
+					output::header_estimate(estimateTable);
 				}
 
 				// Print to file as CSV
 				if(state.outputToFile)
-					output::header_estimate(state.outputFile);
+					output::header_estimate(estimateTable, state.outputFile);
 			}
 
 
 			// Print estimate results
-			for (const auto& p : state.estimateResults) {
+			for (auto it = state.estimateResults.begin();
+				it != state.estimateResults.end(); ++it) {
 
-				const auto res_list = p.second;
+				const auto res_list = it->second;
 
 				for (size_t i = 0; i < res_list.size(); ++i) {
 
+					estimateTable.rowIndex++;
+
+					if(it != state.estimateResults.end()
+					&& std::next(it) == state.estimateResults.end()
+					&& (i == res_list.size() - 1))
+						estimateTable.isLastRow = true;
+
 					if(!state.quiet)
-						output::print_estimate(res_list[i]);
+						output::print_estimate(res_list[i], estimateTable);
 				
 					if(state.outputToFile)
 						output::print_estimate(
-							res_list[i], state.outputFile);
+							res_list[i], estimateTable, state.outputFile);
 				}
 			}
 
@@ -168,27 +185,35 @@ namespace chebyshev {
 
 				if(!state.quiet) {
 					std::cout << "\n";
-					output::header_equation();
+					output::header_equation(equationTable);
 				}
 
 				if(state.outputToFile)
-					output::header_equation(state.outputFile);
+					output::header_equation(equationTable, state.outputFile);
 			}
 
 
 			// Print equation results
-			for (const auto& p : state.equationResults) {
+			for (auto it = state.equationResults.begin();
+				it != state.equationResults.end(); ++it) {
 
-				const auto res_list = p.second;
+				const auto res_list = it->second;
 
 				for (size_t i = 0; i < res_list.size(); ++i) {
 
+					equationTable.rowIndex++;
+
+					if(it != state.equationResults.end()
+					&& std::next(it) == state.equationResults.end()
+					&& (i == res_list.size() - 1))
+						equationTable.isLastRow = true;
+
 					if(!state.quiet)
-						output::print_equation(res_list[i]);
+						output::print_equation(res_list[i], equationTable);
 				
 					if(state.outputToFile)
 						output::print_equation(
-							res_list[i], state.outputFile);
+							res_list[i], equationTable, state.outputFile);
 				}
 			}
 
@@ -200,7 +225,7 @@ namespace chebyshev {
 				
 			std::cout << "Results have been saved in "
 				<< state.outputFolder << state.filenamePrefix
-				<< state.moduleName << ".csv" << std::endl;
+				<< state.moduleName << state.filenameSuffix << std::endl;
 
 			if(state.outputFile.is_open())
 				state.outputFile.close();

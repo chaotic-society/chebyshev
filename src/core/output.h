@@ -45,6 +45,22 @@ namespace chebyshev {
 		};
 
 
+		/// @class table_state
+		/// A structure holding the state of an output table.
+		struct table_state {
+
+			/// Index of the current row, 0 is for headers.
+			unsigned int rowIndex = 0;
+
+			/// Whether the table data has finished printing
+			/// and the current row is the last.
+			bool isLastRow = false;
+			
+			/// Additional custom fields.
+			std::map<std::string, long double> additionalFields {};
+		};
+
+
 		/// @class output_state
 		/// Global state of printing results to standard output.
 		struct output_state {
@@ -53,7 +69,7 @@ namespace chebyshev {
 			std::string(
 				const std::vector<std::string>&,
 				const std::vector<std::string>&,
-				unsigned int,
+				const table_state&,
 				const output_state&)>;
 
 			/// Map of field name to output string
@@ -120,7 +136,7 @@ namespace chebyshev {
 				return [=](
 					const std::vector<std::string>& values,
 					const std::vector<std::string>& fields,
-					unsigned int row_index,
+					const table_state& table,
 					const output_state& state) -> std::string {
 
 					if(values.size() != fields.size()) {
@@ -140,7 +156,7 @@ namespace chebyshev {
 						if(opt_it != state.fieldOptions.end()) {
 							
 							// Format table value
-							if(row_index)
+							if(table.rowIndex)
 								opt_it->second.fieldFormat(s, opt_it->second);
 							// Format column title
 							else
@@ -177,7 +193,7 @@ namespace chebyshev {
 				return [=](
 					const std::vector<std::string>& values,
 					const std::vector<std::string>& fields,
-					unsigned int row_index,
+					const table_state& table,
 					const output_state& state) -> std::string {
 
 					if(values.size() != fields.size()) {
@@ -205,16 +221,16 @@ namespace chebyshev {
 			/// The OutputFormat is returned as a lambda function.
 			inline OutputFormat markdown() {
 
-				return [=](
+				return [](
 					const std::vector<std::string>& values,
 					const std::vector<std::string>& fields,
-					unsigned int row_index,
+					const table_state& table,
 					const output_state& state) -> std::string {
 
 					if(values.size() != fields.size()) {
 						throw std::runtime_error(
 							"values and fields arguments must have the "
-							"same size in format::csv");
+							"same size in format::markdown");
 					}
 
 					std::stringstream s;
@@ -234,7 +250,7 @@ namespace chebyshev {
 
 
 					// Print header underline
-					if(row_index == 0) {
+					if(table.rowIndex == 0) {
 
 						std::string line = "|";						
 
@@ -259,6 +275,69 @@ namespace chebyshev {
 						s << "\n" << line;
 					}
 
+					return s.str();
+				};
+			}
+
+
+			/// Format the table as a LaTeX table in the tabular environment.
+			/// The OutputFormat is returned as a lambda function.
+			///
+			/// @warning The output of this format does not include the
+			/// enclosing statement of the environment, which is "\end{tabular}"
+			/// and it must be added for correct LaTeX output.
+			inline OutputFormat latex() {
+
+				return [](
+					const std::vector<std::string>& values,
+					const std::vector<std::string>& fields,
+					const table_state& table,
+					const output_state& state) -> std::string {
+
+					if(values.size() != fields.size()) {
+						throw std::runtime_error(
+							"values and fields arguments must have the "
+							"same size in format::latex");
+					}
+
+
+					std::stringstream s;
+
+					for (unsigned int i = 0; i < values.size(); ++i) {
+
+						// TO-DO Escape characters such as &, $ and _
+
+						s << values[i];
+
+						if(i != values.size() - 1)
+							s << " & ";
+						else
+							s << " \\\\";
+					}
+
+
+					// Print environment setup
+					if(table.rowIndex == 0) {
+
+						std::string header = "\\begin{tabular}{";
+
+						if(values.size())
+							header += "|";
+
+						for (unsigned int i = 0; i < values.size(); ++i)
+							header += "c|";
+
+						header += "}\n";
+						header += s.str();
+						header += "\n\\hline";
+
+						return header;
+					}
+
+
+					// Close tabular environment on last row
+					if(table.isLastRow)
+						s << "\n\\end{tabular}";
 
 					return s.str();
 				};
@@ -295,6 +374,7 @@ namespace chebyshev {
 			// Set wider column width for some fields
 			state.fieldOptions["funcName"].columnWidth = 16;
 			state.fieldOptions["averageRuntime"].columnWidth = 14;
+			state.fieldOptions["runsPerSecond"].columnWidth = 14;
 
 			// Set the default formats
 			state.outputFormat = format::simple();
@@ -420,6 +500,7 @@ namespace chebyshev {
 
 
 		inline void header(
+			const table_state& table,
 			std::ostream& outputStream,
 			OutputFormat format,
 			std::vector<std::string> columns) {
@@ -438,74 +519,80 @@ namespace chebyshev {
 					titles[i] = columns[i];
 			}
 
-			// row_index = 0 is used for the header row
-			outputStream << format(titles, columns, 0, state) << std::endl;
+			// rowIndex = 0 is used for the header row
+			outputStream << format(titles, columns, table, state) << std::endl;
 		}
 
 
 		/// Print the header of a table for estimate results,
 		/// with the given column names.
 		inline void header_estimate(
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.estimateColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
 		/// Print the header of a table for estimate results,
 		/// with the given column names.
 		inline void header_estimate(
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.estimateColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
 		/// Print the header of a table for equation results,
 		/// with the given column names.
 		inline void header_equation(
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.equationColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
 		/// Print the header of a table for equation results,
 		/// with the given column names.
 		inline void header_equation(
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.equationColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
 		/// Print the header of a table for benchmark results,
 		/// with the given column names.
 		inline void header_benchmark(
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.benchmarkColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
 		/// Print the header of a table for benchmark results,
 		/// with the given column names.
 		inline void header_benchmark(
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.benchmarkColumns) {
 
-			header(outputStream, format, columns);
+			header(table, outputStream, format, columns);
 		}
 
 
@@ -514,6 +601,7 @@ namespace chebyshev {
 		template<typename ResultType>
 		inline void print_result(
 			ResultType res,
+			const table_state& table,
 			std::ostream& outputStream,
 			OutputFormat format,
 			std::vector<std::string> columns) {
@@ -525,74 +613,80 @@ namespace chebyshev {
 			for (unsigned int i = 0; i < columns.size(); ++i)
 				values[i] = resolve_field(columns[i], res);
 
-			// row_index > 0 is used for table entries
-			outputStream << format(values, columns, 1, state) << std::endl;
+			// rowIndex > 0 is used for table entries
+			outputStream << format(values, columns, table, state) << std::endl;
 		}
 
 
 		/// Print an estimate result as a table row.
 		inline void print_estimate(
 			prec::estimate_result res,
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.estimateColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
 		/// Print an estimate result as a table row.
 		inline void print_estimate(
 			prec::estimate_result res,
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.estimateColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
 		/// Print an equation result as a table row.
 		inline void print_equation(
 			prec::equation_result res,
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.equationColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
 		/// Print an equation result as a table row.
 		inline void print_equation(
 			prec::equation_result res,
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.equationColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
 		/// Print a benchmark result as a table row.
 		inline void print_benchmark(
 			benchmark::benchmark_result res,
+			const table_state& table,
 			std::ostream& outputStream = std::cout,
 			OutputFormat format = state.outputFormat,
 			std::vector<std::string> columns = state.benchmarkColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
 		/// Print a benchmark result as a table row.
 		inline void print_benchmark(
 			benchmark::benchmark_result res,
+			const table_state& table,
 			std::ofstream& outputStream,
 			OutputFormat format = state.fileOutputFormat,
 			std::vector<std::string> columns = state.benchmarkColumns) {
 
-			print_result(res, outputStream, format, columns);
+			print_result(res, table, outputStream, format, columns);
 		}
 
 
