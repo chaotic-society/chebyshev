@@ -24,6 +24,8 @@ int main(int argc, char const *argv[]) {
 	benchmark::setup("chebyshev", argc, argv);
 
 		// Set options for multiple benchmarks
+		// with a benchmark_options structure,
+		// specialized for functions taking in doubles
 		benchmark::benchmark_options<double> opt {};
 		opt.inputGenerator = benchmark::generator::uniform1D(0, 1000);
 		opt.iterations = 1E+06;
