@@ -1,6 +1,6 @@
 # Chebyshev Test
+[![Build Status](https://github.com/chaotic-society/chebyshev/actions/workflows/build.yml/badge.svg)](https://github.com/chaotic-society/chebyshev/actions/workflows/build.yml)
 Chebyshev is a header-only C++ testing framework designed for testing scientific software and scientific computing libraries. It is part of the larger Theoretica project, a mathematical library that is thoroughly tested using Chebyshev. The framework is composed of three modules: a `prec` module for precision testing, a `benchmark` module for benchmarks, and the `err` module for error checking. Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications.
-
 
 ## Interface
 The different modules are contained in their respective namespaces and are initialized through the `<module>::setup()` function and are terminated with the `<module>::terminate()` function, which outputs the results. The behavior of a module may be customized and extended by modifying the fields of the `<module>::state` structure after the module has been initialized. The results of testing are also output to file in CSV format for easy analysis and manipulation as a data table.
@@ -41,7 +41,9 @@ The additional `output` module, not directly used for testing, makes it possible
 
 - **Flexible testing:** Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
 
-- **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS.
+- **Many output formats:** The framework supports multiple output formats, such as Markdown and LaTeX tables, and is fully extensible with custom formats.
+
+- **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS, and is fully platform-independent.
 
 
 ## Getting Started

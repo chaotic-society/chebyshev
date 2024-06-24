@@ -165,8 +165,12 @@ namespace chebyshev {
 
 				for (size_t i = 0; i < res_list.size(); ++i) {
 
+					// Increase the row index, where 0 is used for
+					// the header and table rows are numbered from 1 on
 					estimateTable.rowIndex++;
 
+					// Check for the last row of the table
+					// (needed to correctly enclose some table formats)
 					if(it != state.estimateResults.end()
 					&& std::next(it) == state.estimateResults.end()
 					&& (i == res_list.size() - 1))
