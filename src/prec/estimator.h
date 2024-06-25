@@ -11,6 +11,7 @@
 #include <cmath>
 
 #include "../core/common.h"
+#include "../core/random.h"
 #include "./prec_structures.h"
 
 
@@ -112,7 +113,7 @@ namespace prec {
 				FloatType sum = 0;
 				FloatType sum_sqr = 0;
 				FloatType sum_abs = 0;
-				FloatType max = -std::numeric_limits<FloatType>::infinity();
+				FloatType max = 0;
 
 				// Compute the measure of a multi-interval
 				FloatType volume = 1;
@@ -123,7 +124,7 @@ namespace prec {
 
 				for (int i = 0; i < options.iterations; ++i) {
 					
-					sample_uniform(x, options.domain);
+					random::uniform(x, options.domain);
 
 					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
 

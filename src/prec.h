@@ -13,10 +13,11 @@
 #include <iostream>
 #include <ctime>
 
-#include "prec/prec_structures.h"
-#include "prec/fail.h"
-#include "prec/estimator.h"
-#include "core/output.h"
+#include "./prec/prec_structures.h"
+#include "./prec/fail.h"
+#include "./prec/estimator.h"
+#include "./core/output.h"
+#include "./core/random.h"
 
 
 namespace chebyshev {
@@ -110,7 +111,7 @@ namespace chebyshev {
 			state.failedTests = 0;
 			state.totalTests = 0;
 
-			srand(time(nullptr));
+			random::setup();
 			output::setup();
 		}
 

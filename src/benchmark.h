@@ -8,9 +8,10 @@
 
 #include <ctime>
 
-#include "benchmark/timer.h"
-#include "benchmark/generator.h"
-#include "benchmark/benchmark_structures.h"
+#include "./core/random.h"
+#include "./benchmark/timer.h"
+#include "./benchmark/generator.h"
+#include "./benchmark/benchmark_structures.h"
 
 
 namespace chebyshev {
@@ -84,7 +85,6 @@ namespace chebyshev {
 			int argc = 0,
 			const char** argv = nullptr) {
 
-
 			// Initialize list of picked tests
 			if(argc && argv)
 				for (int i = 1; i < argc; ++i)
@@ -96,7 +96,7 @@ namespace chebyshev {
 			state.moduleName = moduleName;
 			state.failedBenchmarks = 0;
 
-			srand(time(nullptr));
+			random::setup();
 			output::setup();
 		}
 

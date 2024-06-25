@@ -10,6 +10,7 @@
 #include <cstdlib>
 
 #include "./core/common.h"
+#include "./core/random.h"
 #include "./err/err_structures.h"
 
 
@@ -84,7 +85,7 @@ namespace chebyshev {
 			state.failedChecks = 0;
 			state.totalChecks = 0;
 
-			srand(time(nullptr));
+			random::setup();
 			output::setup();
 		}
 

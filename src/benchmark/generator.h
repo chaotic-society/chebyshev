@@ -8,6 +8,7 @@
 
 #include <functional>
 #include "../core/common.h"
+#include "../core/random.h"
 
 
 namespace chebyshev {
@@ -20,7 +21,7 @@ namespace benchmark {
 		inline auto uniform1D(long double a, long double b) {
 
 			return [=](unsigned int i) {
-				return random_uniform(a, b);
+				return random::uniform(a, b);
 			};
 		}
 
