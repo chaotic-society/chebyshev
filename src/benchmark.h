@@ -38,9 +38,6 @@ namespace chebyshev {
 			/// Default number of runs
 			unsigned int defaultRuns = CHEBYSHEV_BENCHMARK_RUNS;
 
-			/// Output file for the current module
-			std::ofstream outputFile;
-
 			/// Relative or absolute path to output folder
 			std::string outputFolder = "";
 
@@ -70,6 +67,11 @@ namespace chebyshev {
 
 			/// Results of the benchmarks.
 			std::map<std::string, std::vector<benchmark_result>> benchmarkResults {};
+
+			/// Default columns to print for benchmarks.
+			std::vector<std::string> benchmarkColumns = {
+				"funcName", "averageRuntime", "runsPerSecond"
+			};
 			
 		} state;
 
@@ -106,6 +108,7 @@ namespace chebyshev {
 		/// @param exit Whether to exit after terminating testing.
 		inline void terminate(bool exit = true) {
 
+			output::state.quiet = state.quiet;
 
 			if(state.outputToFile) {
 
@@ -113,12 +116,9 @@ namespace chebyshev {
 				filename = state.outputFolder + state.filenamePrefix
 					+ state.moduleName + state.filenameSuffix;
 
-				if(state.outputFile.is_open())
-					state.outputFile.close();
+				output::state.outputFiles[filename] = std::ofstream(filename);
 
-				state.outputFile.open(filename);
-
-				if(!state.outputFile.is_open()) {
+				if(!output::state.outputFiles[filename].is_open()) {
 					std::cout << "Unable to open output file,"
 						" results will NOT be saved!" << std::endl;
 					state.outputToFile = false;
@@ -128,17 +128,8 @@ namespace chebyshev {
 
 			output::table_state benchmarkTable {};
 
-			if(state.benchmarkResults.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_benchmark(benchmarkTable);
-				}
-
-				// Print to file as CSV
-				if(state.outputToFile)
-					output::header_benchmark(benchmarkTable, state.outputFile);
-			}
+			if(state.benchmarkResults.size())
+				output::header(benchmarkTable, state.benchmarkColumns);
 
 
 			for (auto it = state.benchmarkResults.begin();
@@ -155,12 +146,7 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						benchmarkTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_benchmark(res_list[i], benchmarkTable);
-				
-					if(state.outputToFile)
-						output::print_benchmark(
-							res_list[i], benchmarkTable, state.outputFile);
+					output::print(res_list[i], benchmarkTable, state.benchmarkColumns);
 				}
 			}
 
@@ -170,13 +156,10 @@ namespace chebyshev {
 				(state.failedBenchmarks / (double) state.totalBenchmarks) * 100 << "%)"
 				<< '\n';
 				
-			std::cout << "Results have been saved in "
-				<< state.outputFolder << state.filenamePrefix
-				<< state.moduleName << state.filenameSuffix << std::endl;
+			for (auto& p : output::state.outputFiles)
+				std::cout << "Results have been saved in " << p.first << std::endl;
 
-			if(state.outputFile.is_open())
-				state.outputFile.close();
-
+			output::terminate();
 			state = benchmark_state();
 
 			if(exit)

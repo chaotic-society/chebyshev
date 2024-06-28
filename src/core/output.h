@@ -77,38 +77,11 @@ namespace chebyshev {
 			/// (e.g. "maxErr" -> "Max Err.").
 			std::map<std::string, std::string> fieldNames {};
 
-			/// Default columns to print for precision estimates.
-			std::vector<std::string> estimateColumns = {
-				"funcName", "meanErr", "rmsErr", "maxErr", "failed"
-			};
-
-			/// Default columns to print for equations.
-			std::vector<std::string> equationColumns = {
-				"funcName", "difference", "tolerance", "failed"
-			};
-
-			/// Default columns to print for benchmarks.
-			std::vector<std::string> benchmarkColumns = {
-				"funcName", "averageRuntime", "runsPerSecond"
-			};
-
-			/// Default columns to print for assertions.
-			std::vector<std::string> assertColumns = {
-				"funcName", "evaluated", "failed", "description"
-			};
-
-			/// Default columns to print for errno checks.
-			std::vector<std::string> errnoColumns = {
-				"funcName", "evaluated", "expectedFlags", "failed"
-			};
-
-			/// Default columns to print for exception checks.
-			std::vector<std::string> exceptionColumns = {
-				"funcName", "thrown", "correctType", "failed"
-			};
-
 			/// Options for the different fields.
 			std::map<std::string, field_options> fieldOptions {};
+
+			/// The output files, indexed by filename
+			std::map<std::string, std::ofstream> outputFiles {};
 
 			/// Default width for a field.
 			unsigned int defaultColumnWidth = CHEBYSHEV_OUTPUT_WIDTH;
@@ -117,11 +90,19 @@ namespace chebyshev {
 			unsigned int outputPrecision = 1;
 
 			/// A function which converts the table entries of a row
-			/// to a string to print (e.g. adding separators and padding).
+			/// to a string to print (e.g. adding separators and padding)
+			/// to standard output.
 			OutputFormat_t outputFormat {};
 
-			/// The output format used for printing to file.
-			OutputFormat_t fileOutputFormat {};
+			/// The default output format to use for files,
+			/// when no format has been set.
+			OutputFormat_t defaultFileOutputFormat {};
+
+			/// The output format to use for a specific file, by filename.
+			std::map<std::string, OutputFormat_t> fileOutputFormat {};
+
+			/// Whether to output to standard output.
+			bool quiet = false;
 
 			/// Whether the output module was setup.
 			bool wasSetup = false;
@@ -401,9 +382,22 @@ namespace chebyshev {
 
 			// Set the default formats
 			state.outputFormat = format::simple();
-			state.fileOutputFormat = format::csv();
+			state.defaultFileOutputFormat = format::csv();
 
 			state.wasSetup = true;
+		}
+
+
+		/// Terminate the output module by closing all output files
+		/// and resetting its state.
+		inline void terminate() {
+
+			for (auto& p : state.outputFiles)
+				if(p.second.is_open())
+					p.second.close();
+
+			state.outputFiles.clear();
+			state = output_state();
 		}
 
 
@@ -599,11 +593,10 @@ namespace chebyshev {
 
 		inline void header(
 			const table_state& table,
-			std::ostream& outputStream,
-			OutputFormat format,
 			std::vector<std::string> columns) {
 
-			// Allocate vector of titles
+			// Allocate and populate vector of titles
+			// by associating display names to field names
 			std::vector<std::string> titles (columns.size());
 
 			for (unsigned int i = 0; i < columns.size(); ++i) {
@@ -617,163 +610,31 @@ namespace chebyshev {
 					titles[i] = columns[i];
 			}
 
-			// rowIndex = 0 is used for the header row
-			outputStream << format(titles, columns, table, state) << std::endl;
-		}
+			// Print to standard output if not quiet
+			if(!state.quiet) {
+				std::cout << state.outputFormat(titles, columns, table, state) << std::endl;
+			}
 
+			// Print to each file with its output format
+			for (auto& p : state.outputFiles) {
 
-		/// Print the header of a table for estimate results,
-		/// with the given column names.
-		inline void header_estimate(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.estimateColumns) {
+				auto it = state.fileOutputFormat.find(p.first);
 
-			header(table, outputStream, format, columns);
-		}
+				if(it != state.fileOutputFormat.end())
+					p.second << (it->second)(titles, columns, table, state) << std::endl;
+				else
+					p.second << state.defaultFileOutputFormat(titles, columns, table, state) << std::endl;
 
-
-		/// Print the header of a table for estimate results,
-		/// with the given column names.
-		inline void header_estimate(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.estimateColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for equation results,
-		/// with the given column names.
-		inline void header_equation(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.equationColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for equation results,
-		/// with the given column names.
-		inline void header_equation(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.equationColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for benchmark results,
-		/// with the given column names.
-		inline void header_benchmark(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.benchmarkColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for benchmark results,
-		/// with the given column names.
-		inline void header_benchmark(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.benchmarkColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for assertion results,
-		/// with the given column names.
-		inline void header_assert(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.assertColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for assertion results,
-		/// with the given column names.
-		inline void header_assert(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.assertColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for errno checking results,
-		/// with the given column names.
-		inline void header_errno(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.errnoColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for errno checking results,
-		/// with the given column names.
-		inline void header_errno(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.errnoColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for exception checking results,
-		/// with the given column names.
-		inline void header_exception(
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.exceptionColumns) {
-
-			header(table, outputStream, format, columns);
-		}
-
-
-		/// Print the header of a table for exception checking results,
-		/// with the given column names.
-		inline void header_exception(
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.exceptionColumns) {
-
-			header(table, outputStream, format, columns);
+			}
 		}
 
 
 		/// Print a row of information about
-		/// a result of arbitrary type.
+		/// a result of arbitrary type (e.g. estimate_result).
 		template<typename ResultType>
-		inline void print_result(
+		inline void print(
 			ResultType res,
 			const table_state& table,
-			std::ostream& outputStream,
-			OutputFormat format,
 			std::vector<std::string> columns) {
 
 			// Allocate vector of titles
@@ -783,152 +644,20 @@ namespace chebyshev {
 			for (unsigned int i = 0; i < columns.size(); ++i)
 				values[i] = resolve_field(columns[i], res);
 
-			// rowIndex > 0 is used for table entries
-			outputStream << format(values, columns, table, state) << std::endl;
-		}
+			// Print row to standard output
+			if(!state.quiet) {
+				std::cout << state.outputFormat(values, columns, table, state) << std::endl;
+			}
 
+			for (auto& p : state.outputFiles) {
 
-		/// Print an estimate result as a table row.
-		inline void print_estimate(
-			prec::estimate_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.estimateColumns) {
+				auto it = state.fileOutputFormat.find(p.first);
 
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print an estimate result as a table row.
-		inline void print_estimate(
-			prec::estimate_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.estimateColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print an equation result as a table row.
-		inline void print_equation(
-			prec::equation_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.equationColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print an equation result as a table row.
-		inline void print_equation(
-			prec::equation_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.equationColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a benchmark result as a table row.
-		inline void print_benchmark(
-			benchmark::benchmark_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.benchmarkColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a benchmark result as a table row.
-		inline void print_benchmark(
-			benchmark::benchmark_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.benchmarkColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a assert result as a table row.
-		inline void print_assert(
-			err::assert_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.assertColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a assert result as a table row.
-		inline void print_assert(
-			err::assert_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.assertColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a errno result as a table row.
-		inline void print_errno(
-			err::errno_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.errnoColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a errno result as a table row.
-		inline void print_errno(
-			err::errno_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.errnoColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a exception result as a table row.
-		inline void print_exception(
-			err::exception_result res,
-			const table_state& table,
-			std::ostream& outputStream = std::cout,
-			OutputFormat format = state.outputFormat,
-			std::vector<std::string> columns = state.exceptionColumns) {
-
-			print_result(res, table, outputStream, format, columns);
-		}
-
-
-		/// Print a exception result as a table row.
-		inline void print_exception(
-			err::exception_result res,
-			const table_state& table,
-			std::ofstream& outputStream,
-			OutputFormat format = state.fileOutputFormat,
-			std::vector<std::string> columns = state.exceptionColumns) {
-
-			print_result(res, table, outputStream, format, columns);
+				if(it != state.fileOutputFormat.end())
+					p.second << (it->second)(values, columns, table, state) << std::endl;
+				else
+					p.second << state.defaultFileOutputFormat(values, columns, table, state) << std::endl;
+			}
 		}
 
 

@@ -26,6 +26,7 @@ namespace chebyshev {
 	namespace prec {
 
 
+		/// @class prec_state
 		/// Global state of the precision testing module.
 		struct prec_state {
 			
@@ -35,17 +36,8 @@ namespace chebyshev {
 			/// Print to standard output or not
 			bool quiet = false;
 
-			/// Write to standard output only failed/not passed estimates?
-			bool estimateOnlyFailed = false;
-
-			/// Write to standard output only failed/not passed equations?
-			bool equalsOnlyFailed = false;
-
 			/// Output to file?
 			bool outputToFile = true;
-
-			/// Output file
-			std::ofstream outputFile;
 
 			/// Relative or absolute path to output folder
 			std::string outputFolder = "";
@@ -75,9 +67,19 @@ namespace chebyshev {
 
 			/// Results of precision testing
 			std::map<std::string, std::vector<estimate_result>> estimateResults {};
+
+			/// Default columns to print for precision estimates.
+			std::vector<std::string> estimateColumns = {
+				"funcName", "meanErr", "rmsErr", "maxErr", "failed"
+			};
 			
 			/// Results of equations
 			std::map<std::string, std::vector<equation_result>> equationResults {};
+
+			/// Default columns to print for equations.
+			std::vector<std::string> equationColumns = {
+				"funcName", "difference", "tolerance", "failed"
+			};
 
 			/// Target tests marked for execution,
 			/// can be picked by passing test case names
@@ -121,18 +123,17 @@ namespace chebyshev {
 		/// @param exit Whether to exit after terminating testing.
 		inline void terminate(bool exit = true) {
 
+			output::state.quiet = state.quiet;
+
 			if(state.outputToFile) {
 
 				std::string filename;
 				filename = state.outputFolder + state.filenamePrefix
 					+ state.moduleName + state.filenameSuffix;
 
-				if(state.outputFile.is_open())
-					state.outputFile.close();
+				output::state.outputFiles[filename] = std::ofstream(filename);
 
-				state.outputFile.open(filename);
-
-				if(!state.outputFile.is_open()) {
+				if(!output::state.outputFiles[filename].is_open()) {
 					std::cout << "Unable to open output file,"
 						" results will NOT be saved!" << std::endl;
 					state.outputToFile = false;
@@ -144,18 +145,8 @@ namespace chebyshev {
 			output::table_state equationTable {};
 
 
-			if(state.estimateResults.size()) {
-
-				// Print header for estimates
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_estimate(estimateTable);
-				}
-
-				// Print to file as CSV
-				if(state.outputToFile)
-					output::header_estimate(estimateTable, state.outputFile);
-			}
+			if(state.estimateResults.size())
+				output::header(estimateTable, state.estimateColumns);
 
 
 			// Print estimate results
@@ -177,25 +168,12 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						estimateTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_estimate(res_list[i], estimateTable);
-				
-					if(state.outputToFile)
-						output::print_estimate(
-							res_list[i], estimateTable, state.outputFile);
+					output::print(res_list[i], estimateTable, state.estimateColumns);
 				}
 			}
 
-			if(state.equationResults.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_equation(equationTable);
-				}
-
-				if(state.outputToFile)
-					output::header_equation(equationTable, state.outputFile);
-			}
+			if(state.equationResults.size())
+				output::header(equationTable, state.equationColumns);
 
 
 			// Print equation results
@@ -213,12 +191,7 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						equationTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_equation(res_list[i], equationTable);
-				
-					if(state.outputToFile)
-						output::print_equation(
-							res_list[i], equationTable, state.outputFile);
+					output::print(res_list[i], equationTable, state.equationColumns);
 				}
 			}
 
@@ -228,13 +201,10 @@ namespace chebyshev {
 				(state.failedTests / (double) state.totalTests) * 100 << "%)"
 				<< '\n';
 				
-			std::cout << "Results have been saved in "
-				<< state.outputFolder << state.filenamePrefix
-				<< state.moduleName << state.filenameSuffix << std::endl;
+			for (auto& p : output::state.outputFiles)
+				std::cout << "Results have been saved in " << p.first << std::endl;
 
-			if(state.outputFile.is_open())
-				state.outputFile.close();
-
+			output::terminate();
 			state = prec_state();
 
 			if(exit)

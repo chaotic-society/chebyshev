@@ -33,9 +33,6 @@ namespace chebyshev {
 			/// Number of failed checks
 			unsigned int failedChecks = 0;
 
-			/// Output file
-			std::ofstream outputFile;
-
 			/// Relative or absolute path to output folder
 			std::string outputFolder = "";
 
@@ -53,11 +50,26 @@ namespace chebyshev {
 			/// Results of checking assertions
 			std::map<std::string, std::vector<assert_result>> assertResults {};
 
+			/// Default columns to print for assertions.
+			std::vector<std::string> assertColumns = {
+				"funcName", "evaluated", "failed", "description"
+			};
+
 			/// Results of checking errno
 			std::map<std::string, std::vector<errno_result>> errnoResults {};
 
+			/// Default columns to print for errno checks.
+			std::vector<std::string> errnoColumns = {
+				"funcName", "evaluated", "expectedFlags", "failed"
+			};
+
 			/// Results of exception testing
 			std::map<std::string, std::vector<exception_result>> exceptionResults {};
+
+			/// Default columns to print for exception checks.
+			std::vector<std::string> exceptionColumns = {
+				"funcName", "thrown", "correctType", "failed"
+			};
 
 			/// Target checks marked for execution,
 			/// can be picked by passing test case names
@@ -93,18 +105,17 @@ namespace chebyshev {
 		/// Terminate error checking
 		void terminate(bool exit = true) {
 
+			output::state.quiet = state.quiet;
+
 			if(state.outputToFile) {
 
 				std::string filename;
 				filename = state.outputFolder + state.filenamePrefix
 					+ state.moduleName + state.filenameSuffix;
 
-				if(state.outputFile.is_open())
-					state.outputFile.close();
+				output::state.outputFiles[filename] = std::ofstream(filename);
 
-				state.outputFile.open(filename);
-
-				if(!state.outputFile.is_open()) {
+				if(!output::state.outputFiles[filename].is_open()) {
 					std::cout << "Unable to open output file,"
 						" results will NOT be saved!" << std::endl;
 					state.outputToFile = false;
@@ -118,16 +129,8 @@ namespace chebyshev {
 
 
 			// Print results of assertions
-			if(state.assertResults.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_assert(assertTable);
-				}
-
-				if(state.outputToFile)
-					output::header_assert(assertTable, state.outputFile);
-			}
+			if(state.assertResults.size())
+				output::header(assertTable, state.assertColumns);
 
 
 			for (auto it = state.assertResults.begin();
@@ -144,27 +147,14 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						assertTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_assert(res_list[i], assertTable);
-				
-					if(state.outputToFile)
-						output::print_assert(
-							res_list[i], assertTable, state.outputFile);
+					output::print(res_list[i], assertTable, state.assertColumns);
 				}
 			}
 
 
 			// Print results of errno checking
-			if(state.errnoResults.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_errno(errnoTable);
-				}
-
-				if(state.outputToFile)
-					output::header_errno(errnoTable, state.outputFile);
-			}
+			if(state.errnoResults.size())
+				output::header(errnoTable, state.errnoColumns);
 
 			for (auto it = state.errnoResults.begin();
 				it != state.errnoResults.end(); ++it) {
@@ -180,27 +170,14 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						errnoTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_errno(res_list[i], errnoTable);
-				
-					if(state.outputToFile)
-						output::print_errno(
-							res_list[i], errnoTable, state.outputFile);
+					output::print(res_list[i], errnoTable, state.errnoColumns);
 				}
 			}
 
 
 			// Print results of exception checking
-			if(state.exceptionResults.size()) {
-
-				if(!state.quiet) {
-					std::cout << "\n";
-					output::header_exception(exceptionTable);
-				}
-
-				if(state.outputToFile)
-					output::header_exception(exceptionTable, state.outputFile);
-			}
+			if(state.exceptionResults.size())
+				output::header(exceptionTable, state.exceptionColumns);
 
 
 			for (auto it = state.exceptionResults.begin();
@@ -217,12 +194,7 @@ namespace chebyshev {
 					&& (i == res_list.size() - 1))
 						exceptionTable.isLastRow = true;
 
-					if(!state.quiet)
-						output::print_exception(res_list[i], exceptionTable);
-				
-					if(state.outputToFile)
-						output::print_exception(
-							res_list[i], exceptionTable, state.outputFile);
+					output::print(res_list[i], exceptionTable, state.exceptionColumns);
 				}
 			}
 
@@ -236,6 +208,12 @@ namespace chebyshev {
 				<< state.failedChecks << " failed ("
 				<< (state.failedChecks / (double) state.totalChecks * 100.0)
 				<< "%)" << std::endl;
+
+			for (auto& p : output::state.outputFiles)
+				std::cout << "Results have been saved in " << p.first << std::endl;
+
+			output::terminate();
+			state = err_state();
 
 			if(exit)
 				std::exit(state.failedChecks);
