@@ -140,6 +140,9 @@ namespace chebyshev {
 				}
 			}
 
+			// Print a newline before printing the tables
+			// to space them out
+			std::cout << "\n";
 
 			output::table_state estimateTable {};
 			output::table_state equationTable {};
@@ -195,7 +198,7 @@ namespace chebyshev {
 				}
 			}
 
-			std::cout << "\nFinished testing " << state.moduleName << '\n';
+			std::cout << "Finished testing " << state.moduleName << '\n';
 			std::cout << state.totalTests << " total tests, "
 				<< state.failedTests << " failed (" <<
 				(state.failedTests / (double) state.totalTests) * 100 << "%)"
@@ -310,7 +313,7 @@ namespace chebyshev {
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
 			unsigned int iterations = CHEBYSHEV_PREC_ITER,
 			FailFunction fail = fail::fail_on_max_err,
-			Estimator<double, double> estimator = estimator::quadrature1D<double>,
+			Estimator<double, double> estimator = estimator::quadrature1D<double>(),
 			bool quiet = false) {
 
 			estimate_options<double, double> opt {};

@@ -24,78 +24,82 @@ namespace prec {
 
 
 		/// Use Simpson's quadrature scheme to approximate error integrals
-		/// for univariate real functions.
+		/// for univariate real functions (endofunctions on real number types).
+		/// The estimator is returned as a lambda function.
 		template<typename FloatType = double>
-		estimate_result quadrature1D(
-			RealFunction<FloatType> funcApprox,
-			RealFunction<FloatType> funcExpected,
-			estimate_options<FloatType, FloatType> options) {
+		inline auto quadrature1D() {
 
-			if(options.domain.size() != 1)
-				throw std::runtime_error(
-					"estimator::quadrature1D only works on mono-dimensional domains");
+			return [](
+				EndoFunction<FloatType> funcApprox,
+				EndoFunction<FloatType> funcExpected,
+				estimate_options<FloatType, FloatType> options) {
 
-			interval domain = options.domain[0];
+				if(options.domain.size() != 1)
+					throw std::runtime_error(
+						"estimator::quadrature1D only works on mono-dimensional domains");
 
-			FloatType sum = 0;
-			FloatType sum_sqr = 0;
-			FloatType sum_abs = 0;
-			FloatType max = 0;
+				interval domain = options.domain[0];
 
-			const FloatType length = domain.length();
-			const FloatType dx = length / options.iterations;
-			FloatType x;
-			FloatType coeff;
+				FloatType sum = 0;
+				FloatType sum_sqr = 0;
+				FloatType sum_abs = 0;
+				FloatType max = 0;
 
-			FloatType diff = std::abs(funcApprox(domain.a) - funcExpected(domain.a));
+				const FloatType length = domain.length();
+				const FloatType dx = length / options.iterations;
+				FloatType x;
+				FloatType coeff;
 
-			sum += diff;
-			sum_sqr += diff * diff;
-			sum_abs += std::abs(funcExpected(domain.a));
-			max = diff;
+				FloatType diff = std::abs(funcApprox(domain.a) - funcExpected(domain.a));
 
-			for (unsigned int i = 1; i < options.iterations; ++i) {
+				sum += diff;
+				sum_sqr += diff * diff;
+				sum_abs += std::abs(funcExpected(domain.a));
+				max = diff;
 
-				x = domain.a + i * dx;
-				diff = std::abs(funcApprox(x) - funcExpected(x));
+				for (unsigned int i = 1; i < options.iterations; ++i) {
 
+					x = domain.a + i * dx;
+					diff = std::abs(funcApprox(x) - funcExpected(x));
+
+					if(diff > max)
+						max = diff;
+
+					if(i % 2 == 0)
+						coeff = 2;
+					else
+						coeff = 4;
+
+					sum += coeff * diff;
+					sum_sqr += coeff * diff * diff;
+					sum_abs += coeff * funcExpected(x);
+				}
+
+				diff = std::abs(funcApprox(domain.b) - funcExpected(domain.b));
+
+				sum += diff;
+				sum_sqr += diff * diff;
+				sum_abs += std::abs(funcExpected(domain.b));
+				
 				if(diff > max)
 					max = diff;
 
-				if(i % 2 == 0)
-					coeff = 2;
-				else
-					coeff = 4;
-
-				sum += coeff * diff;
-				sum_sqr += coeff * diff * diff;
-				sum_abs += coeff * funcExpected(x);
-			}
-
-			diff = std::abs(funcApprox(domain.b) - funcExpected(domain.b));
-
-			sum += diff;
-			sum_sqr += diff * diff;
-			sum_abs += std::abs(funcExpected(domain.b));
-			
-			if(diff > max)
-				max = diff;
-
-			estimate_result res {};
-			res.absErr = sum;
-			res.maxErr = max;
-			res.meanErr = (sum * dx / 3.0) / length;
-			res.rmsErr = std::sqrt((sum_sqr * dx / 3.0) / length);
-			res.relErr = std::abs((sum * dx / 3.0) / (sum_abs * dx / 3.0));
-			
-			return res;
+				estimate_result res {};
+				res.absErr = sum;
+				res.maxErr = max;
+				res.meanErr = (sum * dx / 3.0) / length;
+				res.rmsErr = std::sqrt((sum_sqr * dx / 3.0) / length);
+				res.relErr = std::abs((sum * dx / 3.0) / (sum_abs * dx / 3.0));
+				
+				return res;
+			};
 		}
 
 
 		/// Use crude Monte Carlo integration to approximate error integrals
 		/// for multivariate real functions.
 		template<typename FloatType = double>
-		estimate_result montecarlo(unsigned int dimensions) {
+		inline auto montecarlo(unsigned int dimensions) {
 
 			// Return an n-dimensional Monte Carlo estimator
 			// as a lambda function

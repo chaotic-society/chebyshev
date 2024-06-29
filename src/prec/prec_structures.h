@@ -63,8 +63,8 @@ namespace chebyshev {
 		};
 
 
-		/// A function which determines whether an estimation failed
-		using FailFunction = std::function<bool(estimate_result)>;
+		/// A function which determines whether an estimation failed.
+		using FailFunction = std::function<bool(const estimate_result&)>;
 
 
 		/// Distance function between two elements.
@@ -87,19 +87,42 @@ namespace chebyshev {
 			std::vector<interval> domain {};
 
 			/// The tolerance to use to determine whether the test failed.
-			long double tolerance = get_nan();
+			long double tolerance = CHEBYSHEV_PREC_TOLERANCE;
 
 			/// Number of function evaluations to use.
-			unsigned int iterations = 0;
+			unsigned int iterations = CHEBYSHEV_PREC_ITER;
 
-			/// The function to determine whether the test failed.
-			FailFunction fail;
+			/// The function to determine whether the test failed
+			/// (defaults to fail::fail_on_max_err).
+			FailFunction fail = [](const estimate_result& r) {
+				return (r.maxErr > r.tolerance) || (r.maxErr != r.maxErr);
+			};
 
 			/// The precision estimator to use.
 			Estimator_t estimator;
 
 			/// Whether to show the test result or not.
 			bool quiet = false;
+
+
+			/// Construct estimate options with all default values.
+			/// @note The estimator and domain must be set to 
+			/// correctly use the options for test cases.
+			estimate_options() {}
+
+
+			/// Construct estimate options from a one-dimensional
+			/// interval domain and an estimator, with other fields
+			/// equal to the default values.
+			estimate_options(interval omega, Estimator_t estimator)
+			: domain({omega}), estimator(estimator) {}
+
+
+			/// Construct estimate options from a multidimensional
+			/// interval domain and an estimator, with other fields
+			/// equal to the default values.
+			estimate_options(std::vector<interval> omega, Estimator_t estimator)
+			: domain(omega), estimator(estimator) {}
 			
 		};
 
