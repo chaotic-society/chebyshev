@@ -1,6 +1,6 @@
 
 ///
-/// @file printing.h
+/// @file output.h The output module, with formatting capabilities.
 ///
 
 #ifndef CHEBYSHEV_OUTPUT_H
@@ -22,12 +22,13 @@ namespace chebyshev {
 	/// @namespace output Functions to manage printing results.
 	namespace output {
 
-
 		/// @class field_options
 		/// Custom options for printing a certain field.
 		struct field_options {
 
 			using FieldFormat = std::function<void(std::ostream&, const field_options&)>;
+
+			using FieldInterpreter = std::function<std::string(const std::string&)>;
 			
 			/// Width for the column of the field.
 			unsigned int columnWidth = CHEBYSHEV_OUTPUT_WIDTH;
@@ -40,9 +41,12 @@ namespace chebyshev {
 			/// before printing the field header title (defaults to no change).
 			FieldFormat fieldTitleFormat = [](std::ostream& s, const field_options& o) {};
 
+			/// A function which gets as input the value of a field as a string
+			/// and returns a new string (e.g. "1" -> "FAIL" in the field "failed").
+			FieldInterpreter fieldInterpreter = [](const std::string& s) { return s; };
+
 			/// Additional custom options.
 			std::map<std::string, long double> additionalFields {};
-
 		};
 
 
@@ -179,21 +183,118 @@ namespace chebyshev {
 					if(table.rowIndex == 0) {
 
 						std::string line = s.str();
-						std::string head = " +";
+						std::string outline = " +";
+						for (size_t i = 4; i < line.size(); ++i)
+							outline += "-";
+						outline += "+";
 
-						for (int i = 0; i < int(line.size()) - 4; ++i)
-							head += "-";
-
-						head += "+";
-
-						return head + "\n" + line + "\n" + head;
+						return outline + "\n" + line + "\n" + outline;
 					}
 
 					// Add a newline between tables
-					if(table.isLastRow)
-						s << "\n";
+					if(table.isLastRow) {
+
+						std::string line = s.str();
+						std::string outline = " +";
+						for (size_t i = 4; i < line.size(); ++i)
+							outline += "-";
+						outline += "+";
+
+						return line + "\n" + outline;
+					}
 
 					return s.str();
+				};
+			}
+
+
+			/// Fancy output format using Unicode characters
+			/// to print a continuous outline around the table.
+			/// The OutputFormat is returned as a lambda function.
+			inline OutputFormat fancy() {
+
+				return [=](
+					const std::vector<std::string>& values,
+					const std::vector<std::string>& fields,
+					const table_state& table,
+					const output_state& state) -> std::string {
+
+					if(values.size() != fields.size()) {
+						throw std::runtime_error(
+							"values and fields arguments must have the "
+							"same size in format::fancy");
+					}
+
+					// Effective length of the string
+					// (needed because Unicode is used)
+					size_t eff_length = 0;
+					std::stringstream s;
+					
+					s << " │ ";
+					eff_length += 3;
+
+					for (unsigned int i = 0; i < values.size(); ++i) {
+						
+						// Search for custom options for this field
+						const auto opt_it = state.fieldOptions.find(fields[i]);
+
+						if(opt_it != state.fieldOptions.end()) {
+							
+							// Format table value
+							if(table.rowIndex)
+								opt_it->second.fieldFormat(s, opt_it->second);
+							// Format column title
+							else
+								opt_it->second.fieldTitleFormat(s, opt_it->second);
+						}
+
+						// Adjust field width with a custom value
+						// if it exists, or the default otherwise.
+						if(opt_it != state.fieldOptions.end()) {
+							s << std::setw(opt_it->second.columnWidth);
+							eff_length += opt_it->second.columnWidth;
+						} else {
+							s << std::setw(state.defaultColumnWidth);
+							eff_length += state.defaultColumnWidth;
+						}
+
+						s << values[i];
+						s << " │ ";
+						eff_length += 3;
+					}
+
+					// Resulting line of formatted text
+					const std::string line = s.str();
+
+					// Add header outline
+					if(table.rowIndex == 0) {
+
+						std::string upper = " ┌";
+						std::string lower = " ├";
+
+						for (unsigned int i = 4; i < eff_length; ++i) {
+							upper += "─";
+							lower += "─";
+						}
+
+						upper += "┐ ";
+						lower += "┤ ";
+
+						return upper + "\n" + line + "\n" + lower;
+					}
+
+					// Add outline at the bottom of the table
+					if(table.isLastRow) {
+
+						std::string outline = " └";
+						for (unsigned int i = 4; i < eff_length; ++i)
+							outline += "─";
+						outline += "┘ ";
+
+						return line + "\n" + outline + "\n";
+					}
+
+					return line;
 				};
 			}
 
@@ -362,7 +463,7 @@ namespace chebyshev {
 		}
 
 
-		/// Setup printing to the output stream.
+		/// Setup printing to the output stream with default options.
 		inline void setup() {
 
 			// Estimate fields
@@ -399,8 +500,15 @@ namespace chebyshev {
 			state.fieldOptions["runsPerSecond"].columnWidth = 14;
 			state.fieldOptions["description"].columnWidth = 20;
 
+			// Set a special field interpreter for the "failed" field
+			state.fieldOptions["failed"].fieldInterpreter = [](const std::string& s) {
+				if(s == "0") return "PASS";
+				else if(s == "1") return "FAIL";
+				else return "UNKNOWN";
+			};
+
 			// Set the default formats
-			state.outputFormat = format::simple();
+			state.outputFormat = format::fancy();
 			state.defaultFileOutputFormat = format::csv();
 
 			state.wasSetup = true;
@@ -422,6 +530,9 @@ namespace chebyshev {
 
 		/// Resolve the field of an estimate result by name,
 		/// returning the value as a string.
+		///
+		/// @param fieldName The name of the field to resolve
+		/// @param r The estimate result to read the fields of
 		inline std::string resolve_field(
 			const std::string& fieldName, prec::estimate_result r) {
 
@@ -469,6 +580,9 @@ namespace chebyshev {
 
 		/// Resolve the field of an equation result by name,
 		/// returning the value as a string.
+		///
+		/// @param fieldName The name of the field to resolve
+		/// @param r The equation result to read the fields of
 		inline std::string resolve_field(
 			const std::string& fieldName, prec::equation_result r) {
 
@@ -537,6 +651,9 @@ namespace chebyshev {
 
 		/// Resolve the field of an assertion result by name,
 		/// returning the value as a string.
+		///
+		/// @param fieldName The name of the field to resolve
+		/// @param r The assertion result to read the fields of
 		inline std::string resolve_field(
 			const std::string& fieldName, err::assert_result r) {
 
@@ -560,6 +677,9 @@ namespace chebyshev {
 
 		/// Resolve the field of an errno checking result by name,
 		/// returning the value as a string.
+		///
+		/// @param fieldName The name of the field to resolve
+		/// @param r The errno checking result to read the fields of
 		inline std::string resolve_field(
 			const std::string& fieldName, err::errno_result r) {
 
@@ -589,6 +709,9 @@ namespace chebyshev {
 
 		/// Resolve the field of an exception checking result by name,
 		/// returning the value as a string.
+		///
+		/// @param fieldName The name of the field to resolve
+		/// @param r The exception checking result to read the fields of
 		inline std::string resolve_field(
 			const std::string& fieldName, err::exception_result r) {
 
@@ -610,6 +733,12 @@ namespace chebyshev {
 		}
 
 
+		/// Write the header of a table of results to all
+		/// output streams with their corresponding format.
+		///
+		/// @param table The state of the result table
+		/// @param columns A list of the fields to include in
+		/// the table columns.
 		inline void header(
 			const table_state& table,
 			std::vector<std::string> columns) {
@@ -650,6 +779,11 @@ namespace chebyshev {
 
 		/// Print a row of information about
 		/// a result of arbitrary type (e.g. estimate_result).
+		///
+		/// @param res The result to write to output
+		/// @param table The state of the table
+		/// @param columns A list of the fields to include in
+		/// the table columns.
 		template<typename ResultType>
 		inline void print(
 			ResultType res,
@@ -660,8 +794,18 @@ namespace chebyshev {
 			std::vector<std::string> values (columns.size());
 
 			// Resolve fields to their values
-			for (unsigned int i = 0; i < columns.size(); ++i)
-				values[i] = resolve_field(columns[i], res);
+			for (unsigned int i = 0; i < columns.size(); ++i) {
+
+				auto opt_it = state.fieldOptions.find(columns[i]);
+
+				// Apply a field interpreter if it is specified
+				if(opt_it != state.fieldOptions.end()) {
+					values[i] = opt_it->second.fieldInterpreter(
+						resolve_field(columns[i], res));
+				} else {
+					values[i] = resolve_field(columns[i], res);
+				}
+			}
 
 			// Print row to standard output
 			if(!state.quiet) {
