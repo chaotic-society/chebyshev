@@ -3,6 +3,19 @@
 
 Chebyshev is a header-only C++ testing framework designed for testing scientific software and scientific computing libraries. It is part of the larger Theoretica project, a mathematical library that is thoroughly tested using Chebyshev. The framework is composed of three modules: a `prec` module for precision testing, a `benchmark` module for benchmarks, and the `err` module for error checking. Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications.
 
+## Features
+- **Header-only:** Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
+
+- **Error integral approximation:** Chebyshev provides estimators for the precision of functions over their domain.
+
+- **Modular design:** The framework is composed of three independent modules, allowing developers to use only the components they need.
+
+- **Flexible testing:** Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
+
+- **Many output formats:** The framework supports multiple output formats, such as Markdown and LaTeX tables, and is fully extensible with custom formats.
+
+- **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS, and is fully platform-independent.
+
 ## Interface
 The different modules are contained in their respective namespaces and are initialized through the `<module>::setup()` function and are terminated with the `<module>::terminate()` function, which outputs the results. The behavior of a module may be customized and extended by modifying the fields of the `<module>::state` structure after the module has been initialized. The results of testing are also output to file in CSV or other formats for easy analysis, manipulation and visualization.
 
@@ -35,20 +48,6 @@ The additional `output` module, not directly used for testing, makes it possible
 
 ### Randomized tests
 The `random` module works in conjunction with the three testing modules to randomize test inputs and provide distribution sampling capabilities for your test units.
-
-
-## Features
-- **Header-only:** Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
-
-- **Error integral approximation:** Chebyshev provides estimators for the precision of functions over their domain.
-
-- **Modular design:** The framework is composed of three independent modules, allowing developers to use only the components they need.
-
-- **Flexible testing:** Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.
-
-- **Many output formats:** The framework supports multiple output formats, such as Markdown and LaTeX tables, and is fully extensible with custom formats.
-
-- **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS, and is fully platform-independent.
 
 
 ## Getting Started
