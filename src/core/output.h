@@ -174,6 +174,25 @@ namespace chebyshev {
 						s << separator;
 					}
 
+
+					// Add header outline
+					if(table.rowIndex == 0) {
+
+						std::string line = s.str();
+						std::string head = " +";
+
+						for (int i = 0; i < int(line.size()) - 4; ++i)
+							head += "-";
+
+						head += "+";
+
+						return head + "\n" + line + "\n" + head;
+					}
+
+					// Add a newline between tables
+					if(table.isLastRow)
+						s << "\n";
+
 					return s.str();
 				};
 			}
