@@ -307,8 +307,8 @@ namespace chebyshev {
 		/// @param quiet Whether to output the result.
 		inline void estimate(
 			const std::string& name,
-			RealFunction<double> funcApprox,
-			RealFunction<double> funcExpected,
+			EndoFunction<double> funcApprox,
+			EndoFunction<double> funcExpected,
 			interval domain,
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
 			unsigned int iterations = CHEBYSHEV_PREC_ITER,
@@ -328,8 +328,62 @@ namespace chebyshev {
 		}
 
 
+		/// Precision testing of an endofunction which is
+		/// an involution. The function is applied two times
+		/// to input values and it is checked against the identity.
+		///
+		/// @param name The name of the test case.
+		/// @param involution The involution to test.
+		/// @param opt The options for estimation.
+		template<typename Type, typename Involution = EndoFunction<Type>>
+		inline void involution(
+			const std::string& name,
+			Involution invol,
+			const estimate_options<Type, Type>& opt) {
+
+			// Apply the involution two times
+			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+				return invol(invol(x));
+			};
+
+			// And compare it to the identity
+			EndoFunction<Type> funcExpected = [](Type x) -> Type {
+				return x;
+			};
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Precision testing of an endofunction which is
+		/// idempotent. The function is applied two times
+		/// to input values and it is checked against itself.
+		///
+		/// @param name The name of the test case.
+		/// @param idem The idempotent function to test.
+		/// @param opt The options for estimation.
+		template<typename Type, typename Involution = EndoFunction<Type>>
+		inline void idempotence(
+			const std::string& name,
+			Involution idem,
+			const estimate_options<Type, Type>& opt) {
+
+			// Apply the idem two times
+			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+				return idem(idem(x));
+			};
+
+			// And compare it to the identity
+			EndoFunction<Type> funcExpected = [&](Type x) -> Type {
+				return idem(x);
+			};
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
 		/// Test an equivalence up to a tolerance,
-		/// with the given options.
+		/// with the given options (e.g. for residual testing).
 		///
 		/// @param name The name of the test case
 		/// @param evaluate The evaluated value
@@ -371,7 +425,7 @@ namespace chebyshev {
 
 
 		/// Test an equivalence up to a tolerance,
-		/// with the given options.
+		/// with the given options (e.g. for residual testing).
 		///
 		/// @param name The name of the test case
 		/// @param evaluate The evaluated value
@@ -397,7 +451,7 @@ namespace chebyshev {
 
 
 		/// Test an equivalence up to a tolerance,
-		/// with the given options.
+		/// with the given options (e.g. for residual testing).
 		///
 		/// @param name The name of the test case
 		/// @param evaluate The evaluated value
@@ -443,7 +497,7 @@ namespace chebyshev {
 
 
 		/// Evaluate multiple pairs of values for equivalence
-		/// up to the given tolerance.
+		/// up to the given tolerance (e.g. for residual testing).
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<long double, 2>> values,

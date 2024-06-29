@@ -125,6 +125,7 @@ namespace chebyshev {
 				}
 			}
 
+			std::cout << "\n";
 
 			output::table_state benchmarkTable {};
 
@@ -150,7 +151,7 @@ namespace chebyshev {
 				}
 			}
 
-			std::cout << "\nFinished benchmarking " << state.moduleName << '\n';
+			std::cout << "Finished benchmarking " << state.moduleName << '\n';
 			std::cout << state.totalBenchmarks << " total benchmarks, "
 				<< state.failedBenchmarks << " failed (" <<
 				(state.failedBenchmarks / (double) state.totalBenchmarks) * 100 << "%)"

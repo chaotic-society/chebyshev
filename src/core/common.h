@@ -9,7 +9,7 @@
 #ifndef CHEBYSHEV_PREC_ITER
 /// Default number of function evaluations
 /// in precision testing.
-#define CHEBYSHEV_PREC_ITER 1E+06
+#define CHEBYSHEV_PREC_ITER 1000
 #endif
 
 #ifndef CHEBYSHEV_PREC_TOLERANCE
@@ -41,9 +41,10 @@
 namespace chebyshev {
 
 
-	/// A real function of real variable.
-	template<typename FloatType = double>
-	using RealFunction = std::function<FloatType(FloatType)>;
+	/// An endofunction is a function which has the same type
+	/// of input and output (e.g. a real function of real variable).
+	template<typename Type = double>
+	using EndoFunction = std::function<Type(Type)>;
 
 
 	/// Get a quiet NaN of the specified floating point type.

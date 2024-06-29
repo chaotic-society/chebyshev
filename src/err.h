@@ -122,6 +122,7 @@ namespace chebyshev {
 				}
 			}
 
+			std::cout << "\n";
 
 			output::table_state assertTable {};
 			output::table_state errnoTable {};
@@ -199,7 +200,7 @@ namespace chebyshev {
 			}
 
 
-			std::cout << "\nEnding error checking on "
+			std::cout << "Ending error checking on "
 				<< state.moduleName
 				<< " ..." << std::endl;
 
