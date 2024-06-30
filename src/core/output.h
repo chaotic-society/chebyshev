@@ -634,7 +634,10 @@ namespace chebyshev {
 			} else if(fieldName == "averageRuntime") {
 				value << r.averageRuntime;
 			} else if(fieldName == "runsPerSecond") {
-				value << r.runsPerSecond;
+				if(r.runsPerSecond > 1000)
+					value << uint64_t(r.runsPerSecond);
+				else
+					value << r.runsPerSecond;
 			} else if(fieldName == "failed") {
 				value << r.failed;
 			} else {

@@ -170,7 +170,7 @@ namespace chebyshev {
 
 		/// Run a benchmark on a generic function,
 		/// with the given options.
-		template<typename Function, typename InputType = double>
+		template<typename InputType = double, typename Function>
 		inline void benchmark(
 			const std::string& funcName,
 			Function func,
@@ -201,6 +201,10 @@ namespace chebyshev {
 
 					totalRuntime += t();
 				}
+
+				// Differentiate between types with operator+= or not ?
+				// c = *((&c + 1) - 1);
+
 			} catch(...) {
 				failed = true;
 			}
@@ -224,7 +228,7 @@ namespace chebyshev {
 
 		/// Run a benchmark on a generic function,
 		/// with the given options.
-		template<typename Function, typename InputType = double>
+		template<typename InputType = double, typename Function>
 		inline void benchmark(
 			const std::string& funcName,
 			Function func,

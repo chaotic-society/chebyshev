@@ -16,6 +16,13 @@ double g(double x) {
 	return std::atan(x * x);
 }
 
+unsigned int h(unsigned int n) {
+	if(n == 0)
+		return 0;
+	else
+		return n + h(n - 1);
+}
+
 
 
 int main(int argc, char const *argv[]) {
@@ -34,6 +41,15 @@ int main(int argc, char const *argv[]) {
 		// Benchmark the given functions
 		benchmark::benchmark("f(x)", f, opt);
 		benchmark::benchmark("g(x)", g, opt);
+
+		// Specify parameters directly
+		benchmark::benchmark<unsigned int>(
+			"h(n)", h, 10, 1000, [](unsigned int i) {
+				return random::natural() % 1000;
+			});
+
+		// You may need to specify the input type
+		// of your function if it isn't deduced.
 
 	// Stop benchmarking and exit
 	benchmark::terminate();
