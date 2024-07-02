@@ -39,17 +39,6 @@ namespace chebyshev {
 			/// Output to file?
 			bool outputToFile = true;
 
-			/// Relative or absolute path to output folder
-			std::string outputFolder = "";
-
-			/// Prefix to prepend to the filename, in addition
-			/// to the module name.
-			std::string filenamePrefix = "prec_";
-
-			/// Suffix to append to the filename, in addition
-			/// to the module name.
-			std::string filenameSuffix = ".csv";
-
 			/// Total number of tests run
 			unsigned int totalTests = 0;
 
@@ -60,7 +49,7 @@ namespace chebyshev {
 			unsigned int defaultIterations = CHEBYSHEV_PREC_ITER;
 
 			/// Default fail function
-			FailFunction defaultFailFunction = fail::fail_on_max_err;
+			FailFunction defaultFailFunction = fail::fail_on_max_err();
 
 			/// Default tolerance on max absolute error
 			long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
@@ -72,6 +61,10 @@ namespace chebyshev {
 			std::vector<std::string> estimateColumns = {
 				"funcName", "meanErr", "rmsErr", "maxErr", "failed"
 			};
+
+			/// The files to write estimate results to
+			/// (if empty, all results are output to a generic file).
+			std::vector<std::string> estimateFiles {};
 			
 			/// Results of equations
 			std::map<std::string, std::vector<equation_result>> equationResults {};
@@ -80,6 +73,10 @@ namespace chebyshev {
 			std::vector<std::string> equationColumns = {
 				"funcName", "difference", "tolerance", "failed"
 			};
+
+			/// The files to write equation results to
+			/// (if empty, all results are output to a generic file).
+			std::vector<std::string> equationFiles {};
 
 			/// Target tests marked for execution,
 			/// can be picked by passing test case names
@@ -120,98 +117,34 @@ namespace chebyshev {
 
 		/// Terminate the precision testing environment.
 		///
-		/// @param exit Whether to exit after terminating testing.
+		/// @param exit Whether to exit after terminating the module.
 		inline void terminate(bool exit = true) {
 
 			output::state.quiet = state.quiet;
 
-			if(state.outputToFile) {
-
+			// Output to file is true but no specific files are specified,
+			// add default output file.
+			if(state.outputToFile && !state.estimateFiles.size() && !state.equationFiles.size()) {
 				std::string filename;
-				filename = state.outputFolder + state.filenamePrefix
-					+ state.moduleName + state.filenameSuffix;
-
+				filename = output::state.outputFolder + "prec_" + state.moduleName;
 				output::state.outputFiles[filename] = std::ofstream(filename);
-
-				if(!output::state.outputFiles[filename].is_open()) {
-					std::cout << "Unable to open output file,"
-						" results will NOT be saved!" << std::endl;
-					state.outputToFile = false;
-				}
 			}
 
-			// Print a newline before printing the tables
-			// to space them out
-			std::cout << "\n";
-
-			output::table_state estimateTable {};
-			output::table_state equationTable {};
-
-
-			if(state.estimateResults.size())
-				output::header(estimateTable, state.estimateColumns);
-
-
-			// Print estimate results
-			for (auto it = state.estimateResults.begin();
-				it != state.estimateResults.end(); ++it) {
-
-				const auto res_list = it->second;
-
-				for (size_t i = 0; i < res_list.size(); ++i) {
-
-					// Increase the row index, where 0 is used for
-					// the header and table rows are numbered from 1 on
-					estimateTable.rowIndex++;
-
-					// Check for the last row of the table
-					// (needed to correctly enclose some table formats)
-					if(it != state.estimateResults.end()
-					&& std::next(it) == state.estimateResults.end()
-					&& (i == res_list.size() - 1))
-						estimateTable.isLastRow = true;
-
-					output::print(res_list[i], estimateTable, state.estimateColumns);
-				}
-			}
-
-			if(state.equationResults.size())
-				output::header(equationTable, state.equationColumns);
-
-
-			// Print equation results
-			for (auto it = state.equationResults.begin();
-				it != state.equationResults.end(); ++it) {
-
-				const auto res_list = it->second;
-
-				for (size_t i = 0; i < res_list.size(); ++i) {
-
-					equationTable.rowIndex++;
-
-					if(it != state.equationResults.end()
-					&& std::next(it) == state.equationResults.end()
-					&& (i == res_list.size() - 1))
-						equationTable.isLastRow = true;
-
-					output::print(res_list[i], equationTable, state.equationColumns);
-				}
-			}
+			output::print_results(state.estimateResults, state.estimateColumns, state.estimateFiles);
+			output::print_results(state.equationResults, state.equationColumns, state.equationFiles);
 
 			std::cout << "Finished testing " << state.moduleName << '\n';
 			std::cout << state.totalTests << " total tests, "
 				<< state.failedTests << " failed (" <<
 				(state.failedTests / (double) state.totalTests) * 100 << "%)"
 				<< '\n';
-				
-			for (auto& p : output::state.outputFiles)
-				std::cout << "Results have been saved in " << p.first << std::endl;
 
-			output::terminate();
 			state = prec_state();
 
-			if(exit)
+			if(exit) {
+				output::terminate();
 				std::exit(state.failedTests);
+			}
 		}
 
 
@@ -311,8 +244,8 @@ namespace chebyshev {
 			EndoFunction<double> funcExpected,
 			interval domain,
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
-			unsigned int iterations = CHEBYSHEV_PREC_ITER,
-			FailFunction fail = fail::fail_on_max_err,
+			unsigned int iterations = state.defaultIterations,
+			FailFunction fail = fail::fail_on_max_err(),
 			Estimator<double, double> estimator = estimator::quadrature1D<double>(),
 			bool quiet = false) {
 
