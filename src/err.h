@@ -96,7 +96,7 @@ namespace chebyshev {
 					state.pickedChecks[argv[i]] = true;
 
 			std::cout << "Starting error checking on "
-				<< moduleName << " ...\n" << std::endl;
+				<< moduleName << " ..." << std::endl;
 
 			state.moduleName = moduleName;
 			state.failedChecks = 0;
@@ -127,10 +127,7 @@ namespace chebyshev {
 			output::print_results(state.errnoResults, state.errnoColumns, state.errnoFiles);
 			output::print_results(state.exceptionResults, state.exceptionColumns, state.exceptionFiles);
 
-			std::cout << "Ending error checking on "
-				<< state.moduleName
-				<< " ..." << std::endl;
-
+			std::cout << "Finished error checking " << state.moduleName << " ...\n";
 			std::cout << state.totalChecks
 				<< " total checks, "
 				<< state.failedChecks << " failed ("
