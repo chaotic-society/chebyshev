@@ -65,6 +65,26 @@ prec::setup("example", argc, argv);
 prec::terminate();
 ```
 
+The output of this simple code, using default options, is:
+
+```
+Starting precision testing of the example module ...
+
+ ┌──────────────────────────────────────────────────────────────────────────────┐
+ │         Function │    Mean Err. │     RMS Err. │     Max Err. │       Failed │
+ ├──────────────────────────────────────────────────────────────────────────────┤
+ │                f │      3.3e-12 │      3.5e-12 │      5.1e-12 │         PASS │
+ └──────────────────────────────────────────────────────────────────────────────┘
+
+ ┌───────────────────────────────────────────────────────────────┐
+ │         Function │   Difference │    Tolerance │       Failed │
+ ├───────────────────────────────────────────────────────────────┤
+ │                f │     -0.0e+00 │      2.0e-01 │         PASS │
+ └───────────────────────────────────────────────────────────────┘
+
+Finished testing example
+2 total tests, 0 failed (0%)
+```
 ## Setup and Usage
 Chebyshev is a header-only library, so there is no need to build or install it separately. Simply include the relevant header files in your project and start using the framework straightaway. Only a compiler with C++14 support is needed to use the framework.
 
