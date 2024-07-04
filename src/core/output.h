@@ -26,20 +26,10 @@ namespace chebyshev {
 		/// Custom options for printing a certain field.
 		struct field_options {
 
-			using FieldFormat = std::function<void(std::ostream&, const field_options&)>;
-
 			using FieldInterpreter = std::function<std::string(const std::string&)>;
 			
-			/// Width for the column of the field.
+			/// Width for the column associated with the field.
 			unsigned int columnWidth = CHEBYSHEV_OUTPUT_WIDTH;
-
-			/// A function which changes the state of the output stream
-			/// before printing the field value (defaults to no change).
-			FieldFormat fieldFormat = [](std::ostream& s, const field_options& o) {};
-
-			/// A function which changes the state of the output stream
-			/// before printing the field header title (defaults to no change).
-			FieldFormat fieldTitleFormat = [](std::ostream& s, const field_options& o) {};
 
 			/// A function which gets as input the value of a field as a string
 			/// and returns a new string (e.g. "1" -> "FAIL" in the field "failed").
@@ -50,32 +40,18 @@ namespace chebyshev {
 		};
 
 
-		/// @class table_state
-		/// A structure holding the state of an output table.
-		struct table_state {
-
-			/// Index of the current row, 0 is for headers.
-			unsigned int rowIndex = 0;
-
-			/// Whether the table data has finished printing
-			/// and the current row is the last.
-			bool isLastRow = false;
-			
-			/// Additional custom fields.
-			std::map<std::string, long double> additionalFields {};
-		};
-
-
 		/// @class output_state
 		/// Global state of printing results to standard output.
 		struct output_state {
 
 			using OutputFormat_t = std::function<
 			std::string(
+				const std::vector<std::vector<std::string>>&,
 				const std::vector<std::string>&,
-				const std::vector<std::string>&,
-				const table_state&,
 				const output_state&)>;
+
+			/// Relative or absolute path to output folder
+			std::string outputFolder = "";
 
 			/// Map of field name to output string
 			/// (e.g. "maxErr" -> "Max Err.").
@@ -93,13 +69,11 @@ namespace chebyshev {
 			/// The number of digits to show in scientific notation.
 			unsigned int outputPrecision = 1;
 
-			/// A function which converts the table entries of a row
-			/// to a string to print (e.g. adding separators and padding)
-			/// to standard output.
+			/// The output format to use to print to standard output.
 			OutputFormat_t outputFormat {};
 
 			/// The default output format to use for files,
-			/// when no format has been set.
+			/// when no format has been set for a file.
 			OutputFormat_t defaultFileOutputFormat {};
 
 			/// The output format to use for a specific file, by filename.
@@ -122,179 +96,207 @@ namespace chebyshev {
 
 		/// @namespace format Output formatting functions.
 		namespace format {
+			
 
-			/// Default output format which prints the fields
-			/// separated by the separator string and padding, if enabled.
-			/// The OutputFormat is returned as a lambda function.
-			///
-			/// @param separator The string to print between different fields.
-			/// @param horizontal A character to print horizontal lines.
-			/// @param adjustWidth Whether to add padding to the fields.
-			inline OutputFormat simple(
-				const std::string& separator = " | ",
-				bool adjustWidth = true) {
+			/// Bare bone output format which just prints the result
+			/// table as is, without any formatting beyond adjusting column width.
+			inline OutputFormat barebone() {
 
-				return [=](
-					const std::vector<std::string>& values,
+				return [](
+					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
-					const table_state& table,
 					const output_state& state) -> std::string {
 
-					if(values.size() != fields.size()) {
-						throw std::runtime_error(
-							"values and fields arguments must have the "
-							"same size in format::simple");
-					}
+					if(!table.size())
+						return "";
 
-					std::stringstream s;
-					s << separator;
+					std::stringstream result;
 
-					for (unsigned int i = 0; i < values.size(); ++i) {
-						
-						// Search for custom options for this field
-						const auto opt_it = state.fieldOptions.find(fields[i]);
+					for (size_t i = 0; i < table.size(); ++i) {
 
-						if(opt_it != state.fieldOptions.end()) {
-							
-							// Format table value
-							if(table.rowIndex)
-								opt_it->second.fieldFormat(s, opt_it->second);
-							// Format column title
-							else
-								opt_it->second.fieldTitleFormat(s, opt_it->second);
+						if(table[i].size() != fields.size()) {
+							std::runtime_error(
+								"Number of columns and fields argument must have "
+								"the same size in output::format::barebone");
 						}
 
-						// Adjust field width with a custom value
-						// if it exists, or the default otherwise.
-						if(adjustWidth) {
+						for (size_t j = 0; j < table[i].size(); ++j) {
 
-							if(opt_it != state.fieldOptions.end())
-								s << std::setw(opt_it->second.columnWidth);
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								result << std::setw(it->second.columnWidth)
+								<< it->second.fieldInterpreter(table[i][j]);
 							else
-								s << std::setw(state.defaultColumnWidth);
+								result << std::setw(state.defaultColumnWidth)
+								<< table[i][j] << " ";
 						}
 
-						s << values[i];
-						s << separator;
+						result << "\n";
 					}
 
-
-					// Add header outline
-					if(table.rowIndex == 0) {
-
-						std::string line = s.str();
-						std::string outline = " +";
-						for (size_t i = 4; i < line.size(); ++i)
-							outline += "-";
-						outline += "+";
-
-						return outline + "\n" + line + "\n" + outline;
-					}
-
-					// Add a newline between tables
-					if(table.isLastRow) {
-
-						std::string line = s.str();
-						std::string outline = " +";
-						for (size_t i = 4; i < line.size(); ++i)
-							outline += "-";
-						outline += "+";
-
-						return line + "\n" + outline;
-					}
-
-					return s.str();
+					return result.str();
 				};
 			}
 
 
-			/// Fancy output format using Unicode characters
+			/// Simple output format which prints the fields
+			/// separated by the separator string and padding, if enabled.
+			/// The OutputFormat is returned as a lambda function.
+			/// This format is a good starting point if you want to implement
+			/// your own custom output format.
+			inline OutputFormat simple() {
+
+				return [](
+					const std::vector<std::vector<std::string>>& table,
+					const std::vector<std::string>& fields,
+					const output_state& state) -> std::string {
+
+					if(!table.size())
+						return "";
+
+					std::stringstream result;
+					std::stringstream header_str;
+
+					header_str << " | ";
+
+					for (size_t i = 0; i < table[0].size(); ++i) {
+
+						auto it = state.fieldOptions.find(fields[i]);
+
+						if(it != state.fieldOptions.end())
+							header_str << std::setw(it->second.columnWidth) << table[0][i] << " | ";
+						else
+							header_str << std::setw(state.defaultColumnWidth) << table[0][i] << " | ";
+					}
+
+					std::string header = header_str.str();
+					std::string decoration = " +";
+					for (size_t i = 4; i < header.size(); ++i)
+						decoration += "-";
+					decoration += "+ \n";
+
+					for (size_t i = 1; i < table.size(); ++i) {
+
+						if(table[i].size() != fields.size()) {
+							std::runtime_error(
+								"Number of columns and <fields> argument must have "
+								"the same size in output::format::simple");
+						}
+
+						result << " | ";
+
+						for (size_t j = 0; j < table[i].size(); ++j) {
+
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								result << std::setw(it->second.columnWidth)
+								<< it->second.fieldInterpreter(table[i][j]) << " | ";
+							else
+								result << std::setw(state.defaultColumnWidth)
+								<< table[i][j] << " | ";
+						}
+
+						result << "\n";
+					}
+
+					return decoration
+						+ header + "\n"
+						+ decoration
+						+ result.str()
+						+ decoration;
+				};
+			}
+
+
+			/// Fancy output format which uses Unicode characters
 			/// to print a continuous outline around the table.
 			/// The OutputFormat is returned as a lambda function.
 			inline OutputFormat fancy() {
 
-				return [=](
-					const std::vector<std::string>& values,
+				return [](
+					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
-					const table_state& table,
 					const output_state& state) -> std::string {
 
-					if(values.size() != fields.size()) {
-						throw std::runtime_error(
-							"values and fields arguments must have the "
-							"same size in format::fancy");
-					}
+					if(!table.size())
+						return "";
 
 					// Effective length of the string
 					// (needed because Unicode is used)
 					size_t eff_length = 0;
-					std::stringstream s;
+					std::stringstream header_str;
 					
-					s << " │ ";
+					header_str << " │ ";
 					eff_length += 3;
 
-					for (unsigned int i = 0; i < values.size(); ++i) {
-						
-						// Search for custom options for this field
-						const auto opt_it = state.fieldOptions.find(fields[i]);
+					for (size_t i = 0; i < table[0].size(); ++i) {
 
-						if(opt_it != state.fieldOptions.end()) {
-							
-							// Format table value
-							if(table.rowIndex)
-								opt_it->second.fieldFormat(s, opt_it->second);
-							// Format column title
-							else
-								opt_it->second.fieldTitleFormat(s, opt_it->second);
-						}
+						auto it = state.fieldOptions.find(fields[i]);
 
-						// Adjust field width with a custom value
-						// if it exists, or the default otherwise.
-						if(opt_it != state.fieldOptions.end()) {
-							s << std::setw(opt_it->second.columnWidth);
-							eff_length += opt_it->second.columnWidth;
+						if(it != state.fieldOptions.end()) {
+							header_str << std::setw(it->second.columnWidth)
+							<< table[0][i] << " │ ";
+							eff_length += it->second.columnWidth;
 						} else {
-							s << std::setw(state.defaultColumnWidth);
+							header_str << std::setw(state.defaultColumnWidth)
+							<< table[0][i] << " │ ";
 							eff_length += state.defaultColumnWidth;
 						}
 
-						s << values[i];
-						s << " │ ";
 						eff_length += 3;
 					}
 
-					// Resulting line of formatted text
-					const std::string line = s.str();
+					std::string header = " ┌";
 
-					// Add header outline
-					if(table.rowIndex == 0) {
+					// Upper outline
+					for (size_t i = 4; i < eff_length; ++i)
+						header += "─";
+					header += "┐ \n";
 
-						std::string upper = " ┌";
-						std::string lower = " ├";
+					header += header_str.str() + "\n";
 
-						for (unsigned int i = 4; i < eff_length; ++i) {
-							upper += "─";
-							lower += "─";
+					// Lower outline
+					header += " ├";
+					for (size_t i = 4; i < eff_length; ++i)
+						header += "─";
+					header += "┤ \n";
+
+					std::stringstream result;
+
+					for (size_t i = 1; i < table.size(); ++i) {
+
+						if(table[i].size() != fields.size()) {
+							std::runtime_error(
+								"Number of columns and <fields> argument must have "
+								"the same size in output::format::fancy");
 						}
 
-						upper += "┐ ";
-						lower += "┤ ";
+						result << " │ ";
 
-						return upper + "\n" + line + "\n" + lower;
+						for (size_t j = 0; j < table[i].size(); ++j) {
+
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								result << std::setw(it->second.columnWidth)
+								<< it->second.fieldInterpreter(table[i][j]) << " │ ";
+							else
+								result << std::setw(state.defaultColumnWidth)
+								<< table[i][j] << " │ ";
+						}
+
+						result << "\n";
 					}
 
-					// Add outline at the bottom of the table
-					if(table.isLastRow) {
-
-						std::string outline = " └";
-						for (unsigned int i = 4; i < eff_length; ++i)
-							outline += "─";
-						outline += "┘ ";
-
-						return line + "\n" + outline + "\n";
+					std::string underline = " └";
+					for (size_t i = 4; i < eff_length; ++i) {
+						underline += "─";
 					}
+					underline += "┘ \n";
 
-					return line;
+					return header + result.str() + underline;
 				};
 			}
 
@@ -304,29 +306,38 @@ namespace chebyshev {
 			///
 			/// @param separator The string to print between
 			/// different fields (defaults to ",").
-			inline OutputFormat csv(
-				const std::string& separator = ",") {
+			inline OutputFormat csv(const std::string& separator = ",") {
 
-				return [=](
-					const std::vector<std::string>& values,
+				return [separator](
+					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
-					const table_state& table,
 					const output_state& state) -> std::string {
-
-					if(values.size() != fields.size()) {
-						throw std::runtime_error(
-							"values and fields arguments must have the "
-							"same size in format::csv");
-					}
 
 					std::stringstream s;
 
-					for (unsigned int i = 0; i < values.size(); ++i) {
+					for (size_t i = 0; i < table.size(); ++i) {
 
-						s << "\"" << values[i] << "\"";
+						if(table[i].size() != fields.size()) {
+							throw std::runtime_error(
+								"Number of columns and <fields> argument must have "
+								"the same size in output::format::csv");
+						}
 
-						if(i != values.size() - 1)
-							s << separator;
+
+						for (size_t j = 0; j < table[i].size(); ++j) {
+
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								s << "\"" << it->second.fieldInterpreter(table[i][j]) << "\"";
+							else
+								s << "\"" << table[i][j] << "\"";
+
+							if(j != table[i].size() - 1)
+								s << separator;
+						}
+
+						s << "\n";
 					}
 
 					return s.str();
@@ -339,124 +350,123 @@ namespace chebyshev {
 			inline OutputFormat markdown() {
 
 				return [](
-					const std::vector<std::string>& values,
+					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
-					const table_state& table,
 					const output_state& state) -> std::string {
 
-					if(values.size() != fields.size()) {
-						throw std::runtime_error(
-							"values and fields arguments must have the "
-							"same size in format::markdown");
+					if(!table.size())
+						return "";
+
+					std::stringstream result;
+					std::stringstream header_str;
+
+					header_str << "|";
+
+					for (size_t i = 0; i < table[0].size(); ++i) {
+
+						auto it = state.fieldOptions.find(fields[i]);
+
+						if(it != state.fieldOptions.end())
+							header_str << std::setw(it->second.columnWidth) << table[0][i] << "|";
+						else
+							header_str << std::setw(state.defaultColumnWidth) << table[0][i] << "|";
 					}
 
-					std::stringstream s;
-					s << "|";
+					std::string header = header_str.str();
+					std::string decoration = "|";
+					for (size_t i = 1; i < header.size() - 1; ++i)
+						decoration += (header[i] == '|') ? "|" : "-";
+					decoration += "|\n";
 
-					for (unsigned int i = 0; i < values.size(); ++i) {
+					for (size_t i = 1; i < table.size(); ++i) {
 
-						const auto opt_it = state.fieldOptions.find(fields[i]);
-
-						if(opt_it != state.fieldOptions.end())
-								s << std::setw(opt_it->second.columnWidth);
-							else
-								s << std::setw(state.defaultColumnWidth);
-
-						s << values[i] << "|";
-					}
-
-
-					// Print header underline
-					if(table.rowIndex == 0) {
-
-						std::string line = "|";						
-
-						for (unsigned int i = 0; i < values.size(); ++i) {
-
-							int width = state.defaultColumnWidth;;
-
-							const auto opt_it = state.fieldOptions.find(fields[i]);
-
-							if(opt_it != state.fieldOptions.end())
-								width = opt_it->second.columnWidth;
-
-							line += " ";
-
-							for (int l = 0; l < width - 2; ++l)
-								line += "-";
-							
-							line += " ";
-							line += "|";
+						if(table[i].size() != fields.size()) {
+							std::runtime_error(
+								"Number of columns and <fields> argument must have "
+								"the same size in output::format::markdown");
 						}
 
-						s << "\n" << line;
+						result << "|";
+
+						for (size_t j = 0; j < table[i].size(); ++j) {
+
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								result << std::setw(it->second.columnWidth)
+								<< it->second.fieldInterpreter(table[i][j]) << "|";
+							else
+								result << std::setw(state.defaultColumnWidth)
+								<< table[i][j] << "|";
+						}
+
+						result << "\n";
 					}
 
-					return s.str();
+					return header + "\n" + decoration + result.str();
 				};
 			}
 
 
 			/// Format the table as a LaTeX table in the tabular environment.
 			/// The OutputFormat is returned as a lambda function.
-			///
-			/// @warning The output of this format does not include the
-			/// enclosing statement of the environment, which is "\end{tabular}"
-			/// and it must be added for correct LaTeX output.
 			inline OutputFormat latex() {
 
-				return [](
-					const std::vector<std::string>& values,
+				return [=](
+					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
-					const table_state& table,
 					const output_state& state) -> std::string {
 
-					if(values.size() != fields.size()) {
-						throw std::runtime_error(
-							"values and fields arguments must have the "
-							"same size in format::latex");
+					if(!table.size())
+						return "";
+
+					std::stringstream result;
+					result << "\\begin{tabular}{";
+
+					if(fields.size())
+						result << "|";
+
+					for (unsigned int i = 0; i < fields.size(); ++i)
+						result << "c|";
+
+					result << "}\n\\hline\n";
+
+					for (size_t i = 0; i < table[0].size(); ++i) {
+
+						result << table[0][i];
+
+						if(i != table[0].size() - 1)
+							result << " & ";
+					}
+					result << " \\\\\n\\hline\n";
+
+					for (size_t i = 1; i < table.size(); ++i) {
+
+						if(table[i].size() != fields.size()) {
+							std::runtime_error(
+								"Number of columns and <fields> argument must have "
+								"the same size in output::format::latex");
+						}
+
+						for (size_t j = 0; j < table[i].size(); ++j) {
+
+							auto it = state.fieldOptions.find(fields[j]);
+
+							if(it != state.fieldOptions.end())
+								result << it->second.fieldInterpreter(table[i][j]);
+							else
+								result << table[i][j];
+
+							if(j != table[i].size() - 1)
+								result << " & ";
+						}
+
+						result << " \\\\\n";
 					}
 
+					result << "\\hline\\end{tabular}\n";
 
-					std::stringstream s;
-
-					for (unsigned int i = 0; i < values.size(); ++i) {
-
-						// TO-DO Escape characters such as &, $ and _
-
-						s << values[i];
-
-						if(i != values.size() - 1)
-							s << " & ";
-						else
-							s << " \\\\";
-					}
-
-
-					// Print environment setup
-					if(table.rowIndex == 0) {
-
-						std::string header = "\\begin{tabular}{";
-
-						if(values.size())
-							header += "|";
-
-						for (unsigned int i = 0; i < values.size(); ++i)
-							header += "c|";
-
-						header += "}\n";
-						header += s.str();
-						header += "\n\\hline";
-
-						return header;
-					}
-
-
-					// Close tabular environment on last row
-					if(table.isLastRow)
-						s << "\n\\end{tabular}";
-
-					return s.str();
+					return result.str();
 				};
 			}
 
@@ -474,7 +484,7 @@ namespace chebyshev {
 			state.fieldNames["relErr"] = "Rel. Err.";
 			state.fieldNames["absErr"] = "Abs. Err.";
 			state.fieldNames["tolerance"] = "Tolerance";
-			state.fieldNames["failed"] = "Failed";
+			state.fieldNames["failed"] = "Result";
 			state.fieldNames["iterations"] = "Iterations";
 
 			// Equation fields
@@ -507,7 +517,7 @@ namespace chebyshev {
 				else return "UNKNOWN";
 			};
 
-			// Set the default formats
+			// Set the default output formats
 			state.outputFormat = format::fancy();
 			state.defaultFileOutputFormat = format::csv();
 
@@ -736,99 +746,119 @@ namespace chebyshev {
 		}
 
 
-		/// Write the header of a table of results to all
-		/// output streams with their corresponding format.
+		/// Generate a table of results as a string matrix to pass to
+		/// a specific formatter of OutputFormat type.
 		///
-		/// @param table The state of the result table
-		/// @param columns A list of the fields to include in
-		/// the table columns.
-		inline void header(
-			const table_state& table,
-			std::vector<std::string> columns) {
+		/// @param results The map of test results of any type
+		/// @param fields The fields of the test results to write
+		/// to each column, in order.
+		/// @return A string matrix representing the results as a table.
+		template<typename ResultType>
+		inline auto generate_table(
+			const std::map<std::string, std::vector<ResultType>>& results,
+			const std::vector<std::string>& fields) {
 
-			// Allocate and populate vector of titles
-			// by associating display names to field names
-			std::vector<std::string> titles (columns.size());
+			std::vector<std::vector<std::string>> table;
 
-			for (unsigned int i = 0; i < columns.size(); ++i) {
+			// Construct header
+			std::vector<std::string> header (fields.size());
+			for (size_t i = 0; i < fields.size(); ++i) {
 
-				const auto field_it = state.fieldNames.find(columns[i]);
+				const auto it = state.fieldNames.find(fields[i]);
 
 				// Associate string to field name
-				if(field_it != state.fieldNames.end())
-					titles[i] = field_it->second;
+				if(it != state.fieldNames.end())
+					header[i] = it->second;
 				else
-					titles[i] = columns[i];
+					header[i] = fields[i];
 			}
+			table.emplace_back(header);
 
-			// Print to standard output if not quiet
-			if(!state.quiet) {
-				std::cout << state.outputFormat(titles, columns, table, state) << std::endl;
-			}
+			// Construct rows
+			for (const auto& p : results) {
+				for (const auto& result : p.second) {
 
-			// Print to each file with its output format
-			for (auto& p : state.outputFiles) {
+					std::vector<std::string> row (fields.size());
 
-				auto it = state.fileOutputFormat.find(p.first);
+					for (size_t i = 0; i < fields.size(); ++i)
+						row[i] = resolve_field(fields[i], result);
 
-				if(it != state.fileOutputFormat.end())
-					p.second << (it->second)(titles, columns, table, state) << std::endl;
-				else
-					p.second << state.defaultFileOutputFormat(titles, columns, table, state) << std::endl;
-
-			}
-		}
-
-
-		/// Print a row of information about
-		/// a result of arbitrary type (e.g. estimate_result).
-		///
-		/// @param res The result to write to output
-		/// @param table The state of the table
-		/// @param columns A list of the fields to include in
-		/// the table columns.
-		template<typename ResultType>
-		inline void print(
-			ResultType res,
-			const table_state& table,
-			std::vector<std::string> columns) {
-
-			// Allocate vector of titles
-			std::vector<std::string> values (columns.size());
-
-			// Resolve fields to their values
-			for (unsigned int i = 0; i < columns.size(); ++i) {
-
-				auto opt_it = state.fieldOptions.find(columns[i]);
-
-				// Apply a field interpreter if it is specified
-				if(opt_it != state.fieldOptions.end()) {
-					values[i] = opt_it->second.fieldInterpreter(
-						resolve_field(columns[i], res));
-				} else {
-					values[i] = resolve_field(columns[i], res);
+					table.emplace_back(row);
 				}
 			}
 
-			// Print row to standard output
-			if(!state.quiet) {
-				std::cout << state.outputFormat(values, columns, table, state) << std::endl;
-			}
-
-			for (auto& p : state.outputFiles) {
-
-				auto it = state.fileOutputFormat.find(p.first);
-
-				if(it != state.fileOutputFormat.end())
-					p.second << (it->second)(values, columns, table, state) << std::endl;
-				else
-					p.second << state.defaultFileOutputFormat(values, columns, table, state) << std::endl;
-			}
+			return table;
 		}
 
 
-	}
+		/// Print the test results to standard output and output files
+		/// with their given formats, defaulting to state.outputFiles
+		/// if no filenames are specified.
+		///
+		/// @param results The map of test results, of any type.
+		/// @param fields The fields of the test results to write, in order.
+		/// @param filenames The names of the output files
+		/// (if this list is empty, state.outputFiles will be used).
+		template<typename ResultType>
+		inline void print_results(
+			const std::map<std::string, std::vector<ResultType>>& results,
+			const std::vector<std::string>& fields,
+			const std::vector<std::string>& filenames) {
 
+			// Table data as a string matrix
+			std::vector<std::vector<std::string>> table = generate_table(results, fields);
+
+			// Write to standard output
+			if(!state.quiet)
+				std::cout << "\n" << state.outputFormat(table, fields, state) << "\n";
+
+			// Write to the specified filenames or to the
+			// default output files if no filename is specified.
+			if(filenames.size()) {
+
+				for (size_t i = 0; i < filenames.size(); ++i) {
+
+					std::ofstream file (filenames[i]);
+					if(!file.is_open()) {
+						std::cout << "Cannot write to output file: " << filenames[i] << std::endl;
+						continue;
+					}
+
+					// Apply formatting according to set options
+					auto it = state.fileOutputFormat.find(filenames[i]);
+
+					if(it != state.fileOutputFormat.end())
+						file << it->second(table, fields, state);
+					else
+						file << state.defaultFileOutputFormat(table, fields, state);
+
+					std::cout << "Results have been saved in: " << filenames[i] << std::endl;
+				}
+
+			} else {
+
+				for (auto& p : state.outputFiles) {
+
+					if(!p.second.is_open()) {
+						std::cout << "Cannot write to output file: " << p.first << std::endl;
+						continue;
+					}
+					
+					// Apply formatting according to set options
+					auto it = state.fileOutputFormat.find(p.first);
+
+					if(it != state.fileOutputFormat.end())
+						p.second << it->second(table, fields, state);
+					else
+						p.second << state.defaultFileOutputFormat(table, fields, state);
+
+					std::cout << "Results have been saved in: " << p.first << std::endl;
+				}
+
+			}
+
+		}
+	}
 }
 
 #endif
