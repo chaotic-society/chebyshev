@@ -126,7 +126,7 @@ namespace chebyshev {
 			// add default output file.
 			if(state.outputToFile && !state.estimateFiles.size() && !state.equationFiles.size()) {
 				std::string filename;
-				filename = output::state.outputFolder + "prec_" + state.moduleName;
+				filename = output::state.outputFolder + state.moduleName + "_results";
 				output::state.outputFiles[filename] = std::ofstream(filename);
 			}
 

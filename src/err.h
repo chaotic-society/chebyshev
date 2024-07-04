@@ -119,7 +119,7 @@ namespace chebyshev {
 			if(state.outputToFile && !state.assertFiles.size()
 				&& !state.errnoFiles.size() && !state.exceptionFiles.size()) {
 				std::string filename;
-				filename = output::state.outputFolder + "err_" + state.moduleName;
+				filename = output::state.outputFolder + state.moduleName + "_results";
 				output::state.outputFiles[filename] = std::ofstream(filename);
 			}
 

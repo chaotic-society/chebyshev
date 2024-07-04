@@ -69,13 +69,11 @@ namespace chebyshev {
 			/// The number of digits to show in scientific notation.
 			unsigned int outputPrecision = 1;
 
-			/// A function which converts the table entries of a row
-			/// to a string to print (e.g. adding separators and padding)
-			/// to standard output.
+			/// The output format to use to print to standard output.
 			OutputFormat_t outputFormat {};
 
 			/// The default output format to use for files,
-			/// when no format has been set.
+			/// when no format has been set for a file.
 			OutputFormat_t defaultFileOutputFormat {};
 
 			/// The output format to use for a specific file, by filename.
@@ -212,7 +210,7 @@ namespace chebyshev {
 			}
 
 
-			/// Fancy output format using Unicode characters
+			/// Fancy output format which uses Unicode characters
 			/// to print a continuous outline around the table.
 			/// The OutputFormat is returned as a lambda function.
 			inline OutputFormat fancy() {
@@ -310,7 +308,7 @@ namespace chebyshev {
 			/// different fields (defaults to ",").
 			inline OutputFormat csv(const std::string& separator = ",") {
 
-				return [&](
+				return [separator](
 					const std::vector<std::vector<std::string>>& table,
 					const std::vector<std::string>& fields,
 					const output_state& state) -> std::string {
@@ -328,12 +326,15 @@ namespace chebyshev {
 
 						for (size_t j = 0; j < table[i].size(); ++j) {
 
-							auto it = state.fieldOptions.find(fields[i]);
+							auto it = state.fieldOptions.find(fields[j]);
 
-							if(it != state.fieldOptions.end() && i)
-								s << "\"" << it->second.fieldInterpreter(table[i][j]) << "\"" << separator;
+							if(it != state.fieldOptions.end())
+								s << "\"" << it->second.fieldInterpreter(table[i][j]) << "\"";
 							else
-								s << "\"" << table[i][j] << "\"" << separator;
+								s << "\"" << table[i][j] << "\"";
+
+							if(j != table[i].size() - 1)
+								s << separator;
 						}
 
 						s << "\n";
@@ -409,10 +410,6 @@ namespace chebyshev {
 
 			/// Format the table as a LaTeX table in the tabular environment.
 			/// The OutputFormat is returned as a lambda function.
-			///
-			/// @warning The output of this format does not include the
-			/// enclosing statement of the environment, which is "\end{tabular}"
-			/// and it must be added for correct LaTeX output.
 			inline OutputFormat latex() {
 
 				return [=](
