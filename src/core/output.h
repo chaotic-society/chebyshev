@@ -124,12 +124,15 @@ namespace chebyshev {
 
 							auto it = state.fieldOptions.find(fields[j]);
 
-							if(it != state.fieldOptions.end())
+							if(it != state.fieldOptions.end() && i)
 								result << std::setw(it->second.columnWidth)
-								<< it->second.fieldInterpreter(table[i][j]);
+								<< std::left << it->second.fieldInterpreter(table[i][j]);
+							else if(it != state.fieldOptions.end())
+								result << std::setw(it->second.columnWidth)
+								<< std::left << table[i][j];
 							else
 								result << std::setw(state.defaultColumnWidth)
-								<< table[i][j] << " ";
+								<< std::left << table[i][j];
 						}
 
 						result << "\n";
@@ -328,7 +331,7 @@ namespace chebyshev {
 
 							auto it = state.fieldOptions.find(fields[j]);
 
-							if(it != state.fieldOptions.end())
+							if(it != state.fieldOptions.end() && i)
 								s << "\"" << it->second.fieldInterpreter(table[i][j]) << "\"";
 							else
 								s << "\"" << table[i][j] << "\"";
@@ -367,9 +370,13 @@ namespace chebyshev {
 						auto it = state.fieldOptions.find(fields[i]);
 
 						if(it != state.fieldOptions.end())
-							header_str << std::setw(it->second.columnWidth) << table[0][i] << "|";
+							header_str << std::setw(it->second.columnWidth)
+							<< std::left << table[0][i];
 						else
-							header_str << std::setw(state.defaultColumnWidth) << table[0][i] << "|";
+							header_str << std::setw(state.defaultColumnWidth)
+							<< std::left << table[0][i];
+
+						header_str << "|";
 					}
 
 					std::string header = header_str.str();
@@ -394,10 +401,12 @@ namespace chebyshev {
 
 							if(it != state.fieldOptions.end())
 								result << std::setw(it->second.columnWidth)
-								<< it->second.fieldInterpreter(table[i][j]) << "|";
+								<< std::left << it->second.fieldInterpreter(table[i][j]);
 							else
 								result << std::setw(state.defaultColumnWidth)
-								<< table[i][j] << "|";
+								<< std::left << table[i][j];
+
+							result << "|";
 						}
 
 						result << "\n";
@@ -464,7 +473,7 @@ namespace chebyshev {
 						result << " \\\\\n";
 					}
 
-					result << "\\hline\\end{tabular}\n";
+					result << "\\hline\n\\end{tabular}\n";
 
 					return result.str();
 				};

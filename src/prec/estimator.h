@@ -97,15 +97,68 @@ namespace prec {
 
 
 		/// Use crude Monte Carlo integration to approximate error integrals
-		/// for multivariate real functions.
+		/// for univariate real functions.
 		template<typename FloatType = double>
+		inline auto montecarlo1D() {
+
+			// Return an 1-dimensional Monte Carlo estimator
+			// as a lambda function
+			return [](
+				EndoFunction<FloatType> funcApprox,
+				EndoFunction<FloatType> fExpected,
+				estimate_options<FloatType, FloatType> options) {
+
+				if(options.domain.size() != 1)
+					throw std::runtime_error(
+						"The estimation domain's dimension must be 1"
+						"in prec::estimator::montecarlo1D");
+
+				FloatType sum = 0;
+				FloatType sum_sqr = 0;
+				FloatType sum_abs = 0;
+				FloatType max = 0;
+				const FloatType length = options.domain[0].length();
+
+				for (int i = 0; i < options.iterations; ++i) {
+					
+					FloatType x = random::uniform(options.domain[0].a, options.domain[0].b);
+
+					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
+
+					if(max < diff)
+						max = diff;
+
+					sum += diff;
+					sum_sqr += diff * diff;
+					sum_abs += std::abs(funcExpected(x));
+				}
+
+				estimate_result res {};
+				res.maxErr = max;
+				res.meanErr = sum / options.iterations;
+				res.absErr = sum * (length / options.iterations);
+				res.rmsErr = sum_sqr * (length / options.iterations);
+				res.relErr = sum / sum_abs;
+
+				return res;
+			};
+		}
+
+
+		/// Use crude Monte Carlo integration to approximate error integrals
+		/// for multivariate real functions.
+		///
+		/// @param dimensions The dimension of the space of inputs
+		/// @note You may specify a custom vector type to use as input,
+		/// but it must provide a constructor taking in the number of elements.
+		template<typename FloatType = double, typename Vector = std::vector<FloatType>>
 		inline auto montecarlo(unsigned int dimensions) {
 
 			// Return an n-dimensional Monte Carlo estimator
 			// as a lambda function
 			return [dimensions](
-				std::function<FloatType(std::vector<FloatType>)> funcApprox,
-				std::function<FloatType(std::vector<FloatType>)> fExpected,
+				std::function<FloatType(Vector)> funcApprox,
+				std::function<FloatType(Vector)> fExpected,
 				estimate_options<FloatType, FloatType> options) {
 
 				if(options.domain.size() != dimensions)
@@ -124,11 +177,11 @@ namespace prec {
 				for (interval k : options.domain)
 					volume *= k.length();
 
-				std::vector<FloatType> x (dimensions);
+				Vector x (dimensions);
 
 				for (int i = 0; i < options.iterations; ++i) {
 					
-					random::uniform(x, options.domain);
+					random::sample_uniform(x, options.domain);
 
 					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
 

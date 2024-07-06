@@ -23,6 +23,10 @@ double absolute(double x) {
 	return std::abs(x) - 1E-09;
 }
 
+double almost_zero(double x) {
+	return 1E-10 * random::uniform(-1, 1);
+}
+
 
 int main(int argc, char const *argv[]) {
 
@@ -49,6 +53,9 @@ int main(int argc, char const *argv[]) {
 
 		// Precision test an idempotent function
 		prec::property::idempotence("absolute(x)", absolute, opt);
+
+		// Precision test an homogeneous function
+		prec::property::homogeneous("almost_zero(x)", almost_zero, opt);
 
 	// Stop precision testing
 	prec::terminate();

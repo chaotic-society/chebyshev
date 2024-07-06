@@ -50,8 +50,7 @@ namespace chebyshev {
 		/// @param b The upper extreme of the interval
 		/// @return A pseudorandom number uniformly
 		/// distributed over (a, b).
-		template<typename FloatType>
-		inline FloatType uniform(FloatType a, FloatType b) {
+		inline long double uniform(long double a, long double b) {
 			return (rand() / (long double) RAND_MAX) * (b - a) + a;
 		}
 

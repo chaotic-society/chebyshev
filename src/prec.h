@@ -314,6 +314,41 @@ namespace chebyshev {
 
 				estimate(name, funcApprox, funcExpected, opt);
 			}
+
+
+			/// Precision testing of an function which is
+			/// homogeneous over the domain. The function is applied
+			/// to input values and it is checked against zero.
+			/// The zero value is constructed as OutputType(0.0), but may
+			/// be specified as an additional argument.
+			///
+			/// @param name The name of the test case.
+			/// @param hom The homogeneous function to test.
+			/// @param opt The options for estimation.
+			/// @param zero_element The zero element of type OutputType
+			/// (defaults to OutputType(0.0)).
+			template<typename InputType, typename OutputType = InputType,
+			typename Homogeneous = std::function<OutputType(InputType)>>
+			inline void homogeneous(
+				const std::string& name,
+				Homogeneous hom,
+				const estimate_options<InputType, OutputType>& opt,
+				OutputType zero_element = OutputType(0.0)) {
+
+				// Apply the homogeneous function
+				std::function<OutputType(InputType)> funcApprox =
+					[&](InputType x) -> OutputType {
+						return hom(x);
+					};
+
+				// And compare it to the zero element
+				std::function<OutputType(InputType)> funcExpected =
+					[&](InputType x) -> OutputType {
+						return zero_element;
+					};
+
+				estimate(name, funcApprox, funcExpected, opt);
+			}
 		}
 
 
