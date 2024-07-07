@@ -36,7 +36,8 @@ int main(int argc, char const *argv[]) {
 		// Check that a function throws an exception
 		err::check_exception("g(x)", g, -1);
 
-		// Check that a function throws an exception
+		// Check that a function throws an exception,
+		// controlling its type.
 		err::check_exception<std::runtime_error>("g(x)", g, -2);
 
 	// Stop error checking

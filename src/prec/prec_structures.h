@@ -168,16 +168,35 @@ namespace chebyshev {
 		template<typename T>
 		struct equation_options {
 			
+			/// Tolerance on the absolute difference.
+			long double tolerance = 0;
+
 			/// Distance function to measure the distance
 			/// between the expected and evaluated value.
 			DistanceFunction<T> distance;
 
-			/// Tolerance on the absolute difference.
-			long double tolerance = 0;
-
 			/// Print to standard output or not.
 			bool quiet = false;
 
+
+			/// Default constructor for equation options.
+			equation_options() {}
+
+
+			/// Construct equation options from the tolerance,
+			/// setting the distance function to a simple Euclidean distance.
+			equation_options(long double tolerance) : tolerance(tolerance) {
+				distance = [](T x, T y) {
+					const auto diff = x - y;
+					return diff > 0 ? diff : -diff;
+				};
+			}
+
+
+			/// Construct equation options from the tolerance,
+			/// the distance function and the quiet flag (defaults to false).
+			equation_options(long double tolerance, DistanceFunction<T> dist, bool quiet = false)
+			: tolerance(tolerance), distance(dist), quiet(quiet) {}
 		};
 
 	}

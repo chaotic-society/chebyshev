@@ -71,17 +71,20 @@ The output of this simple code, using default options, is:
 Starting precision testing of the example module ...
 
  ┌──────────────────────────────────────────────────────────────────────────────┐
- │         Function │    Mean Err. │     RMS Err. │     Max Err. │       Failed │
+ │         Function │    Mean Err. │     RMS Err. │     Max Err. │       Result │
  ├──────────────────────────────────────────────────────────────────────────────┤
  │                f │      3.3e-12 │      3.5e-12 │      5.1e-12 │         PASS │
  └──────────────────────────────────────────────────────────────────────────────┘
 
+Results have been saved in: example_results
+
  ┌───────────────────────────────────────────────────────────────┐
- │         Function │   Difference │    Tolerance │       Failed │
+ │         Function │   Difference │    Tolerance │       Result │
  ├───────────────────────────────────────────────────────────────┤
  │                f │     -0.0e+00 │      2.0e-01 │         PASS │
  └───────────────────────────────────────────────────────────────┘
 
+Results have been saved in: example_results
 Finished testing example
 2 total tests, 0 failed (0%)
 ```

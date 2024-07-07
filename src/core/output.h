@@ -814,6 +814,10 @@ namespace chebyshev {
 			const std::vector<std::string>& fields,
 			const std::vector<std::string>& filenames) {
 
+			// Skip output on no test case results
+			if(results.empty())
+				return;
+
 			// Table data as a string matrix
 			std::vector<std::vector<std::string>> table = generate_table(results, fields);
 
