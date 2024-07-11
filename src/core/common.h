@@ -38,6 +38,9 @@
 #include "../prec/interval.h"
 
 
+#define CAST_LAMBDA(func, type) [=](type x){ return func(static_cast<type>(x)); }
+
+
 namespace chebyshev {
 
 

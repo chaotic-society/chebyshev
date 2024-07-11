@@ -28,7 +28,7 @@ unsigned int h(unsigned int n) {
 int main(int argc, char const *argv[]) {
 
 	// Setup benchmarking
-	benchmark::setup("chebyshev", argc, argv);
+	benchmark::setup("example", argc, argv);
 
 		// Set options for multiple benchmarks
 		// with a benchmark_options structure,

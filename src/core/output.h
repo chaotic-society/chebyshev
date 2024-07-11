@@ -37,6 +37,12 @@ namespace chebyshev {
 
 			/// Additional custom options.
 			std::map<std::string, long double> additionalFields {};
+
+			// Default constructor
+			field_options() {}
+
+			// Construct field options from the custom column width.
+			field_options(unsigned int columnWidth) : columnWidth(columnWidth) {}
 		};
 
 

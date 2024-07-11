@@ -25,7 +25,7 @@ double g(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup error checking
-	err::setup("chebyshev");
+	err::setup("example");
 
 		// Make an assert
 		err::assert("std::sqrt", std::sqrt(4) == 2, "sqrt(4) is 2");

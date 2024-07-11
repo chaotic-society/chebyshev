@@ -156,11 +156,13 @@ namespace chebyshev {
 		/// @param funcApprox The approximation to test
 		/// @param funcExpected The expected result
 		/// @param opt The options for the estimation
-		template<typename R, typename ...Args>
+		template<typename R, typename ...Args,
+			typename Function1 = std::function<R(Args...)>,
+			typename Function2 = Function1>
 		inline void estimate(
 			const std::string& name,
-			std::function<R(Args...)> funcApprox,
-			std::function<R(Args...)> funcExpected,
+			Function1 funcApprox,
+			Function2 funcExpected,
 			estimate_options<R, Args...> opt) {
 
 			// Skip the test case if any tests have been picked
@@ -201,11 +203,13 @@ namespace chebyshev {
 		/// the test failed.
 		/// @param estimator The precision estimator to use.
 		/// @param quiet Whether to output the result.
-		template<typename R, typename ...Args>
+		template<typename R, typename ...Args,
+			typename Function1 = std::function<R(Args...)>,
+			typename Function2 = Function1>
 		inline void estimate(
 			const std::string& name,
-			std::function<R(Args...)> funcApprox,
-			std::function<R(Args...)> funcExpected,
+			Function1 funcApprox,
+			Function2 funcExpected,
 			std::vector<interval> domain,
 			long double tolerance, unsigned int iterations,
 			FailFunction fail,

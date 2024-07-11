@@ -188,7 +188,7 @@ namespace chebyshev {
 			equation_options(long double tolerance) : tolerance(tolerance) {
 				distance = [](T x, T y) {
 					const auto diff = x - y;
-					return diff > 0 ? diff : -diff;
+					return (long double) (diff > 0 ? diff : -diff);
 				};
 			}
 

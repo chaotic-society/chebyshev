@@ -17,7 +17,6 @@ namespace benchmark {
 	namespace generator {
 
 		/// Uniform generator over a domain
-		template<typename FloatType = long double>
 		inline auto uniform1D(long double a, long double b) {
 
 			return [=](unsigned int i) {

@@ -31,7 +31,7 @@ double almost_zero(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup the precision testing environment
-	prec::setup("chebyshev", argc, argv);
+	prec::setup("example", argc, argv);
 
 		// Estimate errors on g(x) on [0, 100]
 		prec::estimate("g(x)", g, f, prec::interval(0, 100));
