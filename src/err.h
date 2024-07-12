@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <iostream>
 
 #include "./core/common.h"
 #include "./core/random.h"

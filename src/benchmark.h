@@ -7,6 +7,7 @@
 #define CHEBYSHEV_BENCHMARK_H
 
 #include <ctime>
+#include <iostream>
 
 #include "./core/random.h"
 #include "./benchmark/timer.h"

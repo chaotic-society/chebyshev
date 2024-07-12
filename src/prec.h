@@ -367,7 +367,7 @@ namespace chebyshev {
 		inline void equals(
 			const std::string& name,
 			const T& evaluated, const T& expected,
-			equation_options<T> opt) {
+			equation_options<T> opt = equation_options<T>()) {
 
 			// Skip the test case if any tests have been picked
 			// and this one was not picked.
