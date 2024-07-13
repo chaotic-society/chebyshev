@@ -267,6 +267,31 @@ namespace chebyshev {
 		namespace property {
 
 			/// Precision testing of an endofunction which is
+			/// equivalent to the identity.
+			///
+			/// @param name The name of the test case.
+			/// @param id The identity to test.
+			/// @param opt The options for estimation.
+			template<typename Type, typename Identity = EndoFunction<Type>>
+			inline void identity(
+				const std::string& name,
+				Identity id,
+				const estimate_options<Type, Type>& opt) {
+
+				// Apply the identity function
+				EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+					return id(x);
+				};
+
+				// And compare it to the identity
+				EndoFunction<Type> funcExpected = [](Type x) -> Type {
+					return x;
+				};
+
+				estimate(name, funcApprox, funcExpected, opt);
+			}
+
+			/// Precision testing of an endofunction which is
 			/// an involution. The function is applied two times
 			/// to input values and it is checked against the identity.
 			///
@@ -472,9 +497,10 @@ namespace chebyshev {
 
 		/// Evaluate multiple pairs of values for equivalence
 		/// up to the given tolerance (e.g. for residual testing).
+		template<typename T = double>
 		inline void equals(
 			const std::string& name,
-			std::vector<std::array<long double, 2>> values,
+			std::vector<std::array<T, 2>> values,
 			long double tolerance = state.defaultTolerance,
 			bool quiet = false) {
 
@@ -487,8 +513,6 @@ namespace chebyshev {
 			for (const auto& v : values)
 				equals(name, v[0], v[1], tolerance, quiet);
 		}
-
-
 	}
 }
 

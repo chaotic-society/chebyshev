@@ -98,8 +98,14 @@ namespace chebyshev {
 				return (r.maxErr > r.tolerance) || (r.maxErr != r.maxErr);
 			};
 
-			/// The precision estimator to use.
-			Estimator_t estimator;
+			/// The precision estimator to use
+			/// (defaults to a dummy estimator)
+			Estimator_t estimator = [](
+				std::function<R(Args...)> f1,
+				std::function<R(Args...)> f2,
+				estimate_options opt) {
+				return estimate_result();
+			};
 
 			/// Whether to show the test result or not.
 			bool quiet = false;
@@ -173,7 +179,10 @@ namespace chebyshev {
 
 			/// Distance function to measure the distance
 			/// between the expected and evaluated value.
-			DistanceFunction<T> distance;
+			DistanceFunction<T> distance = [](T x, T y) {
+				const auto diff = x - y;
+				return (long double) (diff > 0 ? diff : -diff);
+			};
 
 			/// Print to standard output or not.
 			bool quiet = false;
@@ -185,12 +194,7 @@ namespace chebyshev {
 
 			/// Construct equation options from the tolerance,
 			/// setting the distance function to a simple Euclidean distance.
-			equation_options(long double tolerance) : tolerance(tolerance) {
-				distance = [](T x, T y) {
-					const auto diff = x - y;
-					return (long double) (diff > 0 ? diff : -diff);
-				};
-			}
+			equation_options(long double tolerance) : tolerance(tolerance) {}
 
 
 			/// Construct equation options from the tolerance,
