@@ -135,7 +135,7 @@ namespace chebyshev {
 
 			std::cout << "Finished testing " << state.moduleName << '\n';
 			std::cout << state.totalTests << " total tests, "
-				<< state.failedTests << " failed (" <<
+				<< state.failedTests << " failed (" << std::setprecision(3) <<
 				(state.failedTests / (double) state.totalTests) * 100 << "%)"
 				<< '\n';
 
@@ -178,6 +178,7 @@ namespace chebyshev {
 			res.domain = opt.domain;
 			res.tolerance = opt.tolerance;
 			res.quiet = opt.quiet;
+			res.iterations = opt.iterations;
 
 			// Use the fail function to determine whether the test failed.
 			res.failed = opt.fail(res);

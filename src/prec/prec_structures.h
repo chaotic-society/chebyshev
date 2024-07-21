@@ -59,7 +59,7 @@ namespace chebyshev {
 			bool quiet = false;
 
 			/// Total number of iterations for integral quadrature.
-			unsigned int iterations;
+			unsigned int iterations {0};
 		};
 
 
@@ -86,6 +86,15 @@ namespace chebyshev {
 			/// The domain of estimation.
 			std::vector<interval> domain {};
 
+			/// The precision estimator to use
+			/// (defaults to a dummy estimator)
+			Estimator_t estimator = [](
+				std::function<R(Args...)> f1,
+				std::function<R(Args...)> f2,
+				estimate_options opt) {
+				return estimate_result();
+			};
+
 			/// The tolerance to use to determine whether the test failed.
 			long double tolerance = CHEBYSHEV_PREC_TOLERANCE;
 
@@ -96,15 +105,6 @@ namespace chebyshev {
 			/// (defaults to fail::fail_on_max_err).
 			FailFunction fail = [](const estimate_result& r) {
 				return (r.maxErr > r.tolerance) || (r.maxErr != r.maxErr);
-			};
-
-			/// The precision estimator to use
-			/// (defaults to a dummy estimator)
-			Estimator_t estimator = [](
-				std::function<R(Args...)> f1,
-				std::function<R(Args...)> f2,
-				estimate_options opt) {
-				return estimate_result();
 			};
 
 			/// Whether to show the test result or not.
@@ -124,11 +124,25 @@ namespace chebyshev {
 			: domain({omega}), estimator(estimator) {}
 
 
+			/// Construct estimate options from a one-dimensional
+			/// interval domain, an estimator and the tolerance,
+			/// with other fields equal to the default values.
+			estimate_options(interval omega, Estimator_t estimator, long double tolerance)
+			: domain({omega}), estimator(estimator), tolerance(tolerance) {}
+
+
 			/// Construct estimate options from a multidimensional
 			/// interval domain and an estimator, with other fields
 			/// equal to the default values.
 			estimate_options(std::vector<interval> omega, Estimator_t estimator)
 			: domain(omega), estimator(estimator) {}
+
+
+			/// Construct estimate options from a multidimensional
+			/// interval domain, an estimator and a tolerance, with other fields
+			/// equal to the default values.
+			estimate_options(std::vector<interval> omega, Estimator_t estimator, long double tolerance)
+			: domain(omega), estimator(estimator), tolerance(tolerance) {}
 			
 		};
 

@@ -116,7 +116,7 @@ namespace chebyshev {
 
 			std::cout << "Finished benchmarking " << state.moduleName << '\n';
 			std::cout << state.totalBenchmarks << " total benchmarks, "
-				<< state.failedBenchmarks << " failed (" <<
+				<< state.failedBenchmarks << " failed (" << std::setprecision(3) << 
 				(state.failedBenchmarks / (double) state.totalBenchmarks) * 100 << "%)"
 				<< '\n';
 
