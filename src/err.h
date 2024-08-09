@@ -41,12 +41,15 @@ namespace chebyshev {
 			/// Whether to print to an output file.
 			bool outputToFile = true;
 
+			/// The files to write all error checking results to.
+			std::vector<std::string> outputFiles {};
+
 			/// Results of checking assertions
 			std::map<std::string, std::vector<assert_result>> assertResults {};
 
 			/// The files to write assertion results results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> assertFiles {};
+			std::vector<std::string> assertOutputFiles {};
 
 			/// Default columns to print for assertions.
 			std::vector<std::string> assertColumns = {
@@ -56,9 +59,9 @@ namespace chebyshev {
 			/// Results of checking errno
 			std::map<std::string, std::vector<errno_result>> errnoResults {};
 
-			/// The files to write errno results results to
+			/// The files to write errno checking results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> errnoFiles {};
+			std::vector<std::string> errnoOutputFiles {};
 
 			/// Default columns to print for errno checks.
 			std::vector<std::string> errnoColumns = {
@@ -70,7 +73,7 @@ namespace chebyshev {
 
 			/// The files to write exception results results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> exceptionFiles {};
+			std::vector<std::string> exceptionOutputFiles {};
 
 			/// Default columns to print for exception checks.
 			std::vector<std::string> exceptionColumns = {
@@ -115,18 +118,38 @@ namespace chebyshev {
 
 			output::state.quiet = state.quiet;
 
-			// Output to file is true but no specific files are specified,
-			// add default output file.
-			if(state.outputToFile && !state.assertFiles.size()
-				&& !state.errnoFiles.size() && !state.exceptionFiles.size()) {
-				std::string filename;
-				filename = output::state.outputFolder + state.moduleName + "_results";
-				output::state.outputFiles[filename] = std::ofstream(filename);
+			// Output to file is true but no specific files are specified, add default output file.
+			if(	 state.outputToFile &&
+				!state.assertOutputFiles.size() &&
+				!state.errnoOutputFiles.size() &&
+				!state.exceptionOutputFiles.size() &&
+				!state.outputFiles.size()) {
+				
+				state.outputFiles = { state.moduleName + "_results" };
 			}
 
-			output::print_results(state.assertResults, state.assertColumns, state.assertFiles);
-			output::print_results(state.errnoResults, state.errnoColumns, state.errnoFiles);
-			output::print_results(state.exceptionResults, state.exceptionColumns, state.exceptionFiles);
+			std::vector<std::string> outputFiles;
+
+			// Print assert results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.assertOutputFiles.begin(), state.assertOutputFiles.end());
+
+
+			output::print_results(state.assertResults, state.assertColumns, outputFiles);
+
+			// Print errno checking results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.errnoOutputFiles.begin(), state.errnoOutputFiles.end());
+
+
+			output::print_results(state.errnoResults, state.errnoColumns, outputFiles);
+
+			// Print exception checking results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.exceptionOutputFiles.begin(), state.exceptionOutputFiles.end());
+
+
+			output::print_results(state.exceptionResults, state.exceptionColumns, outputFiles);
 
 			std::cout << "Finished error checking " << state.moduleName << " ...\n";
 			std::cout << state.totalChecks
@@ -135,6 +158,7 @@ namespace chebyshev {
 				<< (state.failedChecks / (double) state.totalChecks * 100.0)
 				<< "%)" << std::endl;
 
+			// Reset module information
 			state = err_state();
 
 			if(exit) {

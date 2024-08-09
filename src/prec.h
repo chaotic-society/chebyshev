@@ -54,6 +54,9 @@ namespace chebyshev {
 			/// Default tolerance on max absolute error
 			long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
 
+			/// The files to write all precision testing results to
+			std::vector<std::string> outputFiles {};
+
 			/// Results of precision testing
 			std::map<std::string, std::vector<estimate_result>> estimateResults {};
 
@@ -64,7 +67,7 @@ namespace chebyshev {
 
 			/// The files to write estimate results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> estimateFiles {};
+			std::vector<std::string> estimateOutputFiles {};
 			
 			/// Results of equations
 			std::map<std::string, std::vector<equation_result>> equationResults {};
@@ -76,7 +79,7 @@ namespace chebyshev {
 
 			/// The files to write equation results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> equationFiles {};
+			std::vector<std::string> equationOutputFiles {};
 
 			/// Target tests marked for execution,
 			/// can be picked by passing test case names
@@ -115,23 +118,36 @@ namespace chebyshev {
 		}
 
 
-		/// Terminate the precision testing environment.
+		/// Terminate the precision testing environment,
+		/// printing the results to standard output and output files.
 		///
 		/// @param exit Whether to exit after terminating the module.
 		inline void terminate(bool exit = true) {
 
 			output::state.quiet = state.quiet;
 
-			// Output to file is true but no specific files are specified,
-			// add default output file.
-			if(state.outputToFile && !state.estimateFiles.size() && !state.equationFiles.size()) {
-				std::string filename;
-				filename = output::state.outputFolder + state.moduleName + "_results";
-				output::state.outputFiles[filename] = std::ofstream(filename);
+			// Output to file is true but no specific files are specified, add default output file.
+			if(	 state.outputToFile &&
+				!state.estimateOutputFiles.size() &&
+				!state.equationOutputFiles.size() &&
+				!state.outputFiles.size()) {
+
+				state.outputFiles = { state.moduleName + "_results" };
 			}
 
-			output::print_results(state.estimateResults, state.estimateColumns, state.estimateFiles);
-			output::print_results(state.equationResults, state.equationColumns, state.equationFiles);
+			std::vector<std::string> outputFiles;
+
+			// Print estimate results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.estimateOutputFiles.begin(), state.estimateOutputFiles.end());
+
+			output::print_results(state.estimateResults, state.estimateColumns, outputFiles);
+
+			// Print equation results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.equationOutputFiles.begin(), state.equationOutputFiles.end());
+
+			output::print_results(state.equationResults, state.equationColumns, outputFiles);
 
 			std::cout << "Finished testing " << state.moduleName << '\n';
 			std::cout << state.totalTests << " total tests, "
@@ -139,6 +155,7 @@ namespace chebyshev {
 				(state.failedTests / (double) state.totalTests) * 100 << "%)"
 				<< '\n';
 
+			// Reset module information
 			state = prec_state();
 
 			if(exit) {

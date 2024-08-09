@@ -19,7 +19,7 @@
 
 namespace chebyshev {
 
-	/// @namespace output Functions to manage printing results.
+	/// @namespace chebyshev::output Functions to manage printing results.
 	namespace output {
 
 		/// @class field_options
@@ -56,9 +56,6 @@ namespace chebyshev {
 				const std::vector<std::string>&,
 				const output_state&)>;
 
-			/// Relative or absolute path to output folder
-			std::string outputFolder = "";
-
 			/// Map of field name to output string
 			/// (e.g. "maxErr" -> "Max Err.").
 			std::map<std::string, std::string> fieldNames {};
@@ -66,8 +63,11 @@ namespace chebyshev {
 			/// Options for the different fields.
 			std::map<std::string, field_options> fieldOptions {};
 
-			/// The output files, indexed by filename
-			std::map<std::string, std::ofstream> outputFiles {};
+			/// A list of output files 
+			std::vector<std::string> outputFiles {};
+
+			/// A map of open output files, by filename
+			std::map<std::string, std::ofstream> openFiles {};
 
 			/// Default width for a field.
 			unsigned int defaultColumnWidth = CHEBYSHEV_OUTPUT_WIDTH;
@@ -544,11 +544,12 @@ namespace chebyshev {
 		/// and resetting its state.
 		inline void terminate() {
 
-			for (auto& p : state.outputFiles)
-				if(p.second.is_open())
-					p.second.close();
+			// Close all open files
+			for (auto& file_pair : state.openFiles)
+				if(file_pair.second.is_open())
+					file_pair.second.close();
 
-			state.outputFiles.clear();
+			// Reset module information
 			state = output_state();
 		}
 
@@ -806,14 +807,38 @@ namespace chebyshev {
 		}
 
 
+		/// Try to open a new output file, returning whether it was correctly opened.
+		/// This function is called internally and is generally not needed, you can
+		/// just specify the filenames and the module will open them when needed.
+		///
+		/// @param filename The name of the file
+		/// @return Whether the file was correctly opened or not
+		inline bool open_file(std::string filename) {
+
+			const auto file_pair = state.openFiles.find(filename);
+
+			// If the file is not already open, try to open it and write to it 
+			if (file_pair == state.openFiles.end() || !file_pair->second.is_open()) {
+
+				state.openFiles[filename].open(filename);
+
+				if (!state.openFiles[filename].is_open()) {
+					state.openFiles.erase(filename);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
 		/// Print the test results to standard output and output files
 		/// with their given formats, defaulting to state.outputFiles
 		/// if no filenames are specified.
 		///
-		/// @param results The map of test results, of any type.
-		/// @param fields The fields of the test results to write, in order.
-		/// @param filenames The names of the output files
-		/// (if this list is empty, state.outputFiles will be used).
+		/// @param results The map of test results, of any type
+		/// @param fields The fields of the test results to write, in order
+		/// @param filenames The names of the module specific output files
 		template<typename ResultType>
 		inline void print_results(
 			const std::map<std::string, std::vector<ResultType>>& results,
@@ -831,51 +856,47 @@ namespace chebyshev {
 			if(!state.quiet)
 				std::cout << "\n" << state.outputFormat(table, fields, state) << "\n";
 
-			// Write to the specified filenames or to the
-			// default output files if no filename is specified.
-			if(filenames.size()) {
+			// Write to the module specific output files
+			for (const auto& filename : filenames) {
 
-				for (size_t i = 0; i < filenames.size(); ++i) {
-
-					std::ofstream file (filenames[i]);
-					if(!file.is_open()) {
-						std::cout << "Cannot write to output file: " << filenames[i] << std::endl;
-						continue;
-					}
-
-					// Apply formatting according to set options
-					auto it = state.fileOutputFormat.find(filenames[i]);
-
-					if(it != state.fileOutputFormat.end())
-						file << it->second(table, fields, state);
-					else
-						file << state.defaultFileOutputFormat(table, fields, state);
-
-					std::cout << "Results have been saved in: " << filenames[i] << std::endl;
+				if (!open_file(filename)) {
+					std::cout << "Unable to write to output file: " << filename << std::endl;
+					continue;
 				}
 
-			} else {
+				auto& file = state.openFiles[filename];
 
-				for (auto& p : state.outputFiles) {
+				// Apply formatting according to set options
+				const auto it = state.fileOutputFormat.find(filename);
 
-					if(!p.second.is_open()) {
-						std::cout << "Cannot write to output file: " << p.first << std::endl;
-						continue;
-					}
-					
-					// Apply formatting according to set options
-					auto it = state.fileOutputFormat.find(p.first);
+				if(it != state.fileOutputFormat.end())
+					file << it->second(table, fields, state);
+				else
+					file << state.defaultFileOutputFormat(table, fields, state);
 
-					if(it != state.fileOutputFormat.end())
-						p.second << it->second(table, fields, state);
-					else
-						p.second << state.defaultFileOutputFormat(table, fields, state);
-
-					std::cout << "Results have been saved in: " << p.first << std::endl;
-				}
-
+				std::cout << "Results have been saved in: " << filename << std::endl;
 			}
 
+			// Write to the generic output files
+			for (const auto& filename : state.outputFiles) {
+
+				if (!open_file(filename)) {
+					std::cout << "Unable to write to output file: " << filename << std::endl;
+					continue;
+				}
+
+				auto& file = state.openFiles[filename];
+				
+				// Apply formatting according to set options
+				const auto it = state.fileOutputFormat.find(filename);
+
+				if(it != state.fileOutputFormat.end())
+					file << it->second(table, fields, state);
+				else
+					file << state.defaultFileOutputFormat(table, fields, state);
+
+				std::cout << "Results have been saved in: " << filename << std::endl;
+			}
 		}
 	}
 }

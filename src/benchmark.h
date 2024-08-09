@@ -42,6 +42,9 @@ namespace chebyshev {
 			/// Whether to output results to a file.
 			bool outputToFile = true;
 
+			/// The files to write all benchmark results to.
+			std::vector<std::string> outputFiles {};
+
 			/// Benchmark state.results
 			std::vector<benchmark_result> results;
 
@@ -57,7 +60,7 @@ namespace chebyshev {
 
 			/// The files to write benchmark results to
 			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> benchmarkFiles {};
+			std::vector<std::string> benchmarkOutputFiles {};
 
 			/// Results of the benchmarks.
 			std::map<std::string, std::vector<benchmark_result>> benchmarkResults {};
@@ -104,15 +107,21 @@ namespace chebyshev {
 
 			output::state.quiet = state.quiet;
 
-			// Output to file is true but no specific files are specified,
-			// add default output file.
-			if(state.outputToFile && !state.benchmarkFiles.size()) {
-				std::string filename;
-				filename = output::state.outputFolder + state.moduleName + "_results";
-				output::state.outputFiles[filename] = std::ofstream(filename);
+			// Output to file is true but no specific files are specified, add default output file.
+			if(	 state.outputToFile &&
+				!state.benchmarkOutputFiles.size() &&
+				!state.outputFiles.size()) {
+				
+				state.outputFiles = { state.moduleName + "_results" };
 			}
 
-			output::print_results(state.benchmarkResults, state.benchmarkColumns, state.benchmarkFiles);
+			std::vector<std::string> outputFiles;
+
+			// Print benchmark results
+			outputFiles  = state.outputFiles;
+			outputFiles.insert(outputFiles.end(), state.benchmarkOutputFiles.begin(), state.benchmarkOutputFiles.end());
+
+			output::print_results(state.benchmarkResults, state.benchmarkColumns, outputFiles);
 
 			std::cout << "Finished benchmarking " << state.moduleName << '\n';
 			std::cout << state.totalBenchmarks << " total benchmarks, "
@@ -120,6 +129,7 @@ namespace chebyshev {
 				(state.failedBenchmarks / (double) state.totalBenchmarks) * 100 << "%)"
 				<< '\n';
 
+			// Reset module information
 			state = benchmark_state();
 
 			if(exit) {
