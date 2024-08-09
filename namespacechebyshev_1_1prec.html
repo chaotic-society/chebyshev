@@ -154,7 +154,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a93dae03c1cc5b925253341bc93fd25b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup the precision testing environment.  <a href="namespacechebyshev_1_1prec.html#a93dae03c1cc5b925253341bc93fd25b6">More...</a><br /></td></tr>
 <tr class="separator:a93dae03c1cc5b925253341bc93fd25b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0a3b6b7902cffd132175810ce8756ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec.html#af0a3b6b7902cffd132175810ce8756ad">terminate</a> (bool exit=true)</td></tr>
-<tr class="memdesc:af0a3b6b7902cffd132175810ce8756ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate the precision testing environment.  <a href="namespacechebyshev_1_1prec.html#af0a3b6b7902cffd132175810ce8756ad">More...</a><br /></td></tr>
+<tr class="memdesc:af0a3b6b7902cffd132175810ce8756ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate the precision testing environment, printing the results to standard output and output files.  <a href="namespacechebyshev_1_1prec.html#af0a3b6b7902cffd132175810ce8756ad">More...</a><br /></td></tr>
 <tr class="separator:af0a3b6b7902cffd132175810ce8756ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25a8e641e0b16ffd6e252a1f5b42095b"><td class="memTemplParams" colspan="2">template&lt;typename R , typename ... Args, typename Function1  = std::function&lt;R(Args...)&gt;, typename Function2  = Function1&gt; </td></tr>
 <tr class="memitem:a25a8e641e0b16ffd6e252a1f5b42095b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec.html#a25a8e641e0b16ffd6e252a1f5b42095b">estimate</a> (const std::string &amp;name, Function1 funcApprox, Function2 funcExpected, <a class="el" href="structchebyshev_1_1prec_1_1estimate__options.html">estimate_options</a>&lt; R, Args... &gt; opt)</td></tr>
@@ -164,7 +164,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a1bfb375300fa5e9a8774f8fdac3c3c80"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec.html#a1bfb375300fa5e9a8774f8fdac3c3c80">estimate</a> (const std::string &amp;name, Function1 funcApprox, Function2 funcExpected, std::vector&lt; <a class="el" href="structchebyshev_1_1prec_1_1interval.html">interval</a> &gt; domain, long double tolerance, unsigned int iterations, <a class="el" href="namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f">FailFunction</a> fail, <a class="el" href="namespacechebyshev_1_1prec.html#a55a645e7fb397ab1a3577999035afaad">Estimator</a>&lt; R, Args... &gt; estimator, bool quiet=false)</td></tr>
 <tr class="memdesc:a1bfb375300fa5e9a8774f8fdac3c3c80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate error integrals over a function with respect to an exact function.  <a href="namespacechebyshev_1_1prec.html#a1bfb375300fa5e9a8774f8fdac3c3c80">More...</a><br /></td></tr>
 <tr class="separator:a1bfb375300fa5e9a8774f8fdac3c3c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7d18d448457947afb2761d17d7b80b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec.html#aa7d18d448457947afb2761d17d7b80b3">estimate</a> (const std::string &amp;name, <a class="el" href="common_8h.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt; funcApprox, <a class="el" href="common_8h.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt; funcExpected, <a class="el" href="structchebyshev_1_1prec_1_1interval.html">interval</a> domain, long double tolerance=<a class="el" href="common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc">CHEBYSHEV_PREC_TOLERANCE</a>, unsigned int iterations=state.defaultIterations, <a class="el" href="namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f">FailFunction</a> fail=fail::fail_on_max_err(), <a class="el" href="namespacechebyshev_1_1prec.html#a55a645e7fb397ab1a3577999035afaad">Estimator</a>&lt; double, double &gt; estimator=<a class="el" href="namespacechebyshev_1_1prec_1_1estimator.html#a196bb68ba898ec12a56e6115d18eea84">estimator::quadrature1D</a>&lt; double &gt;(), bool quiet=false)</td></tr>
+<tr class="memitem:aa7d18d448457947afb2761d17d7b80b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec.html#aa7d18d448457947afb2761d17d7b80b3">estimate</a> (const std::string &amp;name, <a class="el" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt; funcApprox, <a class="el" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt; funcExpected, <a class="el" href="structchebyshev_1_1prec_1_1interval.html">interval</a> domain, long double tolerance=<a class="el" href="common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc">CHEBYSHEV_PREC_TOLERANCE</a>, unsigned int iterations=state.defaultIterations, <a class="el" href="namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f">FailFunction</a> fail=fail::fail_on_max_err(), <a class="el" href="namespacechebyshev_1_1prec.html#a55a645e7fb397ab1a3577999035afaad">Estimator</a>&lt; double, double &gt; estimator=<a class="el" href="namespacechebyshev_1_1prec_1_1estimator.html#a196bb68ba898ec12a56e6115d18eea84">estimator::quadrature1D</a>&lt; double &gt;(), bool quiet=false)</td></tr>
 <tr class="memdesc:aa7d18d448457947afb2761d17d7b80b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate error integrals over a real function of real variable, with respect to an exact function.  <a href="namespacechebyshev_1_1prec.html#aa7d18d448457947afb2761d17d7b80b3">More...</a><br /></td></tr>
 <tr class="separator:aa7d18d448457947afb2761d17d7b80b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae779ee5402a566f4c45a70e5d2f14b2f"><td class="memTemplParams" colspan="2">template&lt;typename T  = double&gt; </td></tr>
@@ -468,13 +468,13 @@ template&lt;typename T  = double&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="common_8h.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt;&#160;</td>
           <td class="paramname"><em>funcApprox</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="common_8h.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a>&lt; double &gt;&#160;</td>
           <td class="paramname"><em>funcExpected</em>, </td>
         </tr>
         <tr>
@@ -775,7 +775,7 @@ template&lt;typename R , typename ... Args, typename Function1  = std::function&
 </table>
 </div><div class="memdoc">
 
-<p>Terminate the precision testing environment. </p>
+<p>Terminate the precision testing environment, printing the results to standard output and output files. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">exit</td><td>Whether to exit after terminating the module. </td></tr>
@@ -790,8 +790,8 @@ template&lt;typename R , typename ... Args, typename Function1  = std::function&
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>chebyshev</b></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec.html">prec</a></li>
-    <li class="footer">Generated on Sat Aug 3 2024 17:20:06 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec.html">prec</a></li>
+    <li class="footer">Generated on Fri Aug 9 2024 20:20:50 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

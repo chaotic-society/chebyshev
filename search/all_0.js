@@ -7,7 +7,7 @@ var searchData=
   ['assert_4',['assert',['../namespacechebyshev_1_1err.html#af98bf5721f5edf2b2b382ef217b97547',1,'chebyshev::err']]],
   ['assert_5fresult_5',['assert_result',['../structchebyshev_1_1err_1_1assert__result.html',1,'chebyshev::err']]],
   ['assertcolumns_6',['assertColumns',['../structchebyshev_1_1err_1_1err__state.html#aa20c7a916ab6b1f04e606ab99def7ef1',1,'chebyshev::err::err_state']]],
-  ['assertfiles_7',['assertFiles',['../structchebyshev_1_1err_1_1err__state.html#a26683ef93ab40c0eadc0eba5d35f9a36',1,'chebyshev::err::err_state']]],
+  ['assertoutputfiles_7',['assertOutputFiles',['../structchebyshev_1_1err_1_1err__state.html#aa5e841bef478dba437e0485c98f75780',1,'chebyshev::err::err_state']]],
   ['assertresults_8',['assertResults',['../structchebyshev_1_1err_1_1err__state.html#a4b8289e83857acd56ba6bcf665f818ac',1,'chebyshev::err::err_state']]],
   ['averageruntime_9',['averageRuntime',['../structchebyshev_1_1benchmark_1_1benchmark__result.html#a330b166457e41239e06f192a409dc4f8',1,'chebyshev::benchmark::benchmark_result']]]
 ];

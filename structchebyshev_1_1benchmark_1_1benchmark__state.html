@@ -125,6 +125,10 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a88045e875c66dd31946551bc4d1226a5">outputToFile</a> = true</td></tr>
 <tr class="memdesc:a88045e875c66dd31946551bc4d1226a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to output results to a file. <br /></td></tr>
 <tr class="separator:a88045e875c66dd31946551bc4d1226a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74abe88e02cbe31ae77cd8cab456052b"><td class="memItemLeft" align="right" valign="top"><a id="a74abe88e02cbe31ae77cd8cab456052b"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a74abe88e02cbe31ae77cd8cab456052b">outputFiles</a> {}</td></tr>
+<tr class="memdesc:a74abe88e02cbe31ae77cd8cab456052b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The files to write all benchmark results to. <br /></td></tr>
+<tr class="separator:a74abe88e02cbe31ae77cd8cab456052b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93661ee67e9240f885adaa93396add8c"><td class="memItemLeft" align="right" valign="top"><a id="a93661ee67e9240f885adaa93396add8c"></a>
 std::vector&lt; <a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__result.html">benchmark_result</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a93661ee67e9240f885adaa93396add8c">results</a></td></tr>
 <tr class="memdesc:a93661ee67e9240f885adaa93396add8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Benchmark state.results. <br /></td></tr>
@@ -141,10 +145,10 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a48b805c9693448e482d199c790c1bdbe">pickedBenchmarks</a> {}</td></tr>
 <tr class="memdesc:a48b805c9693448e482d199c790c1bdbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Target benchmarks marked for execution (all benchmarks will be executed if empty) <br /></td></tr>
 <tr class="separator:a48b805c9693448e482d199c790c1bdbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d8421212cb9011f809db6b3b549c9d0"><td class="memItemLeft" align="right" valign="top"><a id="a4d8421212cb9011f809db6b3b549c9d0"></a>
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a4d8421212cb9011f809db6b3b549c9d0">benchmarkFiles</a> {}</td></tr>
-<tr class="memdesc:a4d8421212cb9011f809db6b3b549c9d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The files to write benchmark results to (if empty, all results are output to a generic file). <br /></td></tr>
-<tr class="separator:a4d8421212cb9011f809db6b3b549c9d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a361b4a0b29a494eef594ffe47ded8298"><td class="memItemLeft" align="right" valign="top"><a id="a361b4a0b29a494eef594ffe47ded8298"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a361b4a0b29a494eef594ffe47ded8298">benchmarkOutputFiles</a> {}</td></tr>
+<tr class="memdesc:a361b4a0b29a494eef594ffe47ded8298"><td class="mdescLeft">&#160;</td><td class="mdescRight">The files to write benchmark results to (if empty, all results are output to a generic file). <br /></td></tr>
+<tr class="separator:a361b4a0b29a494eef594ffe47ded8298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e168e52d9d7decc18583c993ef6fa32"><td class="memItemLeft" align="right" valign="top"><a id="a0e168e52d9d7decc18583c993ef6fa32"></a>
 std::map&lt; std::string, std::vector&lt; <a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__result.html">benchmark_result</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html#a0e168e52d9d7decc18583c993ef6fa32">benchmarkResults</a> {}</td></tr>
 <tr class="memdesc:a0e168e52d9d7decc18583c993ef6fa32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of the benchmarks. <br /></td></tr>
@@ -183,8 +187,8 @@ std::map&lt; std::string, std::vector&lt; <a class="el" href="structchebyshev_1_
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>chebyshev</b></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1benchmark.html">benchmark</a></li><li class="navelem"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html">benchmark_state</a></li>
-    <li class="footer">Generated on Sat Aug 3 2024 17:20:06 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1benchmark.html">benchmark</a></li><li class="navelem"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__state.html">benchmark_state</a></li>
+    <li class="footer">Generated on Fri Aug 9 2024 20:20:50 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
