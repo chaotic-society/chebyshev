@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Chebyshev: /home/runner/work/chebyshev/chebyshev/examples/precision.cpp File Reference</title>
+<title>Chebyshev: chebyshev::prec::fail Namespace Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('precision_8cpp.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('namespacechebyshev_1_1prec_1_1fail.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -93,43 +93,41 @@ $(document).ready(function(){initNavTree('precision_8cpp.html',''); initResizabl
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">precision.cpp File Reference</div>  </div>
+<div class="title">chebyshev::prec::fail Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Example program for precision testing.  
-<a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="chebyshev_8h_source.html">chebyshev.h</a>&quot;</code><br />
-</div><table class="memberdecls">
+<p>Fail functions for use in <a class="el" href="namespacechebyshev_1_1prec.html#a25a8e641e0b16ffd6e252a1f5b42095b" title="Estimate error integrals over a function with respect to an exact function, with the given options.">prec::estimate</a>.  
+<a href="namespacechebyshev_1_1prec_1_1fail.html#details">More...</a></p>
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3de2b7b41a8e4b07da05298510d17ed2"><td class="memItemLeft" align="right" valign="top"><a id="a3de2b7b41a8e4b07da05298510d17ed2"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>f</b> (double x)</td></tr>
-<tr class="separator:a3de2b7b41a8e4b07da05298510d17ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac84831571c8f3d0bca83c1747a32e8d6"><td class="memItemLeft" align="right" valign="top"><a id="ac84831571c8f3d0bca83c1747a32e8d6"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>g</b> (double x)</td></tr>
-<tr class="separator:ac84831571c8f3d0bca83c1747a32e8d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefbbf1cbdc9fd335d93a290d4993b041"><td class="memItemLeft" align="right" valign="top"><a id="aefbbf1cbdc9fd335d93a290d4993b041"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>inverse</b> (double x)</td></tr>
-<tr class="separator:aefbbf1cbdc9fd335d93a290d4993b041"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d35ae1367c850c6de9605ad1e8d32c3"><td class="memItemLeft" align="right" valign="top"><a id="a2d35ae1367c850c6de9605ad1e8d32c3"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>absolute</b> (double x)</td></tr>
-<tr class="separator:a2d35ae1367c850c6de9605ad1e8d32c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d9d03af6a672808a901c491b524d8d6"><td class="memItemLeft" align="right" valign="top"><a id="a6d9d03af6a672808a901c491b524d8d6"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>almost_zero</b> (double x)</td></tr>
-<tr class="separator:a6d9d03af6a672808a901c491b524d8d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf9e6b7e6f15df4b525a2e7705ba3089"><td class="memItemLeft" align="right" valign="top"><a id="abf9e6b7e6f15df4b525a2e7705ba3089"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, char const *argv[])</td></tr>
-<tr class="separator:abf9e6b7e6f15df4b525a2e7705ba3089"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaea6993b992fb83fb1eb92834639c19"><td class="memItemLeft" align="right" valign="top"><a id="aaaea6993b992fb83fb1eb92834639c19"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#aaaea6993b992fb83fb1eb92834639c19">fail_on_max_err</a> ()</td></tr>
+<tr class="memdesc:aaaea6993b992fb83fb1eb92834639c19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default fail function which marks the test as failed if the maximum error on the domain is bigger than the tolerance. <br /></td></tr>
+<tr class="separator:aaaea6993b992fb83fb1eb92834639c19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b2d853d2d1bcd94ae56d985e8402d1"><td class="memItemLeft" align="right" valign="top"><a id="a04b2d853d2d1bcd94ae56d985e8402d1"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#a04b2d853d2d1bcd94ae56d985e8402d1">fail_on_mean_err</a> ()</td></tr>
+<tr class="memdesc:a04b2d853d2d1bcd94ae56d985e8402d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the test as failed if the mean error on the domain is bigger than the tolerance or the error is NaN. <br /></td></tr>
+<tr class="separator:a04b2d853d2d1bcd94ae56d985e8402d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf88360c8f076b6b9f0089a8617ef046"><td class="memItemLeft" align="right" valign="top"><a id="adf88360c8f076b6b9f0089a8617ef046"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#adf88360c8f076b6b9f0089a8617ef046">fail_on_rms_err</a> ()</td></tr>
+<tr class="memdesc:adf88360c8f076b6b9f0089a8617ef046"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the test as failed if the RMS error on the domain is bigger than the tolerance or the error is NaN. <br /></td></tr>
+<tr class="separator:adf88360c8f076b6b9f0089a8617ef046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67f9c1527640b8a8156f3f2fca702e97"><td class="memItemLeft" align="right" valign="top"><a id="a67f9c1527640b8a8156f3f2fca702e97"></a>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#a67f9c1527640b8a8156f3f2fca702e97">fail_on_rel_err</a> ()</td></tr>
+<tr class="memdesc:a67f9c1527640b8a8156f3f2fca702e97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the test as failed if the relative error on the domain is bigger than the tolerance or the error is NaN. <br /></td></tr>
+<tr class="separator:a67f9c1527640b8a8156f3f2fca702e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Example program for precision testing. </p>
+<div class="textblock"><p>Fail functions for use in <a class="el" href="namespacechebyshev_1_1prec.html#a25a8e641e0b16ffd6e252a1f5b42095b" title="Estimate error integrals over a function with respect to an exact function, with the given options.">prec::estimate</a>. </p>
+<p>Fail functions are used to evaluate whether a certain test case has failed error estimation. If the fail function returns true, the test has failed. For example, a test case may fail if the maximum error is over a certain threshold. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="precision_8cpp.html">precision.cpp</a></li>
+    <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec.html">prec</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec_1_1fail.html">fail</a></li>
     <li class="footer">Generated on Sat Aug 10 2024 09:50:45 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>

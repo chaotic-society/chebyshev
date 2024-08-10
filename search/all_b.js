@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['natural_124',['natural',['../namespacechebyshev_1_1random.html#a2e84df7ad7b996b980afe16f085b2104',1,'chebyshev::random']]]
+  ['natural_128',['natural',['../namespacechebyshev_1_1random.html#a2e84df7ad7b996b980afe16f085b2104',1,'chebyshev::random']]]
 ];

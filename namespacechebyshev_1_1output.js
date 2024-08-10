@@ -1,12 +1,12 @@
 var namespacechebyshev_1_1output =
 [
-    [ "format", null, [
-      [ "barebone", "output_8h.html#a4349cd54e726ac0ad2841afd221cff50", null ],
-      [ "csv", "output_8h.html#affbebddca646be0120a09ca36e62f8fa", null ],
-      [ "fancy", "output_8h.html#a5b02f4d40cd542dbd526c65cf5bbd2a0", null ],
-      [ "latex", "output_8h.html#a9a467f594c673e961c98a0cd64b340ac", null ],
-      [ "markdown", "output_8h.html#a153152fc39967d8c8b29a9af2e93481c", null ],
-      [ "simple", "output_8h.html#ab0344d2271f7ed288fe61dab13d6b063", null ]
+    [ "format", "namespacechebyshev_1_1output_1_1format.html", [
+      [ "barebone", "namespacechebyshev_1_1output_1_1format.html#a4349cd54e726ac0ad2841afd221cff50", null ],
+      [ "csv", "namespacechebyshev_1_1output_1_1format.html#affbebddca646be0120a09ca36e62f8fa", null ],
+      [ "fancy", "namespacechebyshev_1_1output_1_1format.html#a5b02f4d40cd542dbd526c65cf5bbd2a0", null ],
+      [ "latex", "namespacechebyshev_1_1output_1_1format.html#a9a467f594c673e961c98a0cd64b340ac", null ],
+      [ "markdown", "namespacechebyshev_1_1output_1_1format.html#a153152fc39967d8c8b29a9af2e93481c", null ],
+      [ "simple", "namespacechebyshev_1_1output_1_1format.html#ab0344d2271f7ed288fe61dab13d6b063", null ]
     ] ],
     [ "field_options", "structchebyshev_1_1output_1_1field__options.html", "structchebyshev_1_1output_1_1field__options" ],
     [ "output_state", "structchebyshev_1_1output_1_1output__state.html", "structchebyshev_1_1output_1_1output__state" ],
