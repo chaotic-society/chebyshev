@@ -100,7 +100,18 @@ namespace chebyshev {
 		using OutputFormat = output_state::OutputFormat_t;
 
 
-		/// @namespace format Output formatting functions.
+		/// @namespace chebyshev::output::format Output formatting functions
+		///
+		/// Output formats are handled by a lambda or function with the
+		/// signature of OutputFormat. An output format is a function which
+		/// takes in a matrix of strings which contains all entries of the
+		/// table resulting from tests, the list of the fields printed in
+		/// each respective column and the global state of the output module
+		/// (which contains the options for formatting and other settings).
+		/// The output format may be fully customized, but many options are
+		/// already available in this namespace. The output format is returned
+		/// by each function (functions are used to construct a format taking
+		/// custom options).
 		namespace format {
 			
 

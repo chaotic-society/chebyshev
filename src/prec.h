@@ -282,13 +282,20 @@ namespace chebyshev {
 			estimate(name, funcApprox, funcExpected, opt);
 		}
 
+		/// @namespace chebyshev::prec::property Property testing of functions
+		///
+		/// When estimating error integrals, it is usually necessary to have
+		/// a function to compare the result to, considered exact. Using
+		/// property testing, it is possible to test a specific property
+		/// of a function (such as involution or homogeneity) doing away
+		/// with the additional "exact" function.
 		namespace property {
 
 			/// Precision testing of an endofunction which is
 			/// equivalent to the identity.
 			///
 			/// @param name The name of the test case.
-			/// @param id The identity to test.
+			/// @param id The identity function to test.
 			/// @param opt The options for estimation.
 			template<typename Type, typename Identity = EndoFunction<Type>>
 			inline void identity(
