@@ -18,7 +18,12 @@
 namespace chebyshev {
 
 
-	/// @namespace chebyshev::benchmark Benchmark module.
+	/// @namespace chebyshev::benchmark Benchmark module
+	///
+	/// This module provides routines for measuring the average
+	/// runtime of functions of any kind over a randomized or fixed
+	/// vector of inputs. The benchmark::benchmark implements this
+	/// functionality and registers the results for analysis and output.
 	namespace benchmark {
 
 
@@ -100,6 +105,7 @@ namespace chebyshev {
 
 
 		/// Terminate the benchmarking environment.
+		/// If benchmarks have been run, their results will be printed.
 		///
 		/// @param exit Whether to exit after terminating the module.
 		inline void terminate(bool exit = true) {
