@@ -522,9 +522,6 @@ namespace chebyshev {
 
 		/// Evaluate multiple pairs of values for equivalence
 		/// up to the given tolerance (e.g. for residual testing).
-		template<typename T = double>
-		/// Evaluate multiple pairs of values for equivalence
-		/// up to the given tolerance (e.g. for residual testing).
 		///
 		/// @param name The name of the function or test case
 		/// @param values A list of values to equate
