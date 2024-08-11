@@ -483,27 +483,26 @@ $(document).ready(function(){initNavTree('prec_8h_source.html',''); initResizabl
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;        }</div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160; </div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160; </div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00534"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1prec.html#a4ea522ff8ad697c5819be70a44e2014b">  534</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1prec.html#ae779ee5402a566f4c45a70e5d2f14b2f">equals</a>(</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;            std::vector&lt;std::array&lt;T, 2&gt;&gt; values,</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;            <span class="keywordtype">long</span> <span class="keywordtype">double</span> tolerance = state.defaultTolerance,</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;            <span class="keywordtype">bool</span> quiet = <span class="keyword">false</span>) {</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;            <span class="comment">// Skip the test case if any tests have been picked</span></div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;            <span class="comment">// and this one was not picked.</span></div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            <span class="keywordflow">if</span>(state.pickedTests.size())</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;                <span class="keywordflow">if</span>(state.pickedTests.find(name) == state.pickedTests.end())</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;                    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160; </div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; v : values)</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;                <a class="code" href="namespacechebyshev_1_1prec.html#ae779ee5402a566f4c45a70e5d2f14b2f">equals</a>(name, v[0], v[1], tolerance, quiet);</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;        }</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    }</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;}</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160; </div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00531"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1prec.html#a4ea522ff8ad697c5819be70a44e2014b">  531</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1prec.html#ae779ee5402a566f4c45a70e5d2f14b2f">equals</a>(</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;            std::vector&lt;std::array&lt;T, 2&gt;&gt; values,</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;            <span class="keywordtype">long</span> <span class="keywordtype">double</span> tolerance = state.defaultTolerance,</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;            <span class="keywordtype">bool</span> quiet = <span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;            <span class="comment">// Skip the test case if any tests have been picked</span></div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;            <span class="comment">// and this one was not picked.</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;            <span class="keywordflow">if</span>(state.pickedTests.size())</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;                <span class="keywordflow">if</span>(state.pickedTests.find(name) == state.pickedTests.end())</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160; </div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; v : values)</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;                <a class="code" href="namespacechebyshev_1_1prec.html#ae779ee5402a566f4c45a70e5d2f14b2f">equals</a>(name, v[0], v[1], tolerance, quiet);</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;        }</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    }</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;}</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160; </div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="acommon_8h_html_a2a491d0f6b10fde5a05b94541e77ff69"><div class="ttname"><a href="common_8h.html#a2a491d0f6b10fde5a05b94541e77ff69">CHEBYSHEV_PREC_ITER</a></div><div class="ttdeci">#define CHEBYSHEV_PREC_ITER</div><div class="ttdoc">Default number of function evaluations in precision testing.</div><div class="ttdef"><b>Definition:</b> common.h:12</div></div>
 <div class="ttc" id="acommon_8h_html_a576ec61e254323459fe7f7e6ef22e5fc"><div class="ttname"><a href="common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc">CHEBYSHEV_PREC_TOLERANCE</a></div><div class="ttdeci">#define CHEBYSHEV_PREC_TOLERANCE</div><div class="ttdoc">Default tolerance in precision testing.</div><div class="ttdef"><b>Definition:</b> common.h:17</div></div>
 <div class="ttc" id="aestimator_8h_html"><div class="ttname"><a href="estimator_8h.html">estimator.h</a></div><div class="ttdoc">Default precision estimators.</div></div>
@@ -571,7 +570,7 @@ $(document).ready(function(){initNavTree('prec_8h_source.html',''); initResizabl
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="prec_8h.html">prec.h</a></li>
-    <li class="footer">Generated on Sun Aug 11 2024 10:14:58 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Aug 11 2024 17:25:03 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
