@@ -241,7 +241,7 @@ namespace chebyshev {
 		inline void benchmark(
 			const std::string& funcName,
 			Function func,
-			benchmark_options<InputType> opt) {
+			const benchmark_options<InputType>& opt) {
 
 			// Generate input set
 			std::vector<InputType> input (opt.iterations);
@@ -265,8 +265,8 @@ namespace chebyshev {
 		inline void benchmark(
 			const std::string& funcName,
 			Function func,
-			unsigned int runs = CHEBYSHEV_BENCHMARK_RUNS,
-			unsigned int iterations = CHEBYSHEV_BENCHMARK_ITER,
+			unsigned int runs = state.defaultRuns,
+			unsigned int iterations = state.defaultIterations,
 			InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1)) {
 
 			benchmark_options<InputType> opt;

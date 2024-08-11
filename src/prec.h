@@ -265,7 +265,7 @@ namespace chebyshev {
 			EndoFunction<double> funcApprox,
 			EndoFunction<double> funcExpected,
 			interval domain,
-			long double tolerance = CHEBYSHEV_PREC_TOLERANCE,
+			long double tolerance = state.defaultTolerance,
 			unsigned int iterations = state.defaultIterations,
 			FailFunction fail = fail::fail_on_max_err(),
 			Estimator<double, double> estimator = estimator::quadrature1D<double>(),
@@ -523,6 +523,14 @@ namespace chebyshev {
 		/// Evaluate multiple pairs of values for equivalence
 		/// up to the given tolerance (e.g. for residual testing).
 		template<typename T = double>
+		/// Evaluate multiple pairs of values for equivalence
+		/// up to the given tolerance (e.g. for residual testing).
+		///
+		/// @param name The name of the function or test case
+		/// @param values A list of values to equate
+		/// @param tolerance The tolerance for the evaluation
+		/// @param quiet Whether to output the result
+		template<typename T>
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<T, 2>> values,

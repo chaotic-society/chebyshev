@@ -805,6 +805,10 @@ namespace chebyshev {
 			for (const auto& p : results) {
 				for (const auto& result : p.second) {
 
+					// Skip results marked as quiet
+					// if (result.quiet)
+					// 	continue;
+
 					std::vector<std::string> row (fields.size());
 
 					for (size_t i = 0; i < fields.size(); ++i)
