@@ -34,7 +34,7 @@ var namespacechebyshev_1_1prec =
     [ "equals", "namespacechebyshev_1_1prec.html#aed935e247c0117ed70ca7d4cf9894bf7", null ],
     [ "equals", "namespacechebyshev_1_1prec.html#a3e6e50c6cb0224b8c7e851946b8db72c", null ],
     [ "equals", "namespacechebyshev_1_1prec.html#a4ea522ff8ad697c5819be70a44e2014b", null ],
-    [ "estimate", "namespacechebyshev_1_1prec.html#aa7d18d448457947afb2761d17d7b80b3", null ],
+    [ "estimate", "namespacechebyshev_1_1prec.html#ab8238593669076070edbee8473b050c8", null ],
     [ "estimate", "namespacechebyshev_1_1prec.html#a25a8e641e0b16ffd6e252a1f5b42095b", null ],
     [ "estimate", "namespacechebyshev_1_1prec.html#a1bfb375300fa5e9a8774f8fdac3c3c80", null ],
     [ "setup", "namespacechebyshev_1_1prec.html#a93dae03c1cc5b925253341bc93fd25b6", null ],
