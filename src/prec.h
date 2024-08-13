@@ -23,11 +23,15 @@
 namespace chebyshev {
 
 	/// @namespace chebyshev::prec Precision testing module.
+	///
+	/// This module provides functions to estimate the precision
+	/// and accuracy of mathematical approximations, over an entire
+	/// domain using prec::estimate or at single points using prec:equals.
+	/// For estimates over a domain, precision estimators are used.
 	namespace prec {
 
 
-		/// @class prec_state
-		/// Global state of the precision testing module.
+		/// @class prec_state Global state of the precision testing module.
 		struct prec_state {
 			
 			/// Name of the module being tested
@@ -128,6 +132,7 @@ namespace chebyshev {
 
 			// Output to file is true but no specific files are specified, add default output file.
 			if(	 state.outputToFile &&
+				!output::state.outputFiles.size() &&
 				!state.estimateOutputFiles.size() &&
 				!state.equationOutputFiles.size() &&
 				!state.outputFiles.size()) {
