@@ -66,7 +66,7 @@ namespace chebyshev {
 
 			/// Default columns to print for precision estimates.
 			std::vector<std::string> estimateColumns = {
-				"funcName", "meanErr", "rmsErr", "maxErr", "failed"
+				"name", "meanErr", "rmsErr", "maxErr", "failed"
 			};
 
 			/// The files to write estimate results to
@@ -78,7 +78,7 @@ namespace chebyshev {
 
 			/// Default columns to print for equations.
 			std::vector<std::string> equationColumns = {
-				"funcName", "difference", "tolerance", "failed"
+				"name", "difference", "tolerance", "failed"
 			};
 
 			/// The files to write equation results to
@@ -181,6 +181,7 @@ namespace chebyshev {
 		template<typename R, typename ...Args,
 			typename Function1 = std::function<R(Args...)>,
 			typename Function2 = Function1>
+			
 		inline void estimate(
 			const std::string& name,
 			Function1 funcApprox,
@@ -196,7 +197,7 @@ namespace chebyshev {
 			// Use the estimator to estimate error integrals.
 			auto res = opt.estimator(funcApprox, funcExpected, opt);
 
-			res.funcName = name;
+			res.name = name;
 			res.domain = opt.domain;
 			res.tolerance = opt.tolerance;
 			res.quiet = opt.quiet;
@@ -229,6 +230,7 @@ namespace chebyshev {
 		template<typename R, typename ...Args,
 			typename Function1 = std::function<R(Args...)>,
 			typename Function2 = Function1>
+
 		inline void estimate(
 			const std::string& name,
 			Function1 funcApprox,
@@ -439,7 +441,7 @@ namespace chebyshev {
 			// is bigger than the tolerance.
 			res.failed = (diff > opt.tolerance);
 
-			res.funcName = name;
+			res.name = name;
 			res.difference = diff;
 			res.tolerance = opt.tolerance;
 			res.quiet = opt.quiet;
@@ -508,7 +510,7 @@ namespace chebyshev {
 			// is bigger than the tolerance.
 			res.failed = (diff > tolerance);
 
-			res.funcName = name;
+			res.name = name;
 			res.difference = diff;
 			res.tolerance = tolerance;
 			res.quiet = quiet;

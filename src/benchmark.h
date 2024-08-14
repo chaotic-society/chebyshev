@@ -71,7 +71,7 @@ namespace chebyshev {
 
 			/// Default columns to print for benchmarks.
 			std::vector<std::string> benchmarkColumns = {
-				"funcName", "averageRuntime", "runsPerSecond"
+				"name", "averageRuntime", "runsPerSecond"
 			};
 			
 		} state;
@@ -187,16 +187,17 @@ namespace chebyshev {
 		/// Run a benchmark on a generic function, with the given input vector.
 		/// The result is registered inside state.benchmarkResults.
 		///
-		/// @param funcName The name of the test case
+		/// @param name The name of the test case
 		/// @param func The function to benchmark
 		/// @param input The vector of input values
 		/// @param runs The number of runs with the same input
 		template<typename InputType = double, typename Function>
 		inline void benchmark(
-			const std::string& funcName,
+			const std::string& name,
 			Function func,
 			const std::vector<InputType>& input,
-			unsigned int runs = state.defaultRuns) {
+			unsigned int runs = state.defaultRuns,
+			bool quiet = false) {
 
 			// Sum of m runs with n iterations each
 			long double totalRuntime = get_nan();
@@ -216,31 +217,32 @@ namespace chebyshev {
 			}
 
 			benchmark_result res {};
-			res.funcName = funcName;
+			res.name = name;
 			res.runs = runs;
 			res.iterations = input.size();
 			res.totalRuntime = totalRuntime;
 			res.averageRuntime = totalRuntime / (runs * input.size());
 			res.runsPerSecond = 1000.0 / res.averageRuntime;
 			res.failed = failed;
+			res.quiet = quiet;
 
 			state.totalBenchmarks++;
 			if(failed)
 				state.failedBenchmarks++;
 
-			state.benchmarkResults[funcName].push_back(res);
+			state.benchmarkResults[name].push_back(res);
 		}
 
 
 		/// Run a benchmark on a generic function, with the given options.
 		/// The result is registered inside state.benchmarkResults.
 		///
-		/// @param funcName The name of the test case
+		/// @param name The name of the test case
 		/// @param func The function to benchmark
 		/// @param opt The benchmark options
 		template<typename InputType = double, typename Function>
 		inline void benchmark(
-			const std::string& funcName,
+			const std::string& name,
 			Function func,
 			const benchmark_options<InputType>& opt) {
 
@@ -250,32 +252,34 @@ namespace chebyshev {
 				input[i] = opt.inputGenerator(i);
 
 			// Benchmark over input set
-			benchmark(funcName, func, input, opt.runs);
+			benchmark(name, func, input, opt.runs, opt.quiet);
 		}
 
 
 		/// Run a benchmark on a generic function, with the given argument options.
 		/// The result is registered inside state.benchmarkResults.
 		///
-		/// @param funcName The name of the test case
+		/// @param name The name of the test case
 		/// @param func The function to benchmark
 		/// @param run The number of runs with the same input
 		/// @param iterations The number of iterations of the function
 		/// @param inputGenerator The input generator to use
 		template<typename InputType = double, typename Function>
 		inline void benchmark(
-			const std::string& funcName,
+			const std::string& name,
 			Function func,
 			unsigned int runs = state.defaultRuns,
 			unsigned int iterations = state.defaultIterations,
-			InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1)) {
+			InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1),
+			bool quiet = false) {
 
 			benchmark_options<InputType> opt;
 			opt.runs = runs;
 			opt.iterations = iterations;
 			opt.inputGenerator = inputGenerator;
+			opt.quiet = quiet;
 
-			benchmark(funcName, func, opt);
+			benchmark(name, func, opt);
 		}
 	}
 }

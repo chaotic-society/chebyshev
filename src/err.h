@@ -59,7 +59,7 @@ namespace chebyshev {
 
 			/// Default columns to print for assertions.
 			std::vector<std::string> assertColumns = {
-				"funcName", "evaluated", "failed", "description"
+				"name", "evaluated", "failed", "description"
 			};
 
 			/// Results of checking errno
@@ -71,7 +71,7 @@ namespace chebyshev {
 
 			/// Default columns to print for errno checks.
 			std::vector<std::string> errnoColumns = {
-				"funcName", "evaluated", "expectedFlags", "failed"
+				"name", "evaluated", "expectedFlags", "failed"
 			};
 
 			/// Results of exception testing
@@ -83,7 +83,7 @@ namespace chebyshev {
 
 			/// Default columns to print for exception checks.
 			std::vector<std::string> exceptionColumns = {
-				"funcName", "thrown", "correctType", "failed"
+				"name", "thrown", "correctType", "failed"
 			};
 
 			/// Target checks marked for execution,
@@ -186,14 +186,19 @@ namespace chebyshev {
 		/// @param name Name of the check (function name or test case name).
 		/// @param exp Expression to test for truth.
 		/// @param description Description of the assertion.
-		inline void assert(const std::string& name, bool exp, std::string description = "") {
+		inline void assert(
+			const std::string& name,
+			bool exp,
+			std::string description = "",
+			bool quiet = false) {
 
 			assert_result res {};
 
-			res.funcName = name;
+			res.name = name;
 			res.evaluated = exp;
 			res.failed = !exp;
 			res.description = description;
+			res.quiet = quiet;
 
 			state.totalChecks++;
 
@@ -212,8 +217,11 @@ namespace chebyshev {
 		/// @param expected_errno The expected value of errno
 		template<typename Function, typename InputType>
 		inline void check_errno(
-			const std::string& name, Function f,
-			InputType x, int expected_errno) {
+			const std::string& name,
+			Function f,
+			InputType x,
+			int expected_errno,
+			bool quiet = false) {
 
 			errno_result res {};
 			errno = 0;
@@ -223,11 +231,11 @@ namespace chebyshev {
 				r = *(&r);
 			} catch(...) {}
 
-			res.funcName = name;
+			res.name = name;
 			res.evaluated = errno;
 			res.expectedFlags = { expected_errno };
 			res.failed = (errno != expected_errno);
-
+			res.quiet = quiet;
 
 			state.totalChecks++;
 
@@ -248,10 +256,11 @@ namespace chebyshev {
 		template<typename Function, typename InputType>
 		inline void check_errno(
 			const std::string& name, Function f,
-			std::function<InputType(unsigned int)> generator,
-			int expected_errno) {
+			std::function<InputType()> generator,
+			int expected_errno,
+			bool quiet = false) {
 
-			check_errno(name, f, generator(rand()), expected_errno);
+			check_errno(name, f, generator(), expected_errno, quiet);
 		}
 
 
@@ -263,8 +272,11 @@ namespace chebyshev {
 		/// @param expected_flags A list of the expected errno flags
 		template<typename Function, typename InputType>
 		inline void check_errno(
-			const std::string& name, Function f,
-			InputType x, std::vector<int>& expected_flags) {
+			const std::string& name,
+			Function f,
+			InputType x,
+			std::vector<int>& expected_flags,
+			bool quiet = false) {
 
 
 			errno_result res {};
@@ -275,10 +287,11 @@ namespace chebyshev {
 				r = *(&r);
 			} catch(...) {}
 
-			res.funcName = name;
+			res.name = name;
 			res.evaluated = errno;
 			res.expectedFlags = expected_flags;
-			
+			res.quiet = quiet;
+
 			res.failed = false;
 			for (int flag : expected_flags)
 				if(!(errno & flag))
@@ -303,10 +316,11 @@ namespace chebyshev {
 		template<typename Function, typename InputType>
 		void check_errno(
 			const std::string& name, Function f,
-			std::function<InputType(unsigned int)> generator,
-			std::vector<int>& expected_flags) {
+			std::function<InputType()> generator,
+			std::vector<int>& expected_flags,
+			bool quiet = false) {
 
-			check_errno(name, f, generator(rand()), expected_flags);
+			check_errno(name, f, generator(), expected_flags, quiet);
 		}
 
 
@@ -316,7 +330,11 @@ namespace chebyshev {
 		/// @param f The function to test
 		/// @param x The input value to use
 		template<typename Function, typename InputType>
-		inline void check_exception(const std::string& name, Function f, InputType x) {
+		inline void check_exception(
+			const std::string& name,
+			Function f,
+			InputType x,
+			bool quiet = false) {
 
 			exception_result res {};
 			bool thrown = false;
@@ -328,10 +346,11 @@ namespace chebyshev {
 				thrown = true;
 			}
 
-			res.funcName = name;
+			res.name = name;
 			res.thrown = thrown;
 			res.failed = !thrown;
 			res.correctType = true;
+			res.quiet = quiet;
 
 			state.totalChecks++;
 			if(!thrown)
@@ -350,9 +369,10 @@ namespace chebyshev {
 		template<typename Function, typename InputType>
 		inline void check_exception(
 			const std::string& name, Function f,
-			std::function<InputType(unsigned int)> generator) {
+			std::function<InputType()> generator,
+			bool quiet = false) {
 
-			check_exception(name, f, generator(rand()));
+			check_exception(name, f, generator(), quiet);
 		}
 
 
@@ -363,7 +383,11 @@ namespace chebyshev {
 		/// @param f The function to test
 		/// @param x The input value to use
 		template<typename ExceptionType, typename Function, typename InputType>
-		inline void check_exception(const std::string& name, Function f, InputType x) {
+		inline void check_exception(
+			const std::string& name,
+			Function f,
+			InputType x,
+			bool quiet = false) {
 
 			exception_result res {};
 			bool thrown = false;
@@ -381,10 +405,11 @@ namespace chebyshev {
 				thrown = true;
 			}
 
-			res.funcName = name;
+			res.name = name;
 			res.thrown = thrown;
 			res.failed = !(thrown && correctType);
 			res.correctType = correctType;
+			res.quiet = quiet;
 
 			state.totalChecks++;
 			if(!thrown)
@@ -404,13 +429,12 @@ namespace chebyshev {
 		template<typename ExceptionType, typename Function, typename InputType>
 		inline void check_exception(
 			const std::string& name, Function f,
-			std::function<InputType(unsigned int)> generator) {
+			std::function<InputType()> generator,
+			bool quiet = false) {
 
-			check_exception(name, f, generator(rand()));
+			check_exception(name, f, generator(), quiet);
 		}
-
 	}
-
 }
 
 #endif

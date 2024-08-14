@@ -502,8 +502,12 @@ namespace chebyshev {
 		/// Setup printing to the output stream with default options.
 		inline void setup() {
 
+			// Skip subsequent setup calls
+			if (state.wasSetup)
+				return;
+
 			// Estimate fields
-			state.fieldNames["funcName"] = "Function";
+			state.fieldNames["name"] = "Function";
 			state.fieldNames["maxErr"] = "Max Err.";
 			state.fieldNames["meanErr"] = "Mean Err.";
 			state.fieldNames["rmsErr"] = "RMS Err.";
@@ -531,7 +535,7 @@ namespace chebyshev {
 			state.fieldNames["thrown"] = "Has Thrown";
 
 			// Set wider column width for some fields
-			state.fieldOptions["funcName"].columnWidth = 16;
+			state.fieldOptions["name"].columnWidth = 20;
 			state.fieldOptions["averageRuntime"].columnWidth = 14;
 			state.fieldOptions["runsPerSecond"].columnWidth = 14;
 			state.fieldOptions["description"].columnWidth = 20;
@@ -575,8 +579,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "maxErr") {
 				value << std::scientific
 					<< std::setprecision(state.outputPrecision)
@@ -625,8 +629,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "evaluated") {
 				value << r.evaluated;
 			} else if(fieldName == "expected") {
@@ -660,8 +664,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "runs") {
 				value << r.runs;
 			} else if(fieldName == "iterations") {
@@ -699,8 +703,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "evaluated") {
 				value << r.evaluated;
 			} else if(fieldName == "description") {
@@ -725,8 +729,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "evaluated") {
 				value << r.evaluated;
 			} else if(fieldName == "expectedFlags") {
@@ -757,8 +761,8 @@ namespace chebyshev {
 
 			std::stringstream value;
 
-			if(fieldName == "funcName") {
-				value << r.funcName;
+			if(fieldName == "name") {
+				value << r.name;
 			} else if(fieldName == "thrown") {
 				value << r.thrown;
 			} else if(fieldName == "correctType") {
@@ -774,7 +778,9 @@ namespace chebyshev {
 
 
 		/// Generate a table of results as a string matrix to pass to
-		/// a specific formatter of OutputFormat type.
+		/// a specific formatter of OutputFormat type. This function
+		/// is used by print_results to create the table of results
+		/// which is then formatted and printed to output.
 		///
 		/// @param results The map of test results of any type
 		/// @param fields The fields of the test results to write
@@ -806,8 +812,8 @@ namespace chebyshev {
 				for (const auto& result : p.second) {
 
 					// Skip results marked as quiet
-					// if (result.quiet)
-					// 	continue;
+					if (result.quiet)
+						continue;
 
 					std::vector<std::string> row (fields.size());
 

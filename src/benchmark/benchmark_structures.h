@@ -21,8 +21,8 @@ namespace chebyshev {
 		/// Structure holding the results of a benchmark.
 		struct benchmark_result {
 				
-			/// Name of the function under benchmark.
-			std::string funcName = "unknown";
+			/// Identifying name of the function or test case.
+			std::string name = "unknown";
 
 			/// Number of runs.
 			unsigned int runs = 0;
@@ -42,6 +42,9 @@ namespace chebyshev {
 			/// Whether the benchmark failed because
 			/// an exception was thrown.
 			bool failed = true;
+
+			/// Whether to print to standard output or not.
+			bool quiet = false;
 
 			/// Additional fields in floating point representation.
 			std::map<std::string, long double> additionalFields {};
@@ -69,19 +72,26 @@ namespace chebyshev {
 			/// The function to use to generate input for the benchmark.
 			InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1);
 
+			/// Whether to print to standard output or not.
+			bool quiet = false;
+
 
 			/// Default constructor for benchmark options.
 			benchmark_options() {}
 
-
 			/// Construct benchmark options from the number of runs and iterations
-			benchmark_options(unsigned int runs, unsigned int iterations)
-			: runs(runs), iterations(iterations) {}
+			/// and whether to print the case to output (defaults to false).
+			benchmark_options(unsigned int runs, unsigned int iterations, bool quiet = false)
+			: runs(runs), iterations(iterations), quiet(quiet) {}
 
-			/// Construct benchmark options from the number of runs and iterations
-			/// and the input generator to use.
-			benchmark_options(unsigned int runs, unsigned int iterations, InputGenerator<InputType> gen)
-			: runs(runs), iterations(iterations), inputGenerator(gen) {}
+			/// Construct benchmark options from the number of runs and iterations,
+			/// the input generator to use and whether to write the result to output.
+			benchmark_options(
+				unsigned int runs,
+				unsigned int iterations,
+				InputGenerator<InputType> gen,
+				bool quiet = false)
+			: runs(runs), iterations(iterations), inputGenerator(gen), quiet(quiet) {}
 
 		};
 
