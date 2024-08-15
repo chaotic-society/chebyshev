@@ -31,27 +31,18 @@ namespace chebyshev {
 	namespace err {
 
 
-		/// @class err_state
-		/// Global state of the error testing module.
-		struct err_state {
+		/// @class err_settings
+		/// Global settings of the error testing module.
+		struct err_settings {
 				
 			/// Name of the module being tested
 			std::string moduleName = "unknown";
-
-			// Total number of checks
-			unsigned int totalChecks = 0;
-
-			/// Number of failed checks
-			unsigned int failedChecks = 0;
 
 			/// Whether to print to an output file.
 			bool outputToFile = true;
 
 			/// The files to write all error checking results to.
 			std::vector<std::string> outputFiles {};
-
-			/// Results of checking assertions
-			std::map<std::string, std::vector<assert_result>> assertResults {};
 
 			/// The files to write assertion results results to
 			/// (if empty, all results are output to a generic file).
@@ -62,9 +53,6 @@ namespace chebyshev {
 				"name", "evaluated", "failed", "description"
 			};
 
-			/// Results of checking errno
-			std::map<std::string, std::vector<errno_result>> errnoResults {};
-
 			/// The files to write errno checking results to
 			/// (if empty, all results are output to a generic file).
 			std::vector<std::string> errnoOutputFiles {};
@@ -73,9 +61,6 @@ namespace chebyshev {
 			std::vector<std::string> errnoColumns = {
 				"name", "evaluated", "expectedFlags", "failed"
 			};
-
-			/// Results of exception testing
-			std::map<std::string, std::vector<exception_result>> exceptionResults {};
 
 			/// The files to write exception results results to
 			/// (if empty, all results are output to a generic file).
@@ -94,7 +79,28 @@ namespace chebyshev {
 			/// Whether to print to standard output
 			bool quiet = false;
 
-		} state;
+		} settings;
+
+
+		/// @class err_results Results of error checking
+		struct err_results {
+			
+			// Total number of checks
+			unsigned int totalChecks = 0;
+
+			/// Number of failed checks
+			unsigned int failedChecks = 0;
+
+			/// Results of checking assertions
+			std::map<std::string, std::vector<assert_result>> assertResults {};
+
+			/// Results of checking errno
+			std::map<std::string, std::vector<errno_result>> errnoResults {};
+
+			/// Results of exception testing
+			std::map<std::string, std::vector<exception_result>> exceptionResults {};
+
+		} results;
 
 
 		/// Setup error checking module.
@@ -108,14 +114,14 @@ namespace chebyshev {
 
 			if(argc && argv)
 				for (int i = 1; i < argc; ++i)
-					state.pickedChecks[argv[i]] = true;
+					settings.pickedChecks[argv[i]] = true;
 
 			std::cout << "Starting error checking on "
 				<< moduleName << " ..." << std::endl;
 
-			state.moduleName = moduleName;
-			state.failedChecks = 0;
-			state.totalChecks = 0;
+			settings.moduleName = moduleName;
+			results.failedChecks = 0;
+			results.totalChecks = 0;
 
 			random::setup();
 			output::setup();
@@ -128,55 +134,55 @@ namespace chebyshev {
 		/// @param exit Whether to exit after terminating the module.
 		inline void terminate(bool exit = true) {
 
-			output::state.quiet = state.quiet;
+			output::settings.quiet = settings.quiet;
 
 			// Output to file is true but no specific files are specified, add default output file.
-			if(	 state.outputToFile &&
-				!output::state.outputFiles.size() &&
-				!state.assertOutputFiles.size() &&
-				!state.errnoOutputFiles.size() &&
-				!state.exceptionOutputFiles.size() &&
-				!state.outputFiles.size()) {
+			if(	 settings.outputToFile &&
+				!output::settings.outputFiles.size() &&
+				!settings.assertOutputFiles.size() &&
+				!settings.errnoOutputFiles.size() &&
+				!settings.exceptionOutputFiles.size() &&
+				!settings.outputFiles.size()) {
 				
-				state.outputFiles = { state.moduleName + "_results" };
+				settings.outputFiles = { settings.moduleName + "_results" };
 			}
 
 			std::vector<std::string> outputFiles;
 
 			// Print assert results
-			outputFiles  = state.outputFiles;
-			outputFiles.insert(outputFiles.end(), state.assertOutputFiles.begin(), state.assertOutputFiles.end());
+			outputFiles  = settings.outputFiles;
+			outputFiles.insert(outputFiles.end(), settings.assertOutputFiles.begin(), settings.assertOutputFiles.end());
 
 
-			output::print_results(state.assertResults, state.assertColumns, outputFiles);
+			output::print_results(results.assertResults, settings.assertColumns, outputFiles);
 
 			// Print errno checking results
-			outputFiles  = state.outputFiles;
-			outputFiles.insert(outputFiles.end(), state.errnoOutputFiles.begin(), state.errnoOutputFiles.end());
+			outputFiles  = settings.outputFiles;
+			outputFiles.insert(outputFiles.end(), settings.errnoOutputFiles.begin(), settings.errnoOutputFiles.end());
 
 
-			output::print_results(state.errnoResults, state.errnoColumns, outputFiles);
+			output::print_results(results.errnoResults, settings.errnoColumns, outputFiles);
 
 			// Print exception checking results
-			outputFiles  = state.outputFiles;
-			outputFiles.insert(outputFiles.end(), state.exceptionOutputFiles.begin(), state.exceptionOutputFiles.end());
+			outputFiles  = settings.outputFiles;
+			outputFiles.insert(outputFiles.end(), settings.exceptionOutputFiles.begin(), settings.exceptionOutputFiles.end());
 
 
-			output::print_results(state.exceptionResults, state.exceptionColumns, outputFiles);
+			output::print_results(results.exceptionResults, settings.exceptionColumns, outputFiles);
 
-			std::cout << "Finished error checking " << state.moduleName << " ...\n";
-			std::cout << state.totalChecks
+			std::cout << "Finished error checking " << settings.moduleName << " ...\n";
+			std::cout << results.totalChecks
 				<< " total checks, "
-				<< state.failedChecks << " failed ("  << std::setprecision(3)
-				<< (state.failedChecks / (double) state.totalChecks * 100.0)
+				<< results.failedChecks << " failed ("  << std::setprecision(3)
+				<< (results.failedChecks / (double) results.totalChecks * 100.0)
 				<< "%)" << std::endl;
 
 			// Reset module information
-			state = err_state();
+			results = err_results();
 
 			if(exit) {
 				output::terminate();
-				std::exit(state.failedChecks);
+				std::exit(results.failedChecks);
 			}
 		}
 
@@ -200,12 +206,12 @@ namespace chebyshev {
 			res.description = description;
 			res.quiet = quiet;
 
-			state.totalChecks++;
+			results.totalChecks++;
 
 			if(!exp)
-				state.failedChecks++;
+				results.failedChecks++;
 
-			state.assertResults[name].push_back(res);
+			results.assertResults[name].push_back(res);
 		}
 
 
@@ -237,12 +243,12 @@ namespace chebyshev {
 			res.failed = (errno != expected_errno);
 			res.quiet = quiet;
 
-			state.totalChecks++;
+			results.totalChecks++;
 
 			if(res.failed)
-				state.failedChecks++;
+				results.failedChecks++;
 
-			state.errnoResults[name].push_back(res);
+			results.errnoResults[name].push_back(res);
 		}
 
 
@@ -297,12 +303,12 @@ namespace chebyshev {
 				if(!(errno & flag))
 					res.failed = true;
 
-			state.totalChecks++;
+			results.totalChecks++;
 
 			if(res.failed)
-				state.failedChecks++;
+				results.failedChecks++;
 
-			state.errnoResults[name].push_back(res);
+			results.errnoResults[name].push_back(res);
 		}
 
 
@@ -352,11 +358,11 @@ namespace chebyshev {
 			res.correctType = true;
 			res.quiet = quiet;
 
-			state.totalChecks++;
+			results.totalChecks++;
 			if(!thrown)
-				state.failedChecks++;
+				results.failedChecks++;
 
-			state.exceptionResults[name].push_back(res);
+			results.exceptionResults[name].push_back(res);
 		}
 
 
@@ -411,11 +417,11 @@ namespace chebyshev {
 			res.correctType = correctType;
 			res.quiet = quiet;
 
-			state.totalChecks++;
+			results.totalChecks++;
 			if(!thrown)
-				state.failedChecks++;
+				results.failedChecks++;
 
-			state.exceptionResults[name].push_back(res);
+			results.exceptionResults[name].push_back(res);
 		}
 
 

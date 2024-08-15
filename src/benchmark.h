@@ -27,8 +27,8 @@ namespace chebyshev {
 	namespace benchmark {
 
 
-		/// @class benchmark_state Global state of the benchmark module
-		struct benchmark_state {
+		/// @class benchmark_settings Global settings of the benchmark module
+		struct benchmark_settings {
 
 			/// Whether to print benchmark results
 			/// to standard output.
@@ -49,15 +49,6 @@ namespace chebyshev {
 			/// The files to write all benchmark results to.
 			std::vector<std::string> outputFiles {};
 
-			/// Benchmark state.results
-			std::vector<benchmark_result> results;
-
-			/// Total number of benchmarks
-			unsigned int totalBenchmarks = 0;
-
-			/// Number of failed benchmarks
-			unsigned int failedBenchmarks = 0;
-
 			/// Target benchmarks marked for execution
 			/// (all benchmarks will be executed if empty)
 			std::map<std::string, bool> pickedBenchmarks {};
@@ -66,15 +57,27 @@ namespace chebyshev {
 			/// (if empty, all results are output to a generic file).
 			std::vector<std::string> benchmarkOutputFiles {};
 
-			/// Results of the benchmarks.
-			std::map<std::string, std::vector<benchmark_result>> benchmarkResults {};
-
 			/// Default columns to print for benchmarks.
 			std::vector<std::string> benchmarkColumns = {
 				"name", "averageRuntime", "runsPerSecond"
 			};
 			
-		} state;
+		} settings;
+
+
+		/// @class benchmark_results Results of benchmarks.
+		struct benchmark_results {
+			
+			/// Total number of benchmarks
+			unsigned int totalBenchmarks = 0;
+
+			/// Number of failed benchmarks
+			unsigned int failedBenchmarks = 0;
+
+			/// Results of the benchmarks.
+			std::map<std::string, std::vector<benchmark_result>> benchmarkResults {};
+
+		} results;
 
 
 		/// Setup the benchmark environment.
@@ -91,13 +94,14 @@ namespace chebyshev {
 			// Initialize list of picked tests
 			if(argc && argv)
 				for (int i = 1; i < argc; ++i)
-					state.pickedBenchmarks[argv[i]] = true;
+					settings.pickedBenchmarks[argv[i]] = true;
 
 			std::cout << "Starting benchmarks of the "
 				<< moduleName << " module ..." << std::endl;
 
-			state.moduleName = moduleName;
-			state.failedBenchmarks = 0;
+			settings.moduleName = moduleName;
+			results.totalBenchmarks = 0;
+			results.failedBenchmarks = 0;
 
 			random::setup();
 			output::setup();
@@ -110,37 +114,37 @@ namespace chebyshev {
 		/// @param exit Whether to exit after terminating the module.
 		inline void terminate(bool exit = true) {
 
-			output::state.quiet = state.quiet;
+			output::settings.quiet = settings.quiet;
 
 			// Output to file is true but no specific files are specified, add default output file.
-			if(	 state.outputToFile &&
-				!output::state.outputFiles.size() &&
-				!state.benchmarkOutputFiles.size() &&
-				!state.outputFiles.size()) {
+			if(	 settings.outputToFile &&
+				!output::settings.outputFiles.size() &&
+				!settings.benchmarkOutputFiles.size() &&
+				!settings.outputFiles.size()) {
 				
-				state.outputFiles = { state.moduleName + "_results" };
+				settings.outputFiles = { settings.moduleName + "_results" };
 			}
 
 			std::vector<std::string> outputFiles;
 
 			// Print benchmark results
-			outputFiles  = state.outputFiles;
-			outputFiles.insert(outputFiles.end(), state.benchmarkOutputFiles.begin(), state.benchmarkOutputFiles.end());
+			outputFiles  = settings.outputFiles;
+			outputFiles.insert(outputFiles.end(), settings.benchmarkOutputFiles.begin(), settings.benchmarkOutputFiles.end());
 
-			output::print_results(state.benchmarkResults, state.benchmarkColumns, outputFiles);
+			output::print_results(results.benchmarkResults, settings.benchmarkColumns, outputFiles);
 
-			std::cout << "Finished benchmarking " << state.moduleName << '\n';
-			std::cout << state.totalBenchmarks << " total benchmarks, "
-				<< state.failedBenchmarks << " failed (" << std::setprecision(3) << 
-				(state.failedBenchmarks / (double) state.totalBenchmarks) * 100 << "%)"
+			std::cout << "Finished benchmarking " << settings.moduleName << '\n';
+			std::cout << results.totalBenchmarks << " total benchmarks, "
+				<< results.failedBenchmarks << " failed (" << std::setprecision(3) << 
+				(results.failedBenchmarks / (double) results.totalBenchmarks) * 100 << "%)"
 				<< '\n';
 
 			// Reset module information
-			state = benchmark_state();
+			results = benchmark_results();
 
 			if(exit) {
 				output::terminate();
-				std::exit(state.failedBenchmarks);
+				std::exit(results.failedBenchmarks);
 			}
 		}
 
@@ -160,7 +164,7 @@ namespace chebyshev {
 		inline long double runtime(
 			Function func,
 			const std::vector<InputType>& input,
-			unsigned int runs = state.defaultRuns) {
+			unsigned int runs = settings.defaultRuns) {
 
 			if (input.size() == 0)
 				return 0.0;
@@ -185,7 +189,7 @@ namespace chebyshev {
 
 
 		/// Run a benchmark on a generic function, with the given input vector.
-		/// The result is registered inside state.benchmarkResults.
+		/// The result is registered inside results.benchmarkResults.
 		///
 		/// @param name The name of the test case
 		/// @param func The function to benchmark
@@ -196,7 +200,7 @@ namespace chebyshev {
 			const std::string& name,
 			Function func,
 			const std::vector<InputType>& input,
-			unsigned int runs = state.defaultRuns,
+			unsigned int runs = settings.defaultRuns,
 			bool quiet = false) {
 
 			// Sum of m runs with n iterations each
@@ -226,16 +230,16 @@ namespace chebyshev {
 			res.failed = failed;
 			res.quiet = quiet;
 
-			state.totalBenchmarks++;
+			results.totalBenchmarks++;
 			if(failed)
-				state.failedBenchmarks++;
+				results.failedBenchmarks++;
 
-			state.benchmarkResults[name].push_back(res);
+			results.benchmarkResults[name].push_back(res);
 		}
 
 
 		/// Run a benchmark on a generic function, with the given options.
-		/// The result is registered inside state.benchmarkResults.
+		/// The result is registered inside results.benchmarkResults.
 		///
 		/// @param name The name of the test case
 		/// @param func The function to benchmark
@@ -257,7 +261,7 @@ namespace chebyshev {
 
 
 		/// Run a benchmark on a generic function, with the given argument options.
-		/// The result is registered inside state.benchmarkResults.
+		/// The result is registered inside results.benchmarkResults.
 		///
 		/// @param name The name of the test case
 		/// @param func The function to benchmark
@@ -268,8 +272,8 @@ namespace chebyshev {
 		inline void benchmark(
 			const std::string& name,
 			Function func,
-			unsigned int runs = state.defaultRuns,
-			unsigned int iterations = state.defaultIterations,
+			unsigned int runs = settings.defaultRuns,
+			unsigned int iterations = settings.defaultIterations,
 			InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1),
 			bool quiet = false) {
 
