@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['seed_336',['seed',['../structchebyshev_1_1random_1_1random__state.html#ad12f80eb19ed17722a42943923cff471',1,'chebyshev::random::random_state']]]
+  ['seed_340',['seed',['../structchebyshev_1_1random_1_1random__settings.html#a6b7a1292ce3bc99645e7b04296d9bb87',1,'chebyshev::random::random_settings']]]
 ];

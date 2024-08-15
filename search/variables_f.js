@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wassetup_342',['wasSetup',['../structchebyshev_1_1output_1_1output__state.html#a4d2cc4d9d6c48dfd37b0605206f45ab9',1,'chebyshev::output::output_state']]]
+  ['wassetup_346',['wasSetup',['../structchebyshev_1_1output_1_1output__settings.html#ae8d9643d8ad0f5c7bb050208ea3aceb1',1,'chebyshev::output::output_settings']]]
 ];
