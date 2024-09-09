@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 
+#include "../core/common.h"
 #include "./generator.h"
 
 
@@ -20,7 +21,7 @@ namespace chebyshev {
 		/// @class benchmark_result
 		/// Structure holding the results of a benchmark.
 		struct benchmark_result {
-				
+			
 			/// Identifying name of the function or test case.
 			std::string name = "unknown";
 
@@ -31,13 +32,16 @@ namespace chebyshev {
 			unsigned int iterations = 0;
 
 			/// Total runtime over all runs and iterations.
-			long double totalRuntime = 0;
+			long double totalRuntime = get_nan<long double>();
 
 			/// Estimated average runtime.
-			long double averageRuntime = 0;
+			long double averageRuntime = get_nan<long double>();
+
+			/// Sample standard deviation of the runtime.
+			long double stdevRuntime = get_nan<long double>();
 
 			/// Number of runs per second.
-			long double runsPerSecond = 0;
+			long double runsPerSecond = get_nan<long double>();
 
 			/// Whether the benchmark failed because
 			/// an exception was thrown.

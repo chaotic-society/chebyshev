@@ -525,6 +525,7 @@ namespace chebyshev {
 			// Benchmark fields
 			settings.fieldNames["totalRuntime"] = "Tot. Time (ms)";
 			settings.fieldNames["averageRuntime"] = "Avg. Time (ms)";
+			settings.fieldNames["stdevRuntime"] = "Stdev. Time (ms)";
 			settings.fieldNames["runsPerSecond"] = "Runs per Sec.";
 			settings.fieldNames["runs"] = "Runs";
 
@@ -537,6 +538,7 @@ namespace chebyshev {
 			// Set wider column width for some fields
 			settings.fieldOptions["name"].columnWidth = 20;
 			settings.fieldOptions["averageRuntime"].columnWidth = 14;
+			settings.fieldOptions["stdevRuntime"].columnWidth = 16;
 			settings.fieldOptions["runsPerSecond"].columnWidth = 14;
 			settings.fieldOptions["description"].columnWidth = 20;
 
@@ -563,9 +565,6 @@ namespace chebyshev {
 			for (auto& file_pair : settings.openFiles)
 				if(file_pair.second.is_open())
 					file_pair.second.close();
-
-			// Reset module information
-			settings = output_settings();
 		}
 
 
@@ -671,9 +670,17 @@ namespace chebyshev {
 			} else if(fieldName == "iterations") {
 				value << r.iterations;
 			} else if(fieldName == "totalRuntime") {
-				value << r.totalRuntime;
+				value << std::scientific
+					  << std::setprecision(settings.outputPrecision)
+					  << r.totalRuntime;
 			} else if(fieldName == "averageRuntime") {
-				value << r.averageRuntime;
+				value << std::scientific
+					  << std::setprecision(settings.outputPrecision)
+					  << r.averageRuntime;
+			} else if(fieldName == "stdevRuntime") {
+				value << std::scientific
+					  << std::setprecision(settings.outputPrecision)
+					  << r.stdevRuntime;
 			} else if(fieldName == "runsPerSecond") {
 				if(r.runsPerSecond > 1000)
 					value << uint64_t(r.runsPerSecond);

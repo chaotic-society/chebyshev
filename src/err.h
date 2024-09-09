@@ -177,7 +177,7 @@ namespace chebyshev {
 				<< (results.failedChecks / (double) results.totalChecks * 100.0)
 				<< "%)" << std::endl;
 
-			// Reset module information
+			// Discard previous results
 			results = err_results();
 
 			if(exit) {

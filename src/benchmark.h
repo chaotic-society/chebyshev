@@ -59,7 +59,7 @@ namespace chebyshev {
 
 			/// Default columns to print for benchmarks.
 			std::vector<std::string> benchmarkColumns = {
-				"name", "averageRuntime", "runsPerSecond"
+				"name", "averageRuntime", "stdevRuntime", "runsPerSecond"
 			};
 			
 		} settings;
@@ -139,7 +139,7 @@ namespace chebyshev {
 				(results.failedBenchmarks / (double) results.totalBenchmarks) * 100 << "%)"
 				<< '\n';
 
-			// Reset module information
+			// Discard previous results
 			results = benchmark_results();
 
 			if(exit) {
@@ -150,41 +150,29 @@ namespace chebyshev {
 
 
 		/// Measure the total runtime of a function over
-		/// the given input for many runs. It is generally
+		/// the given input for a single run. It is generally
 		/// not needed to call this function directly,
 		/// as benchmarks can be run and registered using
 		/// benchmark::benchmark.
 		///
 		/// @param func The function to measure the runtime of
 		/// @param input The vector of inputs
-		/// @param runs The number of runs to make with the same input
-		/// @return The total runtime of the function over the input
-		/// vector and over many runs.
+		/// @return The total runtime of the function over the input vector.
 		template<typename InputType, typename Function>
-		inline long double runtime(
-			Function func,
-			const std::vector<InputType>& input,
-			unsigned int runs = settings.defaultRuns) {
+		inline long double runtime(Function func, const std::vector<InputType>& input) {
 
 			if (input.size() == 0)
 				return 0.0;
 
-			long double totalRuntime = 0.0;
-
 			// Dummy variable
 			__volatile__ auto c = func(input[0]);
 
-			for (unsigned int i = 0; i < runs; ++i) {
+			timer t = timer();
 
-				timer t = timer();
+			for (unsigned int j = 0; j < input.size(); ++j)
+				c += func(input[j]);
 
-				for (unsigned int j = 0; j < input.size(); ++j)
-					c += func(input[j]);
-
-				totalRuntime += t();
-			}
-
-			return totalRuntime;
+			return t();
 		}
 
 
@@ -203,16 +191,37 @@ namespace chebyshev {
 			unsigned int runs = settings.defaultRuns,
 			bool quiet = false) {
 
-			// Sum of m runs with n iterations each
-			long double totalRuntime = get_nan();
-
 			// Whether the benchmark failed because of an exception
 			bool failed = false;
 
+			// Running average
+			long double averageRuntime;
+
+			// Running total sum of squares
+			long double sumSquares;
+
+			// Total runtime
+			long double totalRuntime;
+
 			try {
 
-				// Measure the total runtime
-				totalRuntime = runtime(func, input, runs);
+				// Use Welford's algorithm to compute
+				// the average and the variance
+				totalRuntime = runtime(func, input) / input.size();
+				averageRuntime = totalRuntime;
+				sumSquares = 0.0;
+
+				for (unsigned int i = 1; i < runs; ++i) {
+					
+					// Compute the runtime for a single run
+					// and update the running estimates
+					const long double curr = runtime(func, input) / input.size();
+					totalRuntime += curr;
+
+					const long double tmp = averageRuntime;
+					averageRuntime = tmp + (curr - tmp) / (i + 1);
+					sumSquares += (curr - tmp) * (curr - averageRuntime);
+				}
 
 			} catch(...) {
 
@@ -225,10 +234,13 @@ namespace chebyshev {
 			res.runs = runs;
 			res.iterations = input.size();
 			res.totalRuntime = totalRuntime;
-			res.averageRuntime = totalRuntime / (runs * input.size());
+			res.averageRuntime = averageRuntime;
 			res.runsPerSecond = 1000.0 / res.averageRuntime;
 			res.failed = failed;
 			res.quiet = quiet;
+
+			if (runs > 1)
+				res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));
 
 			results.totalBenchmarks++;
 			if(failed)

@@ -12,11 +12,14 @@ double f(double x) {
 	return x * std::sqrt(x);
 }
 
+
 double g(double x) {
 	return std::atan(x * x);
 }
 
+
 unsigned int h(unsigned int n) {
+	
 	if(n == 0)
 		return 0;
 	else

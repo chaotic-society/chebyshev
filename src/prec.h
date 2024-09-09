@@ -166,7 +166,7 @@ namespace chebyshev {
 				(results.failedTests / (double) results.totalTests) * 100 << "%)"
 				<< '\n';
 
-			// Reset module information
+			// Discard previous results
 			results = prec_results();
 
 			if(exit) {
