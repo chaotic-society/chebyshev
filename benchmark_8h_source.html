@@ -249,88 +249,89 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            <span class="keywordflow">try</span> {</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                <span class="comment">// Use Welford&#39;s algorithm to compute</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                <span class="comment">// the average and the variance</span></div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                totalRuntime = <a class="code" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input) / input.size();</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                averageRuntime = totalRuntime;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                sumSquares = 0.0;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 1; i &lt; runs; ++i) {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                    </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                    <span class="comment">// Compute the runtime for a single run</span></div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                    <span class="comment">// and update the running estimates</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> curr = <a class="code" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input) / input.size();</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                    totalRuntime += curr;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                <span class="comment">// Use Welford&#39;s algorithm to compute the average and the variance</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                totalRuntime = <a class="code" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                averageRuntime = totalRuntime / input.size();</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                sumSquares = 0.0;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 1; i &lt; runs; ++i) {</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                    </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                    <span class="comment">// Compute the runtime for a single run</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                    <span class="comment">// and update the running estimates</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentRun = <a class="code" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentAverage = currentRun / input.size();</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                    totalRuntime += currentRun;</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> tmp = averageRuntime;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                    averageRuntime = tmp + (curr - tmp) / (i + 1);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                    sumSquares += (curr - tmp) * (curr - averageRuntime);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                }</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            } <span class="keywordflow">catch</span>(...) {</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                <span class="comment">// Catch any exception and mark the benchmark as failed</span></div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                failed = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__result.html">benchmark_result</a> res {};</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            res.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__result.html#ab2711386a676762b69777a981a824a18">name</a> = name;</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            res.runs = runs;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            res.iterations = input.size();</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            res.totalRuntime = totalRuntime;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            res.averageRuntime = averageRuntime;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            res.runsPerSecond = 1000.0 / res.averageRuntime;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            res.failed = failed;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            res.quiet = quiet;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keywordflow">if</span> (runs &gt; 1)</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#afd5a48ce207b699b66a1034b336df126">totalBenchmarks</a>++;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            <span class="keywordflow">if</span>(failed)</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#a72549a79e5db385f9b483ebf71d71002">failedBenchmarks</a>++;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#a0ae648d712827a3a5949b53a7be5d623">benchmarkResults</a>[name].push_back(res);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                    averageRuntime = tmp + (currentAverage - tmp) / (i + 1);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                    sumSquares += (currentAverage - tmp)</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                        * (currentAverage - averageRuntime);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                }</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            } <span class="keywordflow">catch</span>(...) {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                <span class="comment">// Catch any exception and mark the benchmark as failed</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                failed = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__result.html">benchmark_result</a> res {};</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            res.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__result.html#ab2711386a676762b69777a981a824a18">name</a> = name;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            res.runs = runs;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            res.iterations = input.size();</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            res.totalRuntime = totalRuntime;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            res.averageRuntime = averageRuntime;</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            res.runsPerSecond = 1000.0 / res.averageRuntime;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            res.failed = failed;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            res.quiet = quiet;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            <span class="keywordflow">if</span> (runs &gt; 1)</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#afd5a48ce207b699b66a1034b336df126">totalBenchmarks</a>++;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            <span class="keywordflow">if</span>(failed)</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#a72549a79e5db385f9b483ebf71d71002">failedBenchmarks</a>++;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            results.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__results.html#a0ae648d712827a3a5949b53a7be5d623">benchmarkResults</a>[name].push_back(res);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        }</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> InputType = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Function&gt;</div>
-<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1benchmark.html#a754107b86fbb9fda52d462b8ba60e7ee">  260</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            Function func,</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <span class="keyword">const</span> <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html">benchmark_options&lt;InputType&gt;</a>&amp; opt) {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            <span class="comment">// Generate input set</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            std::vector&lt;InputType&gt; input (opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a>);</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a>; ++i)</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                input[i] = opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#abb1086cbad099621b2291bddae7a411a">inputGenerator</a>(i);</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            <span class="comment">// Benchmark over input set</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(name, func, input, opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#ab14c3514de0c24ff38db0b479c148567">runs</a>, opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a42ccd110aaca1c9cdd021e518d60da0a">quiet</a>);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> InputType = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Function&gt;</div>
+<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1benchmark.html#a754107b86fbb9fda52d462b8ba60e7ee">  261</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            Function func,</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            <span class="keyword">const</span> <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html">benchmark_options&lt;InputType&gt;</a>&amp; opt) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="comment">// Generate input set</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            std::vector&lt;InputType&gt; input (opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a>);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a>; ++i)</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                input[i] = opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#abb1086cbad099621b2291bddae7a411a">inputGenerator</a>(i);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            <span class="comment">// Benchmark over input set</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(name, func, input, opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#ab14c3514de0c24ff38db0b479c148567">runs</a>, opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a42ccd110aaca1c9cdd021e518d60da0a">quiet</a>);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        }</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> InputType = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Function&gt;</div>
-<div class="line"><a name="l00284"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1benchmark.html#ac7d07483632f2ebc2e1e58df5179c3dc">  284</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            Function func,</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> runs = settings.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#a0be7025776250df559162d81fd483f7c">defaultRuns</a>,</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> iterations = settings.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#aa3b7761864a2065d36af2defaf298eef">defaultIterations</a>,</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a84677dd24e440fe5f26d454a4ba9d74c">InputGenerator&lt;InputType&gt;</a> inputGenerator = <a class="code" href="namespacechebyshev_1_1benchmark_1_1generator.html#a2b7b21e8465fd92fe51d3d380e68694c">generator::uniform1D</a>(0, 1),</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keywordtype">bool</span> quiet = <span class="keyword">false</span>) {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html">benchmark_options&lt;InputType&gt;</a> opt;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#ab14c3514de0c24ff38db0b479c148567">runs</a> = runs;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a> = iterations;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#abb1086cbad099621b2291bddae7a411a">inputGenerator</a> = inputGenerator;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a42ccd110aaca1c9cdd021e518d60da0a">quiet</a> = quiet;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(name, func, opt);</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        }</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;}</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> InputType = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Function&gt;</div>
+<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1benchmark.html#ac7d07483632f2ebc2e1e58df5179c3dc">  285</a></span>&#160;        <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            <span class="keyword">const</span> <a class="code" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">std::string</a>&amp; name,</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            Function func,</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> runs = settings.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#a0be7025776250df559162d81fd483f7c">defaultRuns</a>,</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> iterations = settings.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#aa3b7761864a2065d36af2defaf298eef">defaultIterations</a>,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a84677dd24e440fe5f26d454a4ba9d74c">InputGenerator&lt;InputType&gt;</a> inputGenerator = <a class="code" href="namespacechebyshev_1_1benchmark_1_1generator.html#a2b7b21e8465fd92fe51d3d380e68694c">generator::uniform1D</a>(0, 1),</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            <span class="keywordtype">bool</span> quiet = <span class="keyword">false</span>) {</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html">benchmark_options&lt;InputType&gt;</a> opt;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#ab14c3514de0c24ff38db0b479c148567">runs</a> = runs;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a07b499e348b636bc55997a75732431c4">iterations</a> = iterations;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#abb1086cbad099621b2291bddae7a411a">inputGenerator</a> = inputGenerator;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            opt.<a class="code" href="structchebyshev_1_1benchmark_1_1benchmark__options.html#a42ccd110aaca1c9cdd021e518d60da0a">quiet</a> = quiet;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            <a class="code" href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">benchmark</a>(name, func, opt);</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        }</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;}</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160; </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="abenchmark__structures_8h_html"><div class="ttname"><a href="benchmark__structures_8h.html">benchmark_structures.h</a></div><div class="ttdoc">Structures for the benchmark module.</div></div>
 <div class="ttc" id="aclasschebyshev_1_1benchmark_1_1timer_html"><div class="ttname"><a href="classchebyshev_1_1benchmark_1_1timer.html">chebyshev::benchmark::timer</a></div><div class="ttdoc">Timer class to measure elapsed time in milliseconds.</div><div class="ttdef"><b>Definition:</b> timer.h:18</div></div>
 <div class="ttc" id="acommon_8h_html_a7eb19df08db299b8016adc888768a41b"><div class="ttname"><a href="common_8h.html#a7eb19df08db299b8016adc888768a41b">CHEBYSHEV_BENCHMARK_ITER</a></div><div class="ttdeci">#define CHEBYSHEV_BENCHMARK_ITER</div><div class="ttdoc">Default number of benchmark iterations.</div><div class="ttdef"><b>Definition:</b> common.h:22</div></div>
@@ -341,7 +342,7 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="ttc" id="anamespacechebyshev_1_1benchmark_html_a49728cb1dcd82b8149b4956c1f3e5147"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#a49728cb1dcd82b8149b4956c1f3e5147">chebyshev::benchmark::benchmark</a></div><div class="ttdeci">void benchmark(const std::string &amp;name, Function func, const std::vector&lt; InputType &gt; &amp;input, unsigned int runs=settings.defaultRuns, bool quiet=false)</div><div class="ttdoc">Run a benchmark on a generic function, with the given input vector.</div><div class="ttdef"><b>Definition:</b> benchmark.h:187</div></div>
 <div class="ttc" id="anamespacechebyshev_1_1benchmark_html_a84677dd24e440fe5f26d454a4ba9d74c"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#a84677dd24e440fe5f26d454a4ba9d74c">chebyshev::benchmark::InputGenerator</a></div><div class="ttdeci">std::function&lt; InputType(unsigned int)&gt; InputGenerator</div><div class="ttdoc">A function which takes in an index and returns a generated input element.</div><div class="ttdef"><b>Definition:</b> benchmark_structures.h:62</div></div>
 <div class="ttc" id="anamespacechebyshev_1_1benchmark_html_aaed26bea7e4922eceaeeaa0c973d956a"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#aaed26bea7e4922eceaeeaa0c973d956a">chebyshev::benchmark::setup</a></div><div class="ttdeci">void setup(std::string moduleName, int argc=0, const char **argv=nullptr)</div><div class="ttdoc">Setup the benchmark environment.</div><div class="ttdef"><b>Definition:</b> benchmark.h:89</div></div>
-<div class="ttc" id="anamespacechebyshev_1_1benchmark_html_ac7d07483632f2ebc2e1e58df5179c3dc"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#ac7d07483632f2ebc2e1e58df5179c3dc">chebyshev::benchmark::benchmark</a></div><div class="ttdeci">void benchmark(const std::string &amp;name, Function func, unsigned int runs=settings.defaultRuns, unsigned int iterations=settings.defaultIterations, InputGenerator&lt; InputType &gt; inputGenerator=generator::uniform1D(0, 1), bool quiet=false)</div><div class="ttdoc">Run a benchmark on a generic function, with the given argument options.</div><div class="ttdef"><b>Definition:</b> benchmark.h:284</div></div>
+<div class="ttc" id="anamespacechebyshev_1_1benchmark_html_ac7d07483632f2ebc2e1e58df5179c3dc"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#ac7d07483632f2ebc2e1e58df5179c3dc">chebyshev::benchmark::benchmark</a></div><div class="ttdeci">void benchmark(const std::string &amp;name, Function func, unsigned int runs=settings.defaultRuns, unsigned int iterations=settings.defaultIterations, InputGenerator&lt; InputType &gt; inputGenerator=generator::uniform1D(0, 1), bool quiet=false)</div><div class="ttdoc">Run a benchmark on a generic function, with the given argument options.</div><div class="ttdef"><b>Definition:</b> benchmark.h:285</div></div>
 <div class="ttc" id="anamespacechebyshev_1_1benchmark_html_aca318e15ba67ce17fe08dd60be67c46d"><div class="ttname"><a href="namespacechebyshev_1_1benchmark.html#aca318e15ba67ce17fe08dd60be67c46d">chebyshev::benchmark::terminate</a></div><div class="ttdeci">void terminate(bool exit=true)</div><div class="ttdoc">Terminate the benchmarking environment.</div><div class="ttdef"><b>Definition:</b> benchmark.h:115</div></div>
 <div class="ttc" id="anamespacechebyshev_1_1output_html_a1ac4dd4024287898404604750be5b564"><div class="ttname"><a href="namespacechebyshev_1_1output.html#a1ac4dd4024287898404604750be5b564">chebyshev::output::print_results</a></div><div class="ttdeci">void print_results(const std::map&lt; std::string, std::vector&lt; ResultType &gt;&gt; &amp;results, const std::vector&lt; std::string &gt; &amp;fields, const std::vector&lt; std::string &gt; &amp;filenames)</div><div class="ttdoc">Print the test results to standard output and output files with their given formats,...</div><div class="ttdef"><b>Definition:</b> output.h:871</div></div>
 <div class="ttc" id="anamespacechebyshev_1_1output_html_a5feeb87138e94b32f0c4bfcc1082ac5a"><div class="ttname"><a href="namespacechebyshev_1_1output.html#a5feeb87138e94b32f0c4bfcc1082ac5a">chebyshev::output::setup</a></div><div class="ttdeci">void setup()</div><div class="ttdoc">Setup printing to the output stream with default options.</div><div class="ttdef"><b>Definition:</b> output.h:503</div></div>
@@ -378,7 +379,7 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="benchmark_8h.html">benchmark.h</a></li>
-    <li class="footer">Generated on Mon Sep 9 2024 20:19:19 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Tue Sep 10 2024 18:12:09 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
