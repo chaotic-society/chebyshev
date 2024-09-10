@@ -205,22 +205,23 @@ namespace chebyshev {
 
 			try {
 
-				// Use Welford's algorithm to compute
-				// the average and the variance
-				totalRuntime = runtime(func, input) / input.size();
-				averageRuntime = totalRuntime;
+				// Use Welford's algorithm to compute the average and the variance
+				totalRuntime = runtime(func, input);
+				averageRuntime = totalRuntime / input.size();
 				sumSquares = 0.0;
 
 				for (unsigned int i = 1; i < runs; ++i) {
 					
 					// Compute the runtime for a single run
 					// and update the running estimates
-					const long double curr = runtime(func, input) / input.size();
-					totalRuntime += curr;
+					const long double currentRun = runtime(func, input);
+					const long double currentAverage = currentRun / input.size();
+					totalRuntime += currentRun;
 
 					const long double tmp = averageRuntime;
-					averageRuntime = tmp + (curr - tmp) / (i + 1);
-					sumSquares += (curr - tmp) * (curr - averageRuntime);
+					averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
+					sumSquares += (currentAverage - tmp)
+						* (currentAverage - averageRuntime);
 				}
 
 			} catch(...) {
