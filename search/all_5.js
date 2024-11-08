@@ -11,7 +11,7 @@ var searchData=
   ['failedchecks_99',['failedChecks',['../structchebyshev_1_1err_1_1err__results.html#a46e2e3edd3110828d8f8075168441c94',1,'chebyshev::err::err_results']]],
   ['failedtests_100',['failedTests',['../structchebyshev_1_1prec_1_1prec__results.html#a7e5b4b0dd1881038fc92ca3858228466',1,'chebyshev::prec::prec_results']]],
   ['failfunction_101',['FailFunction',['../namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f',1,'chebyshev::prec']]],
-  ['fancy_102',['fancy',['../namespacechebyshev_1_1output_1_1format.html#a5b02f4d40cd542dbd526c65cf5bbd2a0',1,'chebyshev::output::format']]],
+  ['fancy_102',['fancy',['../namespacechebyshev_1_1output_1_1format.html#a6239ee7d20c0129acb5da46f156c58e1',1,'chebyshev::output::format']]],
   ['field_5foptions_103',['field_options',['../structchebyshev_1_1output_1_1field__options.html',1,'chebyshev::output']]],
   ['fieldinterpreter_104',['fieldInterpreter',['../structchebyshev_1_1output_1_1field__options.html#a634cd71d7d8c4aab9c172cc1b209e299',1,'chebyshev::output::field_options']]],
   ['fieldnames_105',['fieldNames',['../structchebyshev_1_1output_1_1output__settings.html#ac40b0c2a7de09b985e9e8ee712512985',1,'chebyshev::output::output_settings']]],
