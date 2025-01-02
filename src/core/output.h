@@ -11,6 +11,7 @@
 #include <map>
 #include <sstream>
 #include <iomanip>
+#include <fstream>
 
 #include "../prec/prec_structures.h"
 #include "../benchmark/benchmark_structures.h"
@@ -21,6 +22,7 @@ namespace chebyshev {
 
 	/// @namespace chebyshev::output Functions to manage printing results.
 	namespace output {
+
 
 		/// @class field_options
 		/// Custom options for printing a certain field.
@@ -88,10 +90,13 @@ namespace chebyshev {
 			/// Whether to output to standard output.
 			bool quiet = false;
 
+			/// Whether to print the results to file.
+			bool outputToFile = true;
+
 			/// Whether the output module was setup.
 			bool wasSetup = false;
 
-		} settings;
+		};
 
 
 		/// A function which converts the table entries of a row
@@ -535,433 +540,459 @@ namespace chebyshev {
 		}
 
 
-		/// Setup printing to the output stream with default options.
-		inline void setup() {
+		/// @class output_context The output module context.
+		class output_context {
+		public:
 
-			// Skip subsequent setup calls
-			if (settings.wasSetup)
-				return;
+			/// Settings for the output module.
+			output_settings settings;
 
-			// Estimate fields
-			settings.fieldNames["name"] = "Function";
-			settings.fieldNames["maxErr"] = "Max Err.";
-			settings.fieldNames["meanErr"] = "Mean Err.";
-			settings.fieldNames["rmsErr"] = "RMS Err.";
-			settings.fieldNames["relErr"] = "Rel. Err.";
-			settings.fieldNames["absErr"] = "Abs. Err.";
-			settings.fieldNames["tolerance"] = "Tolerance";
-			settings.fieldNames["failed"] = "Result";
-			settings.fieldNames["iterations"] = "Iterations";
+			
+			/// Setup printing to the output stream with default options.
+			inline void setup() {
 
-			// Equation fields
-			settings.fieldNames["difference"] = "Difference";
-			settings.fieldNames["evaluated"] = "Evaluated";
-			settings.fieldNames["expected"] = "Expected";
+				// Skip subsequent setup calls
+				if (settings.wasSetup)
+					return;
 
-			// Benchmark fields
-			settings.fieldNames["totalRuntime"] = "Tot. Time (ms)";
-			settings.fieldNames["averageRuntime"] = "Avg. Time (ms)";
-			settings.fieldNames["stdevRuntime"] = "Stdev. Time (ms)";
-			settings.fieldNames["runsPerSecond"] = "Runs per Sec.";
-			settings.fieldNames["runs"] = "Runs";
+				// Estimate fields
+				settings.fieldNames["name"] = "Function";
+				settings.fieldNames["maxErr"] = "Max Err.";
+				settings.fieldNames["meanErr"] = "Mean Err.";
+				settings.fieldNames["rmsErr"] = "RMS Err.";
+				settings.fieldNames["relErr"] = "Rel. Err.";
+				settings.fieldNames["absErr"] = "Abs. Err.";
+				settings.fieldNames["tolerance"] = "Tolerance";
+				settings.fieldNames["failed"] = "Result";
+				settings.fieldNames["iterations"] = "Iterations";
 
-			// Error checking
-			settings.fieldNames["correctType"] = "Correct Type";
-			settings.fieldNames["description"] = "Description";
-			settings.fieldNames["expectedFlags"] = "Exp. Flags";
-			settings.fieldNames["thrown"] = "Has Thrown";
+				// Equation fields
+				settings.fieldNames["difference"] = "Difference";
+				settings.fieldNames["evaluated"] = "Evaluated";
+				settings.fieldNames["expected"] = "Expected";
 
-			// Set wider column width for some fields
-			settings.fieldOptions["name"].columnWidth = 20;
-			settings.fieldOptions["averageRuntime"].columnWidth = 14;
-			settings.fieldOptions["stdevRuntime"].columnWidth = 16;
-			settings.fieldOptions["runsPerSecond"].columnWidth = 14;
-			settings.fieldOptions["description"].columnWidth = 20;
+				// Benchmark fields
+				settings.fieldNames["totalRuntime"] = "Tot. Time (ms)";
+				settings.fieldNames["averageRuntime"] = "Avg. Time (ms)";
+				settings.fieldNames["stdevRuntime"] = "Stdev. Time (ms)";
+				settings.fieldNames["runsPerSecond"] = "Runs per Sec.";
+				settings.fieldNames["runs"] = "Runs";
 
-			// Set a special field interpreter for the "failed" field
-			settings.fieldOptions["failed"].fieldInterpreter = [](const std::string& s) {
-				if(s == "0") return "PASS";
-				else if(s == "1") return "FAIL";
-				else return "UNKNOWN";
-			};
+				// Error checking
+				settings.fieldNames["correctType"] = "Correct Type";
+				settings.fieldNames["description"] = "Description";
+				settings.fieldNames["expectedFlags"] = "Exp. Flags";
+				settings.fieldNames["thrown"] = "Has Thrown";
 
-			// Set the default output formats
-			settings.outputFormat = format::fancy();
-			settings.defaultFileOutputFormat = format::csv();
+				// Set wider column width for some fields
+				settings.fieldOptions["name"].columnWidth = 20;
+				settings.fieldOptions["averageRuntime"].columnWidth = 14;
+				settings.fieldOptions["stdevRuntime"].columnWidth = 16;
+				settings.fieldOptions["runsPerSecond"].columnWidth = 14;
+				settings.fieldOptions["description"].columnWidth = 20;
 
-			settings.wasSetup = true;
-		}
+				// Set a special field interpreter for the "failed" field
+				settings.fieldOptions["failed"].fieldInterpreter = [](const std::string& s) {
+					if(s == "0") return "PASS";
+					else if(s == "1") return "FAIL";
+					else return "UNKNOWN";
+				};
 
+				// Set the default output formats
+				settings.outputFormat = format::fancy();
+				settings.defaultFileOutputFormat = format::csv();
 
-		/// Terminate the output module by closing all output files
-		/// and resetting its settings.
-		inline void terminate() {
-
-			// Close all open files
-			for (auto& file_pair : settings.openFiles)
-				if(file_pair.second.is_open())
-					file_pair.second.close();
-		}
+				settings.wasSetup = true;
+			}
 
 
-		/// Resolve the field of an estimate result by name,
-		/// returning the value as a string.
-		///
-		/// @param fieldName The name of the field to resolve
-		/// @param r The estimate result to read the fields of
-		inline std::string resolve_field(
-			const std::string& fieldName, prec::estimate_result r) {
+			/// Terminate the output module by closing all output files
+			/// and resetting its settings.
+			inline void terminate() {
 
-			std::stringstream value;
+				// Close all open files
+				for (auto& file_pair : settings.openFiles)
+					if(file_pair.second.is_open())
+						file_pair.second.close();
+			}
 
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "maxErr") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.maxErr;
-			} else if(fieldName == "meanErr") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.meanErr;
-			} else if(fieldName == "rmsErr") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.rmsErr;
-			} else if(fieldName == "relErr") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.relErr;
-			} else if(fieldName == "absErr") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.absErr;
-			} else if(fieldName == "tolerance") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.tolerance;
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				
-				if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+
+			/// Default constructor for the output module
+			output_context() {
+				setup();
+			}
+			
+
+			/// Destructor which automatically terminates the module
+			~output_context() {
+				terminate();
+			}
+
+
+			/// Resolve the field of an estimate result by name,
+			/// returning the value as a string.
+			///
+			/// @param fieldName The name of the field to resolve
+			/// @param r The estimate result to read the fields of
+			inline std::string resolve_field(
+				const std::string& fieldName, prec::estimate_result r) {
+
+				std::stringstream value;
+
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "maxErr") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.maxErr;
+				} else if(fieldName == "meanErr") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.meanErr;
+				} else if(fieldName == "rmsErr") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.rmsErr;
+				} else if(fieldName == "relErr") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.relErr;
+				} else if(fieldName == "absErr") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.absErr;
+				} else if(fieldName == "tolerance") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.tolerance;
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
+					
+					if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+						return "";
+
+					value << r.additionalFields[fieldName];
+				}
+
+				return value.str();
+			}
+
+
+			/// Resolve the field of an equation result by name,
+			/// returning the value as a string.
+			///
+			/// @param fieldName The name of the field to resolve
+			/// @param r The equation result to read the fields of
+			inline std::string resolve_field(
+				const std::string& fieldName, prec::equation_result r) {
+
+				std::stringstream value;
+
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "evaluated") {
+					value << r.evaluated;
+				} else if(fieldName == "expected") {
+					value << r.expected;
+				} else if(fieldName == "difference") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.difference;
+				} else if(fieldName == "tolerance") {
+					value << std::scientific
+						<< std::setprecision(settings.outputPrecision)
+						<< r.tolerance;
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
+					
+					if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+						return "";
+
+					value << r.additionalFields[fieldName];
+				}
+
+				return value.str();
+			}
+
+
+			/// Resolve the field of a benchmark result by name,
+			/// returning the value as a string.
+			inline std::string resolve_field(
+				const std::string& fieldName, benchmark::benchmark_result r) {
+
+				std::stringstream value;
+
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "runs") {
+					value << r.runs;
+				} else if(fieldName == "iterations") {
+					value << r.iterations;
+				} else if(fieldName == "totalRuntime") {
+					value << std::scientific
+						  << std::setprecision(settings.outputPrecision)
+						  << r.totalRuntime;
+				} else if(fieldName == "averageRuntime") {
+					value << std::scientific
+						  << std::setprecision(settings.outputPrecision)
+						  << r.averageRuntime;
+				} else if(fieldName == "stdevRuntime") {
+					value << std::scientific
+						  << std::setprecision(settings.outputPrecision)
+						  << r.stdevRuntime;
+				} else if(fieldName == "runsPerSecond") {
+					if(r.runsPerSecond > 1000)
+						value << uint64_t(r.runsPerSecond);
+					else
+						value << r.runsPerSecond;
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
+					
+					if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+						return "";
+
+					value << r.additionalFields[fieldName];
+				}
+
+				return value.str();
+			}
+
+
+			/// Resolve the field of an assertion result by name,
+			/// returning the value as a string.
+			///
+			/// @param fieldName The name of the field to resolve
+			/// @param r The assertion result to read the fields of
+			inline std::string resolve_field(
+				const std::string& fieldName, err::assert_result r) {
+
+				std::stringstream value;
+
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "evaluated") {
+					value << r.evaluated;
+				} else if(fieldName == "description") {
+					value << r.description;
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
 					return "";
+				}
 
-				value << r.additionalFields[fieldName];
+				return value.str();
 			}
 
-			return value.str();
-		}
 
+			/// Resolve the field of an errno checking result by name,
+			/// returning the value as a string.
+			///
+			/// @param fieldName The name of the field to resolve
+			/// @param r The errno checking result to read the fields of
+			inline std::string resolve_field(
+				const std::string& fieldName, err::errno_result r) {
 
-		/// Resolve the field of an equation result by name,
-		/// returning the value as a string.
-		///
-		/// @param fieldName The name of the field to resolve
-		/// @param r The equation result to read the fields of
-		inline std::string resolve_field(
-			const std::string& fieldName, prec::equation_result r) {
+				std::stringstream value;
 
-			std::stringstream value;
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "evaluated") {
+					value << r.evaluated;
+				} else if(fieldName == "expectedFlags") {
 
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "evaluated") {
-				value << r.evaluated;
-			} else if(fieldName == "expected") {
-				value << r.expected;
-			} else if(fieldName == "difference") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.difference;
-			} else if(fieldName == "tolerance") {
-				value << std::scientific
-					<< std::setprecision(settings.outputPrecision)
-					<< r.tolerance;
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				
-				if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+					int res_flag = 0xFFFFFFFF;
+					for (int flag : r.expectedFlags)
+						res_flag &= flag;
+
+					value << res_flag;
+
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
 					return "";
+				}
 
-				value << r.additionalFields[fieldName];
+				return value.str();
 			}
 
-			return value.str();
-		}
 
+			/// Resolve the field of an exception checking result by name,
+			/// returning the value as a string.
+			///
+			/// @param fieldName The name of the field to resolve
+			/// @param r The exception checking result to read the fields of
+			inline std::string resolve_field(
+				const std::string& fieldName, err::exception_result r) {
 
-		/// Resolve the field of a benchmark result by name,
-		/// returning the value as a string.
-		inline std::string resolve_field(
-			const std::string& fieldName, benchmark::benchmark_result r) {
+				std::stringstream value;
 
-			std::stringstream value;
-
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "runs") {
-				value << r.runs;
-			} else if(fieldName == "iterations") {
-				value << r.iterations;
-			} else if(fieldName == "totalRuntime") {
-				value << std::scientific
-					  << std::setprecision(settings.outputPrecision)
-					  << r.totalRuntime;
-			} else if(fieldName == "averageRuntime") {
-				value << std::scientific
-					  << std::setprecision(settings.outputPrecision)
-					  << r.averageRuntime;
-			} else if(fieldName == "stdevRuntime") {
-				value << std::scientific
-					  << std::setprecision(settings.outputPrecision)
-					  << r.stdevRuntime;
-			} else if(fieldName == "runsPerSecond") {
-				if(r.runsPerSecond > 1000)
-					value << uint64_t(r.runsPerSecond);
-				else
-					value << r.runsPerSecond;
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				
-				if(r.additionalFields.find(fieldName) == r.additionalFields.end())
+				if(fieldName == "name") {
+					value << r.name;
+				} else if(fieldName == "thrown") {
+					value << r.thrown;
+				} else if(fieldName == "correctType") {
+					value << r.correctType;
+				} else if(fieldName == "failed") {
+					value << r.failed;
+				} else {
 					return "";
+				}
 
-				value << r.additionalFields[fieldName];
+				return value.str();
 			}
 
-			return value.str();
-		}
 
+			/// Generate a table of results as a string matrix to pass to
+			/// a specific formatter of OutputFormat type. This function
+			/// is used by print_results to create the table of results
+			/// which is then formatted and printed to output.
+			///
+			/// @param results The map of test results of any type
+			/// @param fields The fields of the test results to write
+			/// to each column, in order.
+			/// @return A string matrix representing the results as a table.
+			template<typename ResultType>
+			inline auto generate_table(
+				const std::map<std::string, std::vector<ResultType>>& results,
+				const std::vector<std::string>& fields) {
 
-		/// Resolve the field of an assertion result by name,
-		/// returning the value as a string.
-		///
-		/// @param fieldName The name of the field to resolve
-		/// @param r The assertion result to read the fields of
-		inline std::string resolve_field(
-			const std::string& fieldName, err::assert_result r) {
+				std::vector<std::vector<std::string>> table;
 
-			std::stringstream value;
+				// Construct header
+				std::vector<std::string> header (fields.size());
+				for (size_t i = 0; i < fields.size(); ++i) {
 
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "evaluated") {
-				value << r.evaluated;
-			} else if(fieldName == "description") {
-				value << r.description;
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				return "";
+					const auto it = settings.fieldNames.find(fields[i]);
+
+					// Associate string to field name
+					if(it != settings.fieldNames.end())
+						header[i] = it->second;
+					else
+						header[i] = fields[i];
+				}
+				table.emplace_back(header);
+
+				// Construct rows
+				for (const auto& p : results) {
+					for (const auto& result : p.second) {
+
+						// Skip results marked as quiet
+						if (result.quiet)
+							continue;
+
+						std::vector<std::string> row (fields.size());
+
+						for (size_t i = 0; i < fields.size(); ++i)
+							row[i] = resolve_field(fields[i], result);
+
+						table.emplace_back(row);
+					}
+				}
+
+				return table;
 			}
 
-			return value.str();
-		}
 
+			/// Try to open a new output file, returning whether it was correctly opened.
+			/// This function is called internally and is generally not needed, you can
+			/// just specify the filenames and the module will open them when needed.
+			///
+			/// @param filename The name of the file
+			/// @return Whether the file was correctly opened or not
+			inline bool open_file(const std::string& filename) {
 
-		/// Resolve the field of an errno checking result by name,
-		/// returning the value as a string.
-		///
-		/// @param fieldName The name of the field to resolve
-		/// @param r The errno checking result to read the fields of
-		inline std::string resolve_field(
-			const std::string& fieldName, err::errno_result r) {
+				const auto file_pair = settings.openFiles.find(filename);
 
-			std::stringstream value;
+				// If the file is not already open, try to open it and write to it 
+				if (file_pair == settings.openFiles.end() || !file_pair->second.is_open()) {
 
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "evaluated") {
-				value << r.evaluated;
-			} else if(fieldName == "expectedFlags") {
+					settings.openFiles[filename].open(filename);
 
-				int res_flag = 0xFFFFFFFF;
-				for (int flag : r.expectedFlags)
-					res_flag &= flag;
+					if (!settings.openFiles[filename].is_open()) {
+						settings.openFiles.erase(filename);
+						return false;
+					}
+				}
 
-				value << res_flag;
-
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				return "";
+				return true;
 			}
 
-			return value.str();
-		}
 
+			/// Print the test results to standard output and output files.
+			///
+			/// @param results The map of test results, of any type
+			/// @param fields The fields of the test results to write, in order
+			/// @param filenames The names of the module specific output files
+			template<typename ResultType>
+			inline void print_results(
+				const std::map<std::string, std::vector<ResultType>>& results,
+				const std::vector<std::string>& fields,
+				const std::vector<std::string>& filenames) {
 
-		/// Resolve the field of an exception checking result by name,
-		/// returning the value as a string.
-		///
-		/// @param fieldName The name of the field to resolve
-		/// @param r The exception checking result to read the fields of
-		inline std::string resolve_field(
-			const std::string& fieldName, err::exception_result r) {
+				// Skip output on no test case results
+				if(results.empty())
+					return;
 
-			std::stringstream value;
+				// Table data as a string matrix
+				std::vector<std::vector<std::string>> table = generate_table(results, fields);
 
-			if(fieldName == "name") {
-				value << r.name;
-			} else if(fieldName == "thrown") {
-				value << r.thrown;
-			} else if(fieldName == "correctType") {
-				value << r.correctType;
-			} else if(fieldName == "failed") {
-				value << r.failed;
-			} else {
-				return "";
-			}
+				// Write to standard output
+				if(!settings.quiet) {
+					std::cout << "\n";
+					std::cout << settings.outputFormat(table, fields, settings);
+					std::cout << "\n";
+				}
 
-			return value.str();
-		}
+				// Skip printing to file
+				if (!settings.outputToFile)
+					return;
 
+				// Write to the module specific output files
+				for (const auto& filename : filenames) {
 
-		/// Generate a table of results as a string matrix to pass to
-		/// a specific formatter of OutputFormat type. This function
-		/// is used by print_results to create the table of results
-		/// which is then formatted and printed to output.
-		///
-		/// @param results The map of test results of any type
-		/// @param fields The fields of the test results to write
-		/// to each column, in order.
-		/// @return A string matrix representing the results as a table.
-		template<typename ResultType>
-		inline auto generate_table(
-			const std::map<std::string, std::vector<ResultType>>& results,
-			const std::vector<std::string>& fields) {
-
-			std::vector<std::vector<std::string>> table;
-
-			// Construct header
-			std::vector<std::string> header (fields.size());
-			for (size_t i = 0; i < fields.size(); ++i) {
-
-				const auto it = settings.fieldNames.find(fields[i]);
-
-				// Associate string to field name
-				if(it != settings.fieldNames.end())
-					header[i] = it->second;
-				else
-					header[i] = fields[i];
-			}
-			table.emplace_back(header);
-
-			// Construct rows
-			for (const auto& p : results) {
-				for (const auto& result : p.second) {
-
-					// Skip results marked as quiet
-					if (result.quiet)
+					if (!open_file(filename)) {
+						std::cout << "Unable to write to output file: " << filename << std::endl;
 						continue;
+					}
 
-					std::vector<std::string> row (fields.size());
+					auto& file = settings.openFiles[filename];
 
-					for (size_t i = 0; i < fields.size(); ++i)
-						row[i] = resolve_field(fields[i], result);
+					// Apply formatting according to set options
+					const auto it = settings.fileOutputFormat.find(filename);
 
-					table.emplace_back(row);
-				}
-			}
+					if(it != settings.fileOutputFormat.end())
+						file << it->second(table, fields, settings);
+					else
+						file << settings.defaultFileOutputFormat(table, fields, settings);
 
-			return table;
-		}
-
-
-		/// Try to open a new output file, returning whether it was correctly opened.
-		/// This function is called internally and is generally not needed, you can
-		/// just specify the filenames and the module will open them when needed.
-		///
-		/// @param filename The name of the file
-		/// @return Whether the file was correctly opened or not
-		inline bool open_file(std::string filename) {
-
-			const auto file_pair = settings.openFiles.find(filename);
-
-			// If the file is not already open, try to open it and write to it 
-			if (file_pair == settings.openFiles.end() || !file_pair->second.is_open()) {
-
-				settings.openFiles[filename].open(filename);
-
-				if (!settings.openFiles[filename].is_open()) {
-					settings.openFiles.erase(filename);
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-
-		/// Print the test results to standard output and output files
-		/// with their given formats, defaulting to settings.outputFiles
-		/// if no filenames are specified.
-		///
-		/// @param results The map of test results, of any type
-		/// @param fields The fields of the test results to write, in order
-		/// @param filenames The names of the module specific output files
-		template<typename ResultType>
-		inline void print_results(
-			const std::map<std::string, std::vector<ResultType>>& results,
-			const std::vector<std::string>& fields,
-			const std::vector<std::string>& filenames) {
-
-			// Skip output on no test case results
-			if(results.empty())
-				return;
-
-			// Table data as a string matrix
-			std::vector<std::vector<std::string>> table = generate_table(results, fields);
-
-			// Write to standard output
-			if(!settings.quiet)
-				std::cout << "\n" << settings.outputFormat(table, fields, settings) << "\n";
-
-			// Write to the module specific output files
-			for (const auto& filename : filenames) {
-
-				if (!open_file(filename)) {
-					std::cout << "Unable to write to output file: " << filename << std::endl;
-					continue;
+					std::cout << "Results have been saved in: " << filename << std::endl;
 				}
 
-				auto& file = settings.openFiles[filename];
+				// Write to the generic output files
+				for (const auto& filename : settings.outputFiles) {
 
-				// Apply formatting according to set options
-				const auto it = settings.fileOutputFormat.find(filename);
+					if (!open_file(filename)) {
+						std::cout << "Unable to write to output file: " << filename << std::endl;
+						continue;
+					}
 
-				if(it != settings.fileOutputFormat.end())
-					file << it->second(table, fields, settings);
-				else
-					file << settings.defaultFileOutputFormat(table, fields, settings);
+					auto& file = settings.openFiles[filename];
+					
+					// Apply formatting according to set options
+					const auto it = settings.fileOutputFormat.find(filename);
 
-				std::cout << "Results have been saved in: " << filename << std::endl;
-			}
+					if(it != settings.fileOutputFormat.end())
+						file << it->second(table, fields, settings);
+					else
+						file << settings.defaultFileOutputFormat(table, fields, settings);
 
-			// Write to the generic output files
-			for (const auto& filename : settings.outputFiles) {
-
-				if (!open_file(filename)) {
-					std::cout << "Unable to write to output file: " << filename << std::endl;
-					continue;
+					std::cout << "Results have been saved in: " << filename << std::endl;
 				}
-
-				auto& file = settings.openFiles[filename];
-				
-				// Apply formatting according to set options
-				const auto it = settings.fileOutputFormat.find(filename);
-
-				if(it != settings.fileOutputFormat.end())
-					file << it->second(table, fields, settings);
-				else
-					file << settings.defaultFileOutputFormat(table, fields, settings);
-
-				std::cout << "Results have been saved in: " << filename << std::endl;
 			}
-		}
+		};
 	}
 }
 
