@@ -1,6 +1,6 @@
 
 ///
-/// @file prec.h Precision testing module.
+/// @file prec.h Precision testing module
 ///
 
 #ifndef CHEBYSHEV_PREC_H
@@ -9,136 +9,139 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <fstream>
 #include <iostream>
-#include <ctime>
+#include <memory>
 
 #include "./prec/prec_structures.h"
-#include "./prec/fail.h"
-#include "./prec/estimator.h"
 #include "./core/output.h"
 #include "./core/random.h"
+#include "./prec/estimator.h"
+#include "./prec/fail.h"
 
 
 namespace chebyshev {
 
-	/// @namespace chebyshev::prec Precision testing module.
-	///
-	/// This module provides functions to estimate the precision
-	/// and accuracy of mathematical approximations, over an entire
-	/// domain using prec::estimate or at single points using prec:equals.
-	/// For estimates over a domain, precision estimators are used.
-	namespace prec {
+/// @namespace chebyshev::prec
+namespace prec {
 
 
-		/// @class prec_settings Global settings of the precision testing module.
-		struct prec_settings {
-			
-			/// Name of the module being tested
-			std::string moduleName = "unknown";
-			
-			/// Print to standard output or not
-			bool quiet = false;
+	/// @class prec_settings Global settings of the precision testing module.
+	struct prec_settings {
+		
+		/// Name of the module being tested
+		std::string moduleName = "unknown";
 
-			/// Output to file?
-			bool outputToFile = true;
+		/// Default number of iterations for integral quadrature
+		unsigned int defaultIterations = CHEBYSHEV_PREC_ITER;
 
-			/// Default number of iterations for integral quadrature
-			unsigned int defaultIterations = CHEBYSHEV_PREC_ITER;
+		/// Default fail function
+		FailFunction defaultFailFunction = fail::fail_on_max_err();
 
-			/// Default fail function
-			FailFunction defaultFailFunction = fail::fail_on_max_err();
+		/// Default tolerance on max absolute error
+		long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
 
-			/// Default tolerance on max absolute error
-			long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
+		/// The files to write all precision testing results to
+		std::vector<std::string> outputFiles {};
 
-			/// The files to write all precision testing results to
-			std::vector<std::string> outputFiles {};
+		/// Default columns to print for precision estimates.
+		std::vector<std::string> estimateColumns = {
+			"name", "meanErr", "rmsErr", "maxErr", "failed"
+		};
 
-			/// Default columns to print for precision estimates.
-			std::vector<std::string> estimateColumns = {
-				"name", "meanErr", "rmsErr", "maxErr", "failed"
-			};
+		/// The files to write estimate results to
+		/// (if empty, all results are output to a generic file).
+		std::vector<std::string> estimateOutputFiles {};
 
-			/// The files to write estimate results to
-			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> estimateOutputFiles {};
+		/// Default columns to print for equations.
+		std::vector<std::string> equationColumns = {
+			"name", "difference", "tolerance", "failed"
+		};
 
-			/// Default columns to print for equations.
-			std::vector<std::string> equationColumns = {
-				"name", "difference", "tolerance", "failed"
-			};
+		/// The files to write equation results to
+		/// (if empty, all results are output to a generic file).
+		std::vector<std::string> equationOutputFiles {};
 
-			/// The files to write equation results to
-			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> equationOutputFiles {};
+		/// Target tests marked for execution,
+		/// can be picked by passing test case names
+		/// by command line (all tests will be executed if empty).
+		std::map<std::string, bool> pickedTests {};
 
-			/// Target tests marked for execution,
-			/// can be picked by passing test case names
-			/// by command line. (all tests will be executed if empty)
-			std::map<std::string, bool> pickedTests {};
-
-		} settings;
+	};
 
 
-		/// @class prec_results Test results of the precision testing module.
-		struct prec_results {
+	/// @class prec_results Test results of the precision testing module.
+	struct prec_results {
 
-			/// Total number of tests run
-			unsigned int totalTests = 0;
+		/// Total number of tests run
+		unsigned int totalTests = 0;
 
-			/// Number of failed tests
-			unsigned int failedTests = 0;
+		/// Number of failed tests
+		unsigned int failedTests = 0;
 
-			/// Results of error estimation
-			std::map<std::string, std::vector<estimate_result>> estimateResults {};
+		/// Results of error estimation
+		std::map<std::string, std::vector<estimate_result>> estimateResults {};
 
-			/// Results of equation evaluation
-			std::map<std::string, std::vector<equation_result>> equationResults {};
-			
-		} results;
+		/// Results of equation evaluation
+		std::map<std::string, std::vector<equation_result>> equationResults {};
+		
+	};
 
 
-		/// Setup the precision testing environment.
+	/// @class prec_context Precision testing context.
+	class prec_context {
+	public:
+
+		/// Settings for the precision testing context
+		prec_settings settings;
+		
+		/// Results of precision testing
+		prec_results results;
+
+		/// Output module settings for the context, dynamically allocated
+		/// and possibly shared between multiple contexts.
+		std::shared_ptr<output::output_context> output;
+
+		/// Random module settings for the context, dynamically allocated
+		/// and possibly shared between multiple contexts.
+		// std::shared_ptr<random_context> random;
+
+
+		/// Setup the precision testing module
 		///
-		/// @param moduleName Name of the module under test.
-		/// @param argc The number of command line arguments
-		/// @param argv A list of C-style strings containing
-		/// the command line arguments.
+		/// @param moduleName Name of the module under test
+		/// @param argc Number of command line arguments
+		/// @param argv List of command line arguments as C strings
 		inline void setup(
-			std::string moduleName,
-			int argc = 0,
-			const char** argv = nullptr) {
+			const std::string& moduleName,
+			int argc = 0, const char** argv = nullptr) {
 
+			// Initialize other modules
+			settings = prec_settings();
+			results = prec_results();
+			output = std::make_shared<output::output_context>();
+			// random = std::make_shared<random_context>();
 
 			// Initialize list of picked tests
 			if(argc && argv)
 				for (int i = 1; i < argc; ++i)
 					settings.pickedTests[argv[i]] = true;
 
-			std::cout << "Starting precision testing of the "
-				<< moduleName << " module ..." << std::endl;
+			std::cout << "Starting precision testing of the ";
+			std::cout << moduleName << " module ..." << std::endl;
 
 			settings.moduleName = moduleName;
-			results.failedTests = 0;
-			results.totalTests = 0;
-
-			random::setup();
-			output::setup();
 		}
 
 
-		/// Terminate the precision testing environment,
-		/// printing the results to standard output and output files.
+		/// Terminate the precision testing module
 		///
-		/// @param exit Whether to exit after terminating the module.
+		/// @param exit Whether to exit after finishing execution.
 		inline void terminate(bool exit = true) {
 
-			output::settings.quiet = settings.quiet;
 
-			// Output to file is true but no specific files are specified, add default output file.
-			if(	 settings.outputToFile &&
-				!output::settings.outputFiles.size() &&
+			// Ensure that an output file is specified
+			if(	 output->settings.outputToFile &&
+				!output->settings.outputFiles.size() &&
 				!settings.estimateOutputFiles.size() &&
 				!settings.equationOutputFiles.size() &&
 				!settings.outputFiles.size()) {
@@ -146,33 +149,71 @@ namespace chebyshev {
 				settings.outputFiles = { settings.moduleName + "_results" };
 			}
 
+
+			// Print test results
 			std::vector<std::string> outputFiles;
 
 			// Print estimate results
 			outputFiles  = settings.outputFiles;
-			outputFiles.insert(outputFiles.end(), settings.estimateOutputFiles.begin(), settings.estimateOutputFiles.end());
+			outputFiles.insert(
+				outputFiles.end(),
+				settings.estimateOutputFiles.begin(),
+				settings.estimateOutputFiles.end()
+			);
 
-			output::print_results(results.estimateResults, settings.estimateColumns, outputFiles);
+			output->print_results(
+				results.estimateResults, settings.estimateColumns, outputFiles
+			);
+
 
 			// Print equation results
 			outputFiles  = settings.outputFiles;
-			outputFiles.insert(outputFiles.end(), settings.equationOutputFiles.begin(), settings.equationOutputFiles.end());
+			outputFiles.insert(
+				outputFiles.end(),
+				settings.equationOutputFiles.begin(),
+				settings.equationOutputFiles.end()
+			);
 
-			output::print_results(results.equationResults, settings.equationColumns, outputFiles);
+			output->print_results(
+				results.equationResults, settings.equationColumns, outputFiles
+			);
 
+
+			// Print overall test results
 			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << results.totalTests << " total tests, "
-				<< results.failedTests << " failed (" << std::setprecision(3) <<
-				(results.failedTests / (double) results.totalTests) * 100 << "%)"
-				<< '\n';
+			std::cout << results.totalTests << " total tests, ";
+			std::cout << results.failedTests << " failed";
+
+			// Print proportion of failed test, avoiding division by zero
+			if (results.totalTests > 0) {
+				std::cout << " (" << std::setprecision(3);
+				std::cout << (results.failedTests / (double) results.totalTests) * 100;
+				std::cout << "%)";
+			}
+			std::cout << std::endl;
 
 			// Discard previous results
 			results = prec_results();
 
 			if(exit) {
-				output::terminate();
+				output->terminate();
 				std::exit(results.failedTests);
 			}
+		}
+
+
+		/// Construct a precision testing context
+		/// @param moduleName Name of the module under test
+		/// @param argc Number of command line arguments
+		/// @param argv List of command line arguments as C strings
+		prec_context(const std::string& moduleName, int argc, const char** argv) {
+			setup(moduleName, argc, argv);
+		}
+
+
+		/// Destructor for the context, automatically terminates the module.
+		~prec_context() {
+			terminate();
 		}
 
 
@@ -184,10 +225,11 @@ namespace chebyshev {
 		/// @param funcApprox The approximation to test
 		/// @param funcExpected The expected result
 		/// @param opt The options for the estimation
-		template<typename R, typename ...Args,
+		template <
+			typename R, typename ...Args,
 			typename Function1 = std::function<R(Args...)>,
-			typename Function2 = Function1>
-			
+			typename Function2 = Function1
+		>
 		inline void estimate(
 			const std::string& name,
 			Function1 funcApprox,
@@ -233,10 +275,11 @@ namespace chebyshev {
 		/// the test failed.
 		/// @param estimator The precision estimator to use.
 		/// @param quiet Whether to output the result.
-		template<typename R, typename ...Args,
+		template <
+			typename R, typename ...Args,
 			typename Function1 = std::function<R(Args...)>,
-			typename Function2 = Function1>
-
+			typename Function2 = Function1
+		>
 		inline void estimate(
 			const std::string& name,
 			Function1 funcApprox,
@@ -278,11 +321,17 @@ namespace chebyshev {
 			EndoFunction<double> funcApprox,
 			EndoFunction<double> funcExpected,
 			interval domain,
-			long double tolerance = settings.defaultTolerance,
-			unsigned int iterations = settings.defaultIterations,
+			long double tolerance = get_nan(),
+			unsigned int iterations = 0,
 			FailFunction fail = fail::fail_on_max_err(),
 			Estimator<double, double> estimator = estimator::quadrature1D<double>(),
 			bool quiet = false) {
+
+			if (tolerance != tolerance)
+				tolerance = settings.defaultTolerance;
+
+			if (iterations == 0)
+				iterations = settings.defaultIterations;
 
 			estimate_options<double, double> opt {};
 			opt.domain = { domain };
@@ -295,127 +344,127 @@ namespace chebyshev {
 			estimate(name, funcApprox, funcExpected, opt);
 		}
 
-		/// @namespace chebyshev::prec::property Property testing of functions
+
+		/// Precision testing of an endofunction which is
+		/// equivalent to the identity.
 		///
-		/// When estimating error integrals, it is usually necessary to have
-		/// a function to compare the result to, considered exact. Using
-		/// property testing, it is possible to test a specific property
-		/// of a function (such as involution or homogeneity) doing away
-		/// with the additional "exact" function.
-		namespace property {
+		/// @param name The name of the test case.
+		/// @param id The identity function to test.
+		/// @param opt The options for estimation.
+		template <
+			typename Type, typename Identity = EndoFunction<Type>
+		>
+		inline void identity(
+			const std::string& name,
+			Identity id,
+			const estimate_options<Type, Type>& opt) {
 
-			/// Precision testing of an endofunction which is
-			/// equivalent to the identity.
-			///
-			/// @param name The name of the test case.
-			/// @param id The identity function to test.
-			/// @param opt The options for estimation.
-			template<typename Type, typename Identity = EndoFunction<Type>>
-			inline void identity(
-				const std::string& name,
-				Identity id,
-				const estimate_options<Type, Type>& opt) {
+			// Apply the identity function
+			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+				return id(x);
+			};
 
-				// Apply the identity function
-				EndoFunction<Type> funcApprox = [&](Type x) -> Type {
-					return id(x);
+			// And compare it to the identity
+			EndoFunction<Type> funcExpected = [](Type x) -> Type {
+				return x;
+			};
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Precision testing of an endofunction which is
+		/// an involution. The function is applied two times
+		/// to input values and it is checked against the identity.
+		///
+		/// @param name The name of the test case.
+		/// @param involution The involution to test.
+		/// @param opt The options for estimation.
+		template <
+			typename Type, typename Involution = EndoFunction<Type>
+		>
+		inline void involution(
+			const std::string& name,
+			Involution invol,
+			const estimate_options<Type, Type>& opt) {
+
+			// Apply the involution two times
+			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+				return invol(invol(x));
+			};
+
+			// And compare it to the identity
+			EndoFunction<Type> funcExpected = [](Type x) -> Type {
+				return x;
+			};
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Precision testing of an endofunction which is
+		/// idempotent. The function is applied two times
+		/// to input values and it is checked against itself.
+		///
+		/// @param name The name of the test case.
+		/// @param idem The idempotent function to test.
+		/// @param opt The options for estimation.
+		template <
+			typename Type, typename Involution = EndoFunction<Type>
+		>
+		inline void idempotence(
+			const std::string& name,
+			Involution idem,
+			const estimate_options<Type, Type>& opt) {
+
+			// Apply the idem two times
+			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+				return idem(idem(x));
+			};
+
+			// And compare it to the identity
+			EndoFunction<Type> funcExpected = [&](Type x) -> Type {
+				return idem(x);
+			};
+
+			estimate(name, funcApprox, funcExpected, opt);
+		}
+
+
+		/// Precision testing of an function which is
+		/// homogeneous over the domain. The function is applied
+		/// to input values and it is checked against zero.
+		/// The zero value is constructed as OutputType(0.0), but may
+		/// be specified as an additional argument.
+		///
+		/// @param name The name of the test case.
+		/// @param hom The homogeneous function to test.
+		/// @param opt The options for estimation.
+		/// @param zero_element The zero element of type OutputType
+		/// (defaults to OutputType(0.0)).
+		template <
+			typename InputType, typename OutputType = InputType,
+			typename Homogeneous = std::function<OutputType(InputType)>
+		>
+		inline void homogeneous(
+			const std::string& name,
+			Homogeneous hom,
+			const estimate_options<InputType, OutputType>& opt,
+			OutputType zero_element = OutputType(0.0)) {
+
+			// Apply the homogeneous function
+			std::function<OutputType(InputType)> funcApprox =
+				[&](InputType x) -> OutputType {
+					return hom(x);
 				};
 
-				// And compare it to the identity
-				EndoFunction<Type> funcExpected = [](Type x) -> Type {
-					return x;
+			// And compare it to the zero element
+			std::function<OutputType(InputType)> funcExpected =
+				[&](InputType x) -> OutputType {
+					return zero_element;
 				};
 
-				estimate(name, funcApprox, funcExpected, opt);
-			}
-
-			/// Precision testing of an endofunction which is
-			/// an involution. The function is applied two times
-			/// to input values and it is checked against the identity.
-			///
-			/// @param name The name of the test case.
-			/// @param involution The involution to test.
-			/// @param opt The options for estimation.
-			template<typename Type, typename Involution = EndoFunction<Type>>
-			inline void involution(
-				const std::string& name,
-				Involution invol,
-				const estimate_options<Type, Type>& opt) {
-
-				// Apply the involution two times
-				EndoFunction<Type> funcApprox = [&](Type x) -> Type {
-					return invol(invol(x));
-				};
-
-				// And compare it to the identity
-				EndoFunction<Type> funcExpected = [](Type x) -> Type {
-					return x;
-				};
-
-				estimate(name, funcApprox, funcExpected, opt);
-			}
-
-
-			/// Precision testing of an endofunction which is
-			/// idempotent. The function is applied two times
-			/// to input values and it is checked against itself.
-			///
-			/// @param name The name of the test case.
-			/// @param idem The idempotent function to test.
-			/// @param opt The options for estimation.
-			template<typename Type, typename Involution = EndoFunction<Type>>
-			inline void idempotence(
-				const std::string& name,
-				Involution idem,
-				const estimate_options<Type, Type>& opt) {
-
-				// Apply the idem two times
-				EndoFunction<Type> funcApprox = [&](Type x) -> Type {
-					return idem(idem(x));
-				};
-
-				// And compare it to the identity
-				EndoFunction<Type> funcExpected = [&](Type x) -> Type {
-					return idem(x);
-				};
-
-				estimate(name, funcApprox, funcExpected, opt);
-			}
-
-
-			/// Precision testing of an function which is
-			/// homogeneous over the domain. The function is applied
-			/// to input values and it is checked against zero.
-			/// The zero value is constructed as OutputType(0.0), but may
-			/// be specified as an additional argument.
-			///
-			/// @param name The name of the test case.
-			/// @param hom The homogeneous function to test.
-			/// @param opt The options for estimation.
-			/// @param zero_element The zero element of type OutputType
-			/// (defaults to OutputType(0.0)).
-			template<typename InputType, typename OutputType = InputType,
-			typename Homogeneous = std::function<OutputType(InputType)>>
-			inline void homogeneous(
-				const std::string& name,
-				Homogeneous hom,
-				const estimate_options<InputType, OutputType>& opt,
-				OutputType zero_element = OutputType(0.0)) {
-
-				// Apply the homogeneous function
-				std::function<OutputType(InputType)> funcApprox =
-					[&](InputType x) -> OutputType {
-						return hom(x);
-					};
-
-				// And compare it to the zero element
-				std::function<OutputType(InputType)> funcExpected =
-					[&](InputType x) -> OutputType {
-						return zero_element;
-					};
-
-				estimate(name, funcApprox, funcExpected, opt);
-			}
+			estimate(name, funcApprox, funcExpected, opt);
 		}
 
 
@@ -498,8 +547,11 @@ namespace chebyshev {
 		inline void equals(
 			const std::string& name,
 			long double evaluated, long double expected,
-			long double tolerance = settings.defaultTolerance,
+			long double tolerance = get_nan(),
 			bool quiet = false) {
+
+			if (tolerance != tolerance)
+				tolerance = settings.defaultTolerance;
 
 			// Skip the test case if any tests have been picked
 			// and this one was not picked.
@@ -544,8 +596,11 @@ namespace chebyshev {
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<T, 2>> values,
-			long double tolerance = settings.defaultTolerance,
+			long double tolerance = get_nan(),
 			bool quiet = false) {
+
+			if (tolerance != tolerance)
+				tolerance = settings.defaultTolerance;
 
 			// Skip the test case if any tests have been picked
 			// and this one was not picked.
@@ -556,7 +611,7 @@ namespace chebyshev {
 			for (const auto& v : values)
 				equals(name, v[0], v[1], tolerance, quiet);
 		}
-	}
-}
+	};
+}}
 
 #endif

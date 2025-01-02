@@ -31,19 +31,24 @@ double almost_zero(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup the precision testing environment
-	prec::setup("example", argc, argv);
+	auto ctx = prec::prec_context("example", argc, argv); {
+		
 
 		// Set the output file for the prec module
-		prec::settings.outputFiles = { "example_prec.csv" };
+		ctx.settings.outputFiles = { "example_prec.csv" };
+
 
 		// Estimate errors on g(x) on [0, 100]
-		prec::estimate("g(x)", g, f, prec::interval(0, 100));
+		ctx.estimate("g(x)", g, f, prec::interval(0, 100));
+
 
 		// Check that two values are equal up to a tolerance
-		prec::equals("f(1) = 1", f(1), 1, 1E-04);
+		ctx.equals("f(1) = 1", f(1), 1, 1E-04);
+
 
 		// Check that two values are equal up to a tolerance
-		prec::equals("g(1) = 1", g(1), 1, 1E-02);
+		ctx.equals("g(1) = 1", g(1), 1, 1E-02);
+
 
 		// Construct options from the test interval and estimator
 		auto opt = prec::estimate_options<double, double>(
@@ -51,15 +56,19 @@ int main(int argc, char const *argv[]) {
 			prec::estimator::quadrature1D<double>()
 		);
 
+
 		// Precision test an involution
-		prec::property::involution("inverse(x)", inverse, opt);
+		ctx.involution("inverse(x)", inverse, opt);
+
 
 		// Precision test an idempotent function
-		prec::property::idempotence("absolute(x)", absolute, opt);
+		ctx.idempotence("absolute(x)", absolute, opt);
+
 
 		// Precision test an homogeneous function
-		prec::property::homogeneous("almost_zero(x)", almost_zero, opt);
+		ctx.homogeneous("almost_zero(x)", almost_zero, opt);
 
-	// Stop precision testing
-	prec::terminate();
+		// You can use ctx.terminate() to print the results,
+		// or leave it to the destructor to do it automatically.
+	}
 }
