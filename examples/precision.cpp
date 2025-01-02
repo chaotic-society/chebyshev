@@ -31,44 +31,43 @@ double almost_zero(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup the precision testing environment
-	auto ctx = prec::prec_context("example", argc, argv); {
-		
+	auto ctx = prec::prec_context("example", argc, argv);
+	
 
-		// Set the output file for the prec module
-		ctx.settings.outputFiles = { "example_prec.csv" };
-
-
-		// Estimate errors on g(x) on [0, 100]
-		ctx.estimate("g(x)", g, f, prec::interval(0, 100));
+	// Set the output file for the prec module
+	ctx.settings.outputFiles = { "example_prec.csv" };
 
 
-		// Check that two values are equal up to a tolerance
-		ctx.equals("f(1) = 1", f(1), 1, 1E-04);
+	// Estimate errors on g(x) on [0, 100]
+	ctx.estimate("g(x)", g, f, prec::interval(0, 100));
 
 
-		// Check that two values are equal up to a tolerance
-		ctx.equals("g(1) = 1", g(1), 1, 1E-02);
+	// Check that two values are equal up to a tolerance
+	ctx.equals("f(1) = 1", f(1), 1, 1E-04);
 
 
-		// Construct options from the test interval and estimator
-		auto opt = prec::estimate_options<double, double>(
-			prec::interval(1.0, 10.0),
-			prec::estimator::quadrature1D<double>()
-		);
+	// Check that two values are equal up to a tolerance
+	ctx.equals("g(1) = 1", g(1), 1, 1E-02);
 
 
-		// Precision test an involution
-		ctx.involution("inverse(x)", inverse, opt);
+	// Construct options from the test interval and estimator
+	auto opt = prec::estimate_options<double, double>(
+		prec::interval(1.0, 10.0),
+		prec::estimator::quadrature1D<double>()
+	);
 
 
-		// Precision test an idempotent function
-		ctx.idempotence("absolute(x)", absolute, opt);
+	// Precision test an involution
+	ctx.involution("inverse(x)", inverse, opt);
 
 
-		// Precision test an homogeneous function
-		ctx.homogeneous("almost_zero(x)", almost_zero, opt);
+	// Precision test an idempotent function
+	ctx.idempotence("absolute(x)", absolute, opt);
 
-		// You can use ctx.terminate() to print the results,
-		// or leave it to the destructor to do it automatically.
-	}
+
+	// Precision test an homogeneous function
+	ctx.homogeneous("almost_zero(x)", almost_zero, opt);
+
+	// You can use ctx.terminate() to print the results,
+	// or leave it to the destructor to do it automatically.
 }

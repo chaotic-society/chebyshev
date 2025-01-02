@@ -31,36 +31,37 @@ unsigned int h(unsigned int n) {
 int main(int argc, char const *argv[]) {
 
 	// Setup benchmarking
-	benchmark::setup("example", argc, argv);
+	auto ctx = benchmark::benchmark_context("example", argc, argv);
 
-		// Set the output file for the benchmark module
-		benchmark::settings.outputFiles = { "example_benchmark.csv" };
 
-		// Set options for multiple benchmarks
-		// with a benchmark_options structure,
-		// specialized for functions taking in doubles
-		auto opt = benchmark::benchmark_options<double>(
-			10, 	// runs
-			1E+06,	// iterations
-			benchmark::generator::uniform1D(0, 1000) // input generator
-		);
+	// Set the output file for the benchmark module
+	ctx.settings.outputFiles = { "example_benchmark.csv" };
 
-		// Benchmark the given functions
-		benchmark::benchmark("f(x)", f, opt);
-		benchmark::benchmark("g(x)", g, opt);
 
-		// Specify parameters directly
-		benchmark::benchmark<unsigned int>(
-			"h(n)",
-			h, 10, 1000,
-			[](unsigned int i) {
-				return random::natural() % 1000;
-			}
-		);
+	// Set options for multiple benchmarks
+	// with a benchmark_options structure,
+	// specialized for functions taking in doubles
+	auto opt = benchmark::benchmark_options<double>(
+		10, 	// runs
+		1E+06,	// iterations
+		benchmark::generator::uniform1D(0, 1000) // input generator
+	);
 
-		// You may need to specify the input type
-		// of your function if it isn't deduced.
 
-	// Stop benchmarking and exit
-	benchmark::terminate();
+	// Benchmark the given functions
+	ctx.benchmark("f(x)", f, opt);
+	ctx.benchmark("g(x)", g, opt);
+
+
+	// You may need to specify the input type
+	// of your function if it isn't deduced.
+
+	// Specify parameters directly
+	ctx.benchmark<unsigned int>(
+		"h(n)",
+		h, 10, 1000,
+		[](unsigned int i) {
+			return random::natural() % 1000;
+		}
+	);
 }
