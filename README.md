@@ -24,13 +24,13 @@ The different modules are contained in their respective namespaces and are initi
 ### Precision testing
 The precision testing module, implemented in the `prec` namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, the following integrals:
 
-$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |f(x) - f'(x)| dx$$
+$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |\tilde{f}(x) - f(x)| dx$$
 
-$$\epsilon_{rms} = \frac{1}{\mu(\Omega)} \sqrt{\int_\Omega |f(x) - f'(x)|^2 dx}$$
+$$\epsilon_{rms} = \sqrt{\frac{1}{\mu(\Omega)} \int_\Omega |\tilde{f}(x) - f(x)|^2 dx}$$
 
-$$\epsilon_{max} = \max_{\Omega} |f(x) - f'(x)|$$
+$$\epsilon_{max} = \max_{\Omega} |\tilde{f}(x) - f(x)|$$
 
-$$\epsilon_{rel} = \frac{\int_\Omega |f(x) - f'(x)| dx}{\int_\Omega |f(x)|dx}$$
+$$\epsilon_{rel} = \frac{\int_\Omega |\tilde{f}(x) - f(x)| dx}{\int_\Omega |f(x)|dx}$$
 
 The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test cases are validated through a _fail function_, which determines whether the test failed, depending on its results.
 
