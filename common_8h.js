@@ -1,6 +1,5 @@
 var common_8h =
 [
-    [ "CAST_LAMBDA", "common_8h.html#ad25ecae70ca92964c90b50b175bc345c", null ],
     [ "CHEBYSHEV_BENCHMARK_ITER", "common_8h.html#a7eb19df08db299b8016adc888768a41b", null ],
     [ "CHEBYSHEV_BENCHMARK_RUNS", "common_8h.html#acfbfcbde585622ab8d5f0e0bdcbedb36", null ],
     [ "CHEBYSHEV_OUTPUT_WIDTH", "common_8h.html#a3b5334414e528c1283f0beb5cf1afc89", null ],

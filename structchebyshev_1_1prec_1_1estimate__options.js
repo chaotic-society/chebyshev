@@ -1,6 +1,5 @@
 var structchebyshev_1_1prec_1_1estimate__options =
 [
-    [ "Estimator_t", "structchebyshev_1_1prec_1_1estimate__options.html#ab9f0297638f921b01b384522d22e7bca", null ],
     [ "estimate_options", "structchebyshev_1_1prec_1_1estimate__options.html#afe056c349d004fe8acb60aacae7d4f55", null ],
     [ "estimate_options", "structchebyshev_1_1prec_1_1estimate__options.html#a489e411ea06f43b4877bd1b25283e70a", null ],
     [ "estimate_options", "structchebyshev_1_1prec_1_1estimate__options.html#a90784e33bd13e2218a9ff4acc42fb365", null ],

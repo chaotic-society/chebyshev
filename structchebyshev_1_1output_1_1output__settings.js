@@ -1,6 +1,5 @@
 var structchebyshev_1_1output_1_1output__settings =
 [
-    [ "OutputFormat_t", "structchebyshev_1_1output_1_1output__settings.html#a43cd780340511bcdeb3ef86c3de7479a", null ],
     [ "defaultColumnWidth", "structchebyshev_1_1output_1_1output__settings.html#aaae0e027b924b8fc40e5fc0774447f83", null ],
     [ "defaultFileOutputFormat", "structchebyshev_1_1output_1_1output__settings.html#a78c6fae290a511ad3329b5138dbcb987", null ],
     [ "fieldNames", "structchebyshev_1_1output_1_1output__settings.html#ac40b0c2a7de09b985e9e8ee712512985", null ],

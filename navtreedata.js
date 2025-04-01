@@ -25,19 +25,7 @@
 var NAVTREE =
 [
   [ "Chebyshev", "index.html", [
-    [ "Chebyshev Test", "index.html", [
-      [ "Features", "index.html#autotoc_md1", null ],
-      [ "Interface", "index.html#autotoc_md2", [
-        [ "Precision testing", "index.html#autotoc_md3", null ],
-        [ "Benchmarks", "index.html#autotoc_md4", null ],
-        [ "Error checking", "index.html#autotoc_md5", null ],
-        [ "Output customization", "index.html#autotoc_md6", null ],
-        [ "Randomized tests", "index.html#autotoc_md7", null ]
-      ] ],
-      [ "Getting Started", "index.html#autotoc_md8", null ],
-      [ "Setup and Usage", "index.html#autotoc_md9", null ],
-      [ "Contributing", "index.html#autotoc_md10", null ]
-    ] ],
+    [ "Chebyshev Test", "index.html", "index" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -69,7 +57,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"random_8h.html#a312b4d18d025da8b55947e7a4e530fbc"
+"structchebyshev_1_1benchmark_1_1benchmark__options.html#ab14c3514de0c24ff38db0b479c148567",
+"structchebyshev_1_1prec_1_1interval.html#af94ff5166fea869495672875833c90a0"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
