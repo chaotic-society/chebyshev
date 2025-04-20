@@ -399,7 +399,7 @@ namespace chebyshev {
 			/// @param f The function to test
 			/// @param x The input value to use
 			template<typename Function, typename InputType>
-			inline void check_exception(
+			inline void exception(
 				const std::string& name,
 				Function f,
 				InputType x,
@@ -504,6 +504,18 @@ namespace chebyshev {
 				check_exception(name, f, generator(), quiet);
 			}
 		};
+
+
+		/// Construct an error checking context with the given parameters.
+		///
+		/// @param moduleName Name of the module under test.
+		/// @param argc The number of command line arguments.
+		/// @param argv An array of command line arguments as C-like strings.
+		err_context make_context(const std::string& moduleName,
+				int argc = 0, const char** argv = nullptr) {
+			
+			return err_context(moduleName, argc, argv);
+		}
 	}
 }
 

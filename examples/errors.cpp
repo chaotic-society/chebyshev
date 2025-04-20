@@ -25,7 +25,7 @@ double g(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup error checking
-	auto ctx = err::err_context("example", argc, argv);
+	auto ctx = err::make_context("example", argc, argv);
 
 
 	// Set the output file for the err module

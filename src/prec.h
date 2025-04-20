@@ -612,6 +612,20 @@ namespace prec {
 				equals(name, v[0], v[1], tolerance, quiet);
 		}
 	};
+
+
+	/// Construct a precision testing context with the given parameters.
+	///
+	/// @param moduleName Name of the module under test.
+	/// @param argc The number of command line arguments.
+	/// @param argv An array of command line arguments as C-like strings.
+	prec_context make_context(const std::string& moduleName,
+			int argc = 0, const char** argv = nullptr) {
+		
+		return prec_context(moduleName, argc, argv);
+	}
+
+
 }}
 
 #endif

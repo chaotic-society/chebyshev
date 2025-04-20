@@ -34,9 +34,11 @@ namespace prec {
 				EndoFunction<FloatType> funcExpected,
 				estimate_options<FloatType, FloatType> options) {
 
-				if(options.domain.size() != 1)
+				if(options.domain.size() != 1) {
 					throw std::runtime_error(
-						"estimator::quadrature1D only works on mono-dimensional domains");
+						"estimator::quadrature1D only works on mono-dimensional domains"
+					);
+				}
 
 				interval domain = options.domain[0];
 
@@ -104,19 +106,23 @@ namespace prec {
 		///
 		/// ReturnType must be a type that has operator-() and is castable
 		/// to long double.
-		template<typename IntType = int, typename ReturnType = IntType>
+		template <
+			typename IntType = int,
+			typename ReturnType = IntType
+		>
 		inline auto discrete1D() {
 
-			// Return a one-dimensional discrete estimator
-			// as a lambda function
+			// Return a one-dimensional discrete estimator as a lambda function
 			return [](
 				std::function<IntType(ReturnType)> funcApprox,
 				std::function<IntType(ReturnType)> funcExpected,
 				estimate_options<IntType, ReturnType> options) {
 
-				if(options.domain.size() != 1)
+				if(options.domain.size() != 1) {
 					throw std::runtime_error(
-						"estimator::discrete1D only works on mono-dimensional domains");
+						"estimator::discrete1D only works on mono-dimensional domains"
+					);
+				}
 
 				IntType extreme1 = IntType(std::ceil(options.domain[0].a));
 				IntType extreme2 = IntType(std::floor(options.domain[0].b));
@@ -169,9 +175,11 @@ namespace prec {
 				EndoFunction<FloatType> fExpected,
 				estimate_options<FloatType, FloatType> options) {
 
-				if(options.domain.size() != 1)
+				if(options.domain.size() != 1) {
 					throw std::runtime_error(
-						"estimator::montecarlo1D only works on mono-dimensional domains");
+						"estimator::montecarlo1D only works on mono-dimensional domains"
+					);
+				}
 
 				FloatType sum = 0;
 				FloatType sumSqr = 0;
@@ -208,7 +216,10 @@ namespace prec {
 		/// @param dimensions The dimension of the space of inputs
 		/// @note You may specify a custom vector type to use as input,
 		/// but it must provide a constructor taking in the number of elements.
-		template<typename FloatType = double, typename Vector = std::vector<FloatType>>
+		template <
+			typename FloatType = double,
+			typename Vector = std::vector<FloatType>
+		>
 		inline auto montecarlo(unsigned int dimensions) {
 
 			// Return an n-dimensional Monte Carlo estimator
@@ -218,11 +229,13 @@ namespace prec {
 				std::function<FloatType(Vector)> fExpected,
 				estimate_options<FloatType, FloatType> options) {
 
-				if(options.domain.size() != dimensions)
+				if(options.domain.size() != dimensions) {
 					throw std::runtime_error(
 						"The estimation domain's dimension does not match "
 						"the instantiated number of dimensions "
-						"in estimator::montecarlo");
+						"in estimator::montecarlo"
+					);
+				}
 
 				FloatType sum = 0;
 				FloatType sumSqr = 0;
@@ -260,10 +273,7 @@ namespace prec {
 				return res;
 			};
 		}
-
-
 	}
-
 }}
 
 

@@ -55,15 +55,13 @@ The `random` module works in conjunction with the three testing modules to rando
 To use Chebyshev, simply include the relevant header file for the module that you need in your project and start writing tests. You can alternatively include the `chebyshev.h` header file which automatically includes all functionalities. The framework is designed to be easy to use, with a minimal learning curve and customization options to shape it according to your needs. This example code sets up precision testing for the "example" test unit and estimates the error over a fictitious function with respect to an exact function:
 
 ```c
-prec::setup("example", argc, argv);
+auto ctx = prec::make_context("example", argc, argv);
 
-	// Estimate errors on f on [0, 100]
-	prec::estimate("f", f, g, prec::interval(0, 100));
+// Estimate errors on f on [0, 100]
+ctx.estimate("f", f, g, prec::interval(0, 100));
 
-	// Check that two values are equal up to a tolerance
-	prec::equals("f", f(1), 1, 0.2);
-
-prec::terminate();
+// Check that two values are equal up to a tolerance
+ctx.equals("f", f(1), 1, 0.2);
 ```
 
 The output of this simple code, using default options, is:
