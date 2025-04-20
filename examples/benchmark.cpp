@@ -31,7 +31,7 @@ unsigned int h(unsigned int n) {
 int main(int argc, char const *argv[]) {
 
 	// Setup benchmarking
-	auto ctx = benchmark::benchmark_context("example", argc, argv);
+	auto ctx = benchmark::make_context("example", argc, argv);
 
 
 	// Set the output file for the benchmark module

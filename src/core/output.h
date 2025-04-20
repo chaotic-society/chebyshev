@@ -167,7 +167,7 @@ namespace chebyshev {
 
 			/// Simple output format which prints the fields
 			/// separated by the separator string and padding, if enabled.
-			/// The OutputFormat is returned as a lambda function.
+			/// @return The OutputFormat as a lambda function.
 			/// This format is a good starting point if you want to implement
 			/// your own custom output format.
 			inline OutputFormat simple() {
@@ -237,7 +237,10 @@ namespace chebyshev {
 
 			/// Fancy output format which uses Unicode characters
 			/// to print a continuous outline around the table.
-			/// The OutputFormat is returned as a lambda function.
+			/// @return The OutputFormat as a lambda function.
+			///
+			/// @param adaptiveWidth Whether to adjust the column width to fit
+			/// each table entry completely (defaults to true).
 			inline OutputFormat fancy(bool adaptiveWidth = true) {
 
 				return [adaptiveWidth](
@@ -363,7 +366,7 @@ namespace chebyshev {
 
 
 			/// Format function for CSV format files.
-			/// The OutputFormat is returned as a lambda function.
+			/// @return The OutputFormat as a lambda function.
 			///
 			/// @param separator The string to print between
 			/// different fields (defaults to ",").
@@ -407,7 +410,7 @@ namespace chebyshev {
 
 
 			/// Format the table as Markdown.
-			/// The OutputFormat is returned as a lambda function.
+			/// @return The OutputFormat as a lambda function.
 			inline OutputFormat markdown() {
 
 				return [](
@@ -476,7 +479,7 @@ namespace chebyshev {
 
 
 			/// Format the table as a LaTeX table in the tabular environment.
-			/// The OutputFormat is returned as a lambda function.
+			/// @return The OutputFormat as a lambda function.
 			inline OutputFormat latex() {
 
 				return [=](

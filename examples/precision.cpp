@@ -31,7 +31,7 @@ double almost_zero(double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup the precision testing environment
-	auto ctx = prec::prec_context("example", argc, argv);
+	auto ctx = prec::make_context("example", argc, argv);
 	
 
 	// Set the output file for the prec module
