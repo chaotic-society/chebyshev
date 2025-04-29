@@ -101,8 +101,7 @@ $(document).ready(function(){initNavTree('random_8h.html',''); initResizable(); 
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">random.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -111,14 +110,22 @@ $(document).ready(function(){initNavTree('random_8h.html',''); initResizable(); 
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &quot;<a class="el" href="common_8h_source.html">../core/common.h</a>&quot;</code><br />
+<code>#include &lt;random&gt;</code><br />
 </div>
 <p><a href="random_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1random_1_1random__source.html">chebyshev::random::random_source</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A source of pseudorandom numbers.  <a href="structchebyshev_1_1random_1_1random__source.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1random_1_1random__settings.html">chebyshev::random::random_settings</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Settings for the random module.  <a href="structchebyshev_1_1random_1_1random__settings.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classchebyshev_1_1random_1_1random__context.html">chebyshev::random::random_context</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">context.  <a href="classchebyshev_1_1random_1_1random__context.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -130,45 +137,12 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespacechebyshev_1_1random"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pseudorandom number generation and sampling module. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a55c243009a6a0db0791b5a1473f3dab9" id="r_a55c243009a6a0db0791b5a1473f3dab9"><td class="memItemLeft" align="right" valign="top"><a id="a55c243009a6a0db0791b5a1473f3dab9" name="a55c243009a6a0db0791b5a1473f3dab9"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">void</a>&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev::random::setup</b> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">uint64_t</a> seed=0)</td></tr>
-<tr class="memdesc:a55c243009a6a0db0791b5a1473f3dab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the random module. <br /></td></tr>
-<tr class="separator:a55c243009a6a0db0791b5a1473f3dab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e84df7ad7b996b980afe16f085b2104" id="r_a2e84df7ad7b996b980afe16f085b2104"><td class="memItemLeft" align="right" valign="top"><a id="a2e84df7ad7b996b980afe16f085b2104" name="a2e84df7ad7b996b980afe16f085b2104"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">uint64_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev::random::natural</b> ()</td></tr>
-<tr class="memdesc:a2e84df7ad7b996b980afe16f085b2104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random natural number. <br /></td></tr>
-<tr class="separator:a2e84df7ad7b996b980afe16f085b2104"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3019c0b166ae8302c5d977ab80bb7e68" id="r_a3019c0b166ae8302c5d977ab80bb7e68"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#a3019c0b166ae8302c5d977ab80bb7e68">chebyshev::random::uniform</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a> a, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a> b)</td></tr>
-<tr class="memdesc:a3019c0b166ae8302c5d977ab80bb7e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a uniformly distributed random number.  <br /></td></tr>
-<tr class="separator:a3019c0b166ae8302c5d977ab80bb7e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8f29a593d6c92b14b67f3ea523865b7" id="r_ab8f29a593d6c92b14b67f3ea523865b7"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &gt; </td></tr>
-<tr class="memitem:ab8f29a593d6c92b14b67f3ea523865b7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#ab8f29a593d6c92b14b67f3ea523865b7">chebyshev::random::sample_uniform</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a>, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> std::vector&lt; <a class="el" href="structchebyshev_1_1prec_1_1interval.html">prec::interval</a> &gt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">intervals</a>)</td></tr>
-<tr class="memdesc:ab8f29a593d6c92b14b67f3ea523865b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill an already allocated vector with uniformly distributed numbers over different intervals.  <br /></td></tr>
-<tr class="separator:ab8f29a593d6c92b14b67f3ea523865b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7ab3f7b6f0f0dc0a77e7c1b147c3e05" id="r_ac7ab3f7b6f0f0dc0a77e7c1b147c3e05"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#ac7ab3f7b6f0f0dc0a77e7c1b147c3e05">chebyshev::random::gaussian</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">m</a>, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a> s)</td></tr>
-<tr class="memdesc:ac7ab3f7b6f0f0dc0a77e7c1b147c3e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a Gaussian distributed random number.  <br /></td></tr>
-<tr class="separator:ac7ab3f7b6f0f0dc0a77e7c1b147c3e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15bbdc55dff1111ed74f09a061ad08d0" id="r_a15bbdc55dff1111ed74f09a061ad08d0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#a15bbdc55dff1111ed74f09a061ad08d0">chebyshev::random::string</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">size_t</a> length)</td></tr>
-<tr class="memdesc:a15bbdc55dff1111ed74f09a061ad08d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random string made of human-readable ASCII characters.  <br /></td></tr>
-<tr class="separator:a15bbdc55dff1111ed74f09a061ad08d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a195a6bc39086a7dfb196f72e98dc8ce6" id="r_a195a6bc39086a7dfb196f72e98dc8ce6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#a195a6bc39086a7dfb196f72e98dc8ce6">chebyshev::random::string</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">size_t</a> length, std::string <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">alphabet</a>)</td></tr>
-<tr class="memdesc:a195a6bc39086a7dfb196f72e98dc8ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random string made of the elements of the given alphabet.  <br /></td></tr>
-<tr class="separator:a195a6bc39086a7dfb196f72e98dc8ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab92694bf83718dcdb666a2b523b32834" id="r_ab92694bf83718dcdb666a2b523b32834"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#ab92694bf83718dcdb666a2b523b32834">chebyshev::random::string</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">size_t</a> length, std::vector&lt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">char</a> &gt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">alphabet</a>)</td></tr>
-<tr class="memdesc:ab92694bf83718dcdb666a2b523b32834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random string made of the elements of the given alphabet.  <br /></td></tr>
-<tr class="separator:ab92694bf83718dcdb666a2b523b32834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacdcb222e2d8d7c9020973ff98b9d397" id="r_aacdcb222e2d8d7c9020973ff98b9d397"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">T</a> &gt; </td></tr>
-<tr class="memitem:aacdcb222e2d8d7c9020973ff98b9d397"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1random.html#aacdcb222e2d8d7c9020973ff98b9d397">chebyshev::random::string</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">size_t</a> length, std::vector&lt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">T</a> &gt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">alphabet</a>)</td></tr>
-<tr class="memdesc:aacdcb222e2d8d7c9020973ff98b9d397"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random string made of the elements of the given alphabet, of arbitrary type.  <br /></td></tr>
-<tr class="separator:aacdcb222e2d8d7c9020973ff98b9d397"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a312b4d18d025da8b55947e7a4e530fbc" id="r_a312b4d18d025da8b55947e7a4e530fbc"><td class="memItemLeft" align="right" valign="top"><a id="a312b4d18d025da8b55947e7a4e530fbc" name="a312b4d18d025da8b55947e7a4e530fbc"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">struct</a> <a class="el" href="structchebyshev_1_1random_1_1random__settings.html">chebyshev::random::random_settings</a>&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev::random::settings</b></td></tr>
-<tr class="separator:a312b4d18d025da8b55947e7a4e530fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a8378a030b884ce3d0c07e21f45ff6df8" id="r_a8378a030b884ce3d0c07e21f45ff6df8"><td class="memItemLeft" align="right" valign="top"><a id="a8378a030b884ce3d0c07e21f45ff6df8" name="a8378a030b884ce3d0c07e21f45ff6df8"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>random_engine</b> = std::mt19937</td></tr>
+<tr class="memdesc:a8378a030b884ce3d0c07e21f45ff6df8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define the CH_CUSTOM_RND macro and a type random_engine to use a custom random number generator. <br /></td></tr>
+<tr class="separator:a8378a030b884ce3d0c07e21f45ff6df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The pseudorandom number generation and sampling module. </p>
@@ -178,7 +152,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_aebb8dcc11953d78e620bbef0b9e2183.html">core</a></li><li class="navelem"><a class="el" href="random_8h.html">random.h</a></li>
-    <li class="footer">Generated on Tue Apr 1 2025 12:44:31 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Apr 29 2025 16:32:45 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

@@ -9,6 +9,7 @@ var structchebyshev_1_1output_1_1output__settings =
     [ "outputFiles", "structchebyshev_1_1output_1_1output__settings.html#a3cf8a0a76e4c1c25b5605ab4aa486840", null ],
     [ "outputFormat", "structchebyshev_1_1output_1_1output__settings.html#a94f3dbde74f2118f35c9ec69d83d5db1", null ],
     [ "outputPrecision", "structchebyshev_1_1output_1_1output__settings.html#ad8e7b72c67060f1f24f171fa84a75fe3", null ],
+    [ "outputToFile", "structchebyshev_1_1output_1_1output__settings.html#a50a959ee893f31df422ae9ebd9ae969e", null ],
     [ "quiet", "structchebyshev_1_1output_1_1output__settings.html#a22f16630ffb5fe0b4c570ac74824c242", null ],
     [ "wasSetup", "structchebyshev_1_1output_1_1output__settings.html#ae8d9643d8ad0f5c7bb050208ea3aceb1", null ]
 ];

@@ -6,10 +6,8 @@ var searchData=
   ['chebyshev_3a_3aerr_3',['err',['../namespacechebyshev_1_1err.html',1,'chebyshev']]],
   ['chebyshev_3a_3aoutput_4',['output',['../namespacechebyshev_1_1output.html',1,'chebyshev']]],
   ['chebyshev_3a_3aoutput_3a_3aformat_5',['format',['../namespacechebyshev_1_1output_1_1format.html',1,'chebyshev::output']]],
-  ['chebyshev_3a_3aprec_6',['prec',['../namespacechebyshev_1_1prec.html',1,'chebyshev']]],
-  ['chebyshev_3a_3aprec_3a_3adistance_7',['distance',['../namespacechebyshev_1_1prec_1_1distance.html',1,'chebyshev::prec']]],
-  ['chebyshev_3a_3aprec_3a_3aestimator_8',['estimator',['../namespacechebyshev_1_1prec_1_1estimator.html',1,'chebyshev::prec']]],
-  ['chebyshev_3a_3aprec_3a_3afail_9',['fail',['../namespacechebyshev_1_1prec_1_1fail.html',1,'chebyshev::prec']]],
-  ['chebyshev_3a_3aprec_3a_3aproperty_10',['property',['../namespacechebyshev_1_1prec_1_1property.html',1,'chebyshev::prec']]],
-  ['chebyshev_3a_3arandom_11',['random',['../namespacechebyshev_1_1random.html',1,'chebyshev']]]
+  ['chebyshev_3a_3aprec_3a_3adistance_6',['distance',['../namespacechebyshev_1_1prec_1_1distance.html',1,'chebyshev::prec']]],
+  ['chebyshev_3a_3aprec_3a_3aestimator_7',['estimator',['../namespacechebyshev_1_1prec_1_1estimator.html',1,'chebyshev::prec']]],
+  ['chebyshev_3a_3aprec_3a_3afail_8',['fail',['../namespacechebyshev_1_1prec_1_1fail.html',1,'chebyshev::prec']]],
+  ['chebyshev_3a_3arandom_9',['random',['../namespacechebyshev_1_1random.html',1,'chebyshev']]]
 ];

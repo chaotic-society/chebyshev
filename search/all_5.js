@@ -10,7 +10,7 @@ var searchData=
   ['failedbenchmarks_7',['failedBenchmarks',['../structchebyshev_1_1benchmark_1_1benchmark__results.html#a72549a79e5db385f9b483ebf71d71002',1,'chebyshev::benchmark::benchmark_results']]],
   ['failedchecks_8',['failedChecks',['../structchebyshev_1_1err_1_1err__results.html#a46e2e3edd3110828d8f8075168441c94',1,'chebyshev::err::err_results']]],
   ['failedtests_9',['failedTests',['../structchebyshev_1_1prec_1_1prec__results.html#a7e5b4b0dd1881038fc92ca3858228466',1,'chebyshev::prec::prec_results']]],
-  ['failfunction_10',['FailFunction',['../namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f',1,'chebyshev::prec']]],
+  ['failfunction_10',['FailFunction',['../prec__structures_8h.html#a5022ef665cb15b39272380050636962f',1,'chebyshev::prec']]],
   ['fancy_11',['fancy',['../namespacechebyshev_1_1output_1_1format.html#a6239ee7d20c0129acb5da46f156c58e1',1,'chebyshev::output::format']]],
   ['features_12',['Features',['../index.html#autotoc_md1',1,'']]],
   ['field_5foptions_13',['field_options',['../structchebyshev_1_1output_1_1field__options.html',1,'chebyshev::output']]],

@@ -139,15 +139,13 @@ Randomized tests</h2>
 <h1><a class="anchor" id="autotoc_md8"></a>
 Getting Started</h1>
 <p>To use Chebyshev, simply include the relevant header file for the module that you need in your project and start writing tests. You can alternatively include the <code><a class="el" href="chebyshev_8h.html" title="Main include header of the test framework.">chebyshev.h</a></code> header file which automatically includes all functionalities. The framework is designed to be easy to use, with a minimal learning curve and customization options to shape it according to your needs. This example code sets up precision testing for the "example" test unit and estimates the error over a fictitious function with respect to an exact function:</p>
-<div class="fragment"><div class="line">prec::setup(<span class="stringliteral">&quot;example&quot;</span>, argc, argv);</div>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> ctx = prec::make_context(<span class="stringliteral">&quot;example&quot;</span>, argc, argv);</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// Estimate errors on f on [0, 100]</span></div>
-<div class="line">    prec::estimate(<span class="stringliteral">&quot;f&quot;</span>, f, g, prec::interval(0, 100));</div>
+<div class="line"><span class="comment">// Estimate errors on f on [0, 100]</span></div>
+<div class="line">ctx.estimate(<span class="stringliteral">&quot;f&quot;</span>, f, g, prec::interval(0, 100));</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// Check that two values are equal up to a tolerance</span></div>
-<div class="line">    prec::equals(<span class="stringliteral">&quot;f&quot;</span>, f(1), 1, 0.2);</div>
-<div class="line"> </div>
-<div class="line">prec::terminate();</div>
+<div class="line"><span class="comment">// Check that two values are equal up to a tolerance</span></div>
+<div class="line">ctx.equals(<span class="stringliteral">&quot;f&quot;</span>, f(1), 1, 0.2);</div>
 </div><!-- fragment --><p>The output of this simple code, using default options, is:</p>
 <div class="fragment"><div class="line">Starting precision testing of the example module ...</div>
 <div class="line"> </div>
@@ -180,7 +178,7 @@ Contributing</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Apr 1 2025 12:44:31 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Apr 29 2025 16:32:45 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

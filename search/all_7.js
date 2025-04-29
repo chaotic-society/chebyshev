@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['homogeneous_0',['homogeneous',['../namespacechebyshev_1_1prec_1_1property.html#a812c8c29ec496e7d7dbb5e3f5751f8eb',1,'chebyshev::prec::property']]]
+  ['homogeneous_0',['homogeneous',['../classchebyshev_1_1prec_1_1prec__context.html#a7f703e4e96ab56c5cc011f5eadf4c25a',1,'chebyshev::prec::prec_context']]]
 ];

@@ -11,6 +11,6 @@ var searchData=
   ['discrete1d_8',['discrete1D',['../namespacechebyshev_1_1prec_1_1estimator.html#a8cfe951c34e0ad1518816025034c2c82',1,'chebyshev::prec::estimator']]],
   ['distance_9',['distance',['../structchebyshev_1_1prec_1_1equation__options.html#aed953669f7714b838466008725054a5c',1,'chebyshev::prec::equation_options']]],
   ['distance_2eh_10',['distance.h',['../distance_8h.html',1,'']]],
-  ['distancefunction_11',['DistanceFunction',['../namespacechebyshev_1_1prec.html#a0de94c2a8800d7dc4e7bf94469706c07',1,'chebyshev::prec']]],
+  ['distancefunction_11',['DistanceFunction',['../prec__structures_8h.html#a0de94c2a8800d7dc4e7bf94469706c07',1,'chebyshev::prec']]],
   ['domain_12',['domain',['../structchebyshev_1_1prec_1_1estimate__result.html#abbbe0d2515fc9ff4dc517b666a6673de',1,'chebyshev::prec::estimate_result::domain'],['../structchebyshev_1_1prec_1_1estimate__options.html#a9e98d758740c329812879bdc339e2035',1,'chebyshev::prec::estimate_options::domain']]]
 ];

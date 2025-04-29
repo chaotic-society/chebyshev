@@ -114,20 +114,12 @@ Public Attributes</h2></td></tr>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>moduleName</b> = &quot;unknown&quot;</td></tr>
 <tr class="memdesc:a4c295d5ad65f0b0504f5933c1d9ff90b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the module being tested. <br /></td></tr>
 <tr class="separator:a4c295d5ad65f0b0504f5933c1d9ff90b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a591f1feaddfbb0e1600e912f1ea0bd03" id="r_a591f1feaddfbb0e1600e912f1ea0bd03"><td class="memItemLeft" align="right" valign="top"><a id="a591f1feaddfbb0e1600e912f1ea0bd03" name="a591f1feaddfbb0e1600e912f1ea0bd03"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>quiet</b> = <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">false</a></td></tr>
-<tr class="memdesc:a591f1feaddfbb0e1600e912f1ea0bd03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print to standard output or not. <br /></td></tr>
-<tr class="separator:a591f1feaddfbb0e1600e912f1ea0bd03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaaf9186e7ae4312557c9a63022ec0773" id="r_aaaf9186e7ae4312557c9a63022ec0773"><td class="memItemLeft" align="right" valign="top"><a id="aaaf9186e7ae4312557c9a63022ec0773" name="aaaf9186e7ae4312557c9a63022ec0773"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><b>outputToFile</b> = <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">true</a></td></tr>
-<tr class="memdesc:aaaf9186e7ae4312557c9a63022ec0773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output to file? <br /></td></tr>
-<tr class="separator:aaaf9186e7ae4312557c9a63022ec0773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f635eb97a7b74d79b637900cf1cde49" id="r_a8f635eb97a7b74d79b637900cf1cde49"><td class="memItemLeft" align="right" valign="top"><a id="a8f635eb97a7b74d79b637900cf1cde49" name="a8f635eb97a7b74d79b637900cf1cde49"></a>
 <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">unsigned</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">int</a>&#160;</td><td class="memItemRight" valign="bottom"><b>defaultIterations</b> = <a class="el" href="common_8h.html#a2a491d0f6b10fde5a05b94541e77ff69">CHEBYSHEV_PREC_ITER</a></td></tr>
 <tr class="memdesc:a8f635eb97a7b74d79b637900cf1cde49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of iterations for integral quadrature. <br /></td></tr>
 <tr class="separator:a8f635eb97a7b74d79b637900cf1cde49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b21b27a0a641844f348044f498251de" id="r_a7b21b27a0a641844f348044f498251de"><td class="memItemLeft" align="right" valign="top"><a id="a7b21b27a0a641844f348044f498251de" name="a7b21b27a0a641844f348044f498251de"></a>
-<a class="el" href="namespacechebyshev_1_1prec.html#a5022ef665cb15b39272380050636962f">FailFunction</a>&#160;</td><td class="memItemRight" valign="bottom"><b>defaultFailFunction</b> = <a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#aaaea6993b992fb83fb1eb92834639c19">fail::fail_on_max_err</a>()</td></tr>
+<a class="el" href="prec__structures_8h.html#a5022ef665cb15b39272380050636962f">FailFunction</a>&#160;</td><td class="memItemRight" valign="bottom"><b>defaultFailFunction</b> = <a class="el" href="namespacechebyshev_1_1prec_1_1fail.html#aaaea6993b992fb83fb1eb92834639c19">fail::fail_on_max_err</a>()</td></tr>
 <tr class="memdesc:a7b21b27a0a641844f348044f498251de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default fail function. <br /></td></tr>
 <tr class="separator:a7b21b27a0a641844f348044f498251de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebadd8eaa0af57a3e64d86b40907225b" id="r_aebadd8eaa0af57a3e64d86b40907225b"><td class="memItemLeft" align="right" valign="top"><a id="aebadd8eaa0af57a3e64d86b40907225b" name="aebadd8eaa0af57a3e64d86b40907225b"></a>
@@ -152,8 +144,9 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>equationOutputFiles</b> {}</td></tr>
 <tr class="memdesc:a7714b4d58aecedb9de1ed59122a21b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">The files to write equation results to (if empty, all results are output to a generic file). <br /></td></tr>
 <tr class="separator:a7714b4d58aecedb9de1ed59122a21b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0aae58d83eb64ce64b188f398ae6308b" id="r_a0aae58d83eb64ce64b188f398ae6308b"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1prec_1_1prec__settings.html#a0aae58d83eb64ce64b188f398ae6308b">pickedTests</a> {}</td></tr>
-<tr class="memdesc:a0aae58d83eb64ce64b188f398ae6308b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Target tests marked for execution, can be picked by passing test case names by command line.  <br /></td></tr>
+<tr class="memitem:a0aae58d83eb64ce64b188f398ae6308b" id="r_a0aae58d83eb64ce64b188f398ae6308b"><td class="memItemLeft" align="right" valign="top"><a id="a0aae58d83eb64ce64b188f398ae6308b" name="a0aae58d83eb64ce64b188f398ae6308b"></a>
+std::map&lt; std::string, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pickedTests</b> {}</td></tr>
+<tr class="memdesc:a0aae58d83eb64ce64b188f398ae6308b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Target tests marked for execution, can be picked by passing test case names by command line (all tests will be executed if empty). <br /></td></tr>
 <tr class="separator:a0aae58d83eb64ce64b188f398ae6308b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -171,8 +164,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">                <span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;difference&quot;</span>, <span class="stringliteral">&quot;tolerance&quot;</span>, <span class="stringliteral">&quot;failed&quot;</span></div>
-<div class="line">            }</div>
+<div class="line">            <span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;difference&quot;</span>, <span class="stringliteral">&quot;tolerance&quot;</span>, <span class="stringliteral">&quot;failed&quot;</span></div>
+<div class="line">        }</div>
 </div><!-- fragment -->
 <p>Default columns to print for equations. </p>
 
@@ -190,27 +183,10 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">                <span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;meanErr&quot;</span>, <span class="stringliteral">&quot;rmsErr&quot;</span>, <span class="stringliteral">&quot;maxErr&quot;</span>, <span class="stringliteral">&quot;failed&quot;</span></div>
-<div class="line">            }</div>
+<div class="line">            <span class="stringliteral">&quot;name&quot;</span>, <span class="stringliteral">&quot;meanErr&quot;</span>, <span class="stringliteral">&quot;rmsErr&quot;</span>, <span class="stringliteral">&quot;maxErr&quot;</span>, <span class="stringliteral">&quot;failed&quot;</span></div>
+<div class="line">        }</div>
 </div><!-- fragment -->
 <p>Default columns to print for precision estimates. </p>
-
-</div>
-</div>
-<a id="a0aae58d83eb64ce64b188f398ae6308b" name="a0aae58d83eb64ce64b188f398ae6308b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0aae58d83eb64ce64b188f398ae6308b">&#9670;&#160;</a></span>pickedTests</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::string, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a>&gt; chebyshev::prec::prec_settings::pickedTests {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Target tests marked for execution, can be picked by passing test case names by command line. </p>
-<p>(all tests will be executed if empty) </p>
 
 </div>
 </div>
@@ -222,8 +198,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec.html">prec</a></li><li class="navelem"><a class="el" href="structchebyshev_1_1prec_1_1prec__settings.html">prec_settings</a></li>
-    <li class="footer">Generated on Tue Apr 1 2025 12:44:31 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><b>prec</b></li><li class="navelem"><a class="el" href="structchebyshev_1_1prec_1_1prec__settings.html">prec_settings</a></li>
+    <li class="footer">Generated on Tue Apr 29 2025 16:32:45 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

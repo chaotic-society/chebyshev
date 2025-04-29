@@ -113,27 +113,32 @@ $(document).ready(function(){initNavTree('distance_8h_source.html',''); initResi
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechebyshev.html">chebyshev</a> {</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>prec {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">namespace </span>distance {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> FloatType = <span class="keywordtype">double</span>&gt;</div>
-<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1prec_1_1distance.html#ae4555b874cad1361260c5500267bd7b2">   19</a></span>        <span class="keyword">inline</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> <a class="code hl_function" href="namespacechebyshev_1_1prec_1_1distance.html#ae4555b874cad1361260c5500267bd7b2">abs_distance</a>(<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> a, <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> b) {</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            <span class="keyword">const</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> = b - a;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            <span class="keywordflow">return</span> (<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> &gt; 0) ? <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> : -<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        }</div>
-</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>_internal {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Type&gt;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">inline</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> abs(<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a>) {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        <span class="keywordflow">return</span> (<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a> &gt; 0) ? <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a> : -<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a>;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>}</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>prec {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">namespace </span>distance {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>}}</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacechebyshev_1_1prec_1_1distance_html_ae4555b874cad1361260c5500267bd7b2"><div class="ttname"><a href="namespacechebyshev_1_1prec_1_1distance.html#ae4555b874cad1361260c5500267bd7b2">chebyshev::prec::distance::abs_distance</a></div><div class="ttdeci">FloatType abs_distance(FloatType a, FloatType b)</div><div class="ttdoc">Absolute distance between two real values.</div><div class="ttdef"><b>Definition</b> distance.h:19</div></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Type = <span class="keywordtype">double</span>&gt;</div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="}">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="namespacechebyshev_1_1prec_1_1distance.html#a915ed90adbfbac977b743b9fec7b7b9b">   27</a></span>        <span class="keyword">inline</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> <a class="code hl_function" href="namespacechebyshev_1_1prec_1_1distance.html#a915ed90adbfbac977b743b9fec7b7b9b">abs_distance</a>(<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> a, <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> b) {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>            <span class="keywordflow">return</span> _internal::abs(b - a);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        }</div>
+</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    }</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}}</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacechebyshev_1_1prec_1_1distance_html_a915ed90adbfbac977b743b9fec7b7b9b"><div class="ttname"><a href="namespacechebyshev_1_1prec_1_1distance.html#a915ed90adbfbac977b743b9fec7b7b9b">chebyshev::prec::distance::abs_distance</a></div><div class="ttdeci">Type abs_distance(Type a, Type b)</div><div class="ttdoc">Absolute distance between two real values.</div><div class="ttdef"><b>Definition</b> distance.h:27</div></div>
 <div class="ttc" id="anamespacechebyshev_html"><div class="ttname"><a href="namespacechebyshev.html">chebyshev</a></div><div class="ttdoc">General namespace of the framework.</div><div class="ttdef"><b>Definition</b> benchmark.h:18</div></div>
 <div class="ttc" id="anamespacechebyshev_html_a62181021524138fb26d708e15a8feb06"><div class="ttname"><a href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">chebyshev::get_nan</a></div><div class="ttdeci">constexpr FloatType get_nan()</div><div class="ttdoc">Get a quiet NaN of the specified floating point type.</div><div class="ttdef"><b>Definition</b> common.h:55</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -142,7 +147,7 @@ $(document).ready(function(){initNavTree('distance_8h_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_98cfb946305e64a50aff61d7f6b40e1c.html">prec</a></li><li class="navelem"><a class="el" href="distance_8h.html">distance.h</a></li>
-    <li class="footer">Generated on Tue Apr 1 2025 12:44:31 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Apr 29 2025 16:32:45 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
