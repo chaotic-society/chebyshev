@@ -23,8 +23,8 @@ double absolute(double x) {
 	return std::abs(x) - 1E-09;
 }
 
-double almost_zero(double x) {
-	return 1E-10 * random::uniform(-1, 1);
+double noise(random::random_source& rnd, double x) {
+	return 1E-10 * rnd.uniform(-1, 1);
 }
 
 
@@ -64,6 +64,12 @@ int main(int argc, char const *argv[]) {
 	// Precision test an idempotent function
 	ctx.idempotence("absolute(x)", absolute, opt);
 
+
+	// Get a source of random numbers
+	random::random_source rnd = ctx.random->get_rnd();
+	auto almost_zero = [&](double x) {
+		return noise(rnd, x);
+	};
 
 	// Precision test an homogeneous function
 	ctx.homogeneous("almost_zero(x)", almost_zero, opt);

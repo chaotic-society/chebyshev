@@ -56,10 +56,10 @@ namespace chebyshev {
 		};
 
 
-		/// A function which takes in an index and returns
+		/// A function which takes in a random source and returns
 		/// a generated input element.
 		template<typename InputType>
-		using InputGenerator = std::function<InputType(unsigned int)>;
+		using InputGenerator = std::function<InputType(random::random_source&)>;
 
 
 		/// @class benchmark_options

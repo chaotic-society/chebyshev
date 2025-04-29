@@ -118,7 +118,7 @@ namespace chebyshev {
 
 			/// Random module settings for the context, dynamically allocated
 			/// and possibly shared between multiple contexts.
-			// std::shared_ptr<random_context> random;
+			std::shared_ptr<random::random_context> random;
 
 
 			/// Setup error checking module.
@@ -135,7 +135,7 @@ namespace chebyshev {
 				settings = err_settings();
 				results = err_results();
 				output = std::make_shared<output::output_context>();
-				// random = std::make_shared<random_context>();
+				random = std::make_shared<random::random_context>();
 
 				if(argc && argv)
 					for (int i = 1; i < argc; ++i)
@@ -399,7 +399,7 @@ namespace chebyshev {
 			/// @param f The function to test
 			/// @param x The input value to use
 			template<typename Function, typename InputType>
-			inline void exception(
+			inline void check_exception(
 				const std::string& name,
 				Function f,
 				InputType x,

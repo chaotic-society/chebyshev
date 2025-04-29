@@ -17,11 +17,12 @@ namespace benchmark {
 	/// @namespace chebyshev::benchmark::generator Input generators for benchmarks
 	namespace generator {
 
+
 		/// Uniform generator over a domain
 		inline auto uniform1D(long double a, long double b) {
 
-			return [=](unsigned int i) {
-				return random::uniform(a, b);
+			return [a, b](random::random_source& rnd) {
+				return rnd.uniform(a, b);
 			};
 		}
 

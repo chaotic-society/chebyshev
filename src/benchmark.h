@@ -89,7 +89,7 @@ namespace chebyshev {
 
 			/// Random module settings for the context, dynamically allocated
 			/// and possibly shared between multiple contexts.
-			// std::shared_ptr<random_context> random;
+			std::shared_ptr<random::random_context> random;
 
 
 			/// Setup the benchmark environment.
@@ -107,7 +107,7 @@ namespace chebyshev {
 				settings = benchmark_settings();
 				results = benchmark_results();
 				output = std::make_shared<output::output_context>();
-				// random = std::make_shared<random_context>();
+				random = std::make_shared<random::random_context>();
 
 				// Initialize list of picked tests
 				if(argc && argv)
@@ -224,6 +224,8 @@ namespace chebyshev {
 			/// @param name The name of the test case
 			/// @param func The function to benchmark
 			/// @param input The vector of input values
+			/// (InputType must correspond to the argument of func, but may be any POD
+			/// or aggregate data type).
 			/// @param runs The number of runs with the same input
 			template<typename InputType = double, typename Function>
 			inline void benchmark(
@@ -302,19 +304,19 @@ namespace chebyshev {
 			/// @param name The name of the test case
 			/// @param func The function to benchmark
 			/// @param opt The benchmark options
-			template <
-				typename InputType = double,
-				typename Function
-			>
+			template <typename InputType = double, typename Function>
 			inline void benchmark(
 				const std::string& name,
 				Function func,
 				const benchmark_options<InputType>& opt) {
 
+
 				// Generate input set
+				random::random_source rnd = random->get_rnd();
 				std::vector<InputType> input (opt.iterations);
+
 				for (unsigned int i = 0; i < opt.iterations; ++i)
-					input[i] = opt.inputGenerator(i);
+					input[i] = opt.inputGenerator(rnd);
 
 				// Benchmark over input set
 				benchmark(name, func, input, opt.runs, opt.quiet);
@@ -333,9 +335,9 @@ namespace chebyshev {
 			inline void benchmark(
 				const std::string& name,
 				Function func,
+				InputGenerator<InputType> inputGenerator,
 				unsigned int runs = 0,
 				unsigned int iterations = 0,
-				InputGenerator<InputType> inputGenerator = generator::uniform1D(0, 1),
 				bool quiet = false) {
 
 				if (runs == 0)

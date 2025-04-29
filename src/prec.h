@@ -103,7 +103,7 @@ namespace prec {
 
 		/// Random module settings for the context, dynamically allocated
 		/// and possibly shared between multiple contexts.
-		// std::shared_ptr<random_context> random;
+		std::shared_ptr<random::random_context> random;
 
 
 		/// Setup the precision testing module
@@ -119,7 +119,7 @@ namespace prec {
 			settings = prec_settings();
 			results = prec_results();
 			output = std::make_shared<output::output_context>();
-			// random = std::make_shared<random_context>();
+			random = std::make_shared<random::random_context>();
 
 			// Initialize list of picked tests
 			if(argc && argv)
