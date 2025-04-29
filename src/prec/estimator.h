@@ -166,14 +166,15 @@ namespace prec {
 		/// for univariate real functions. A uniform random sampler is used
 		/// to sample points over the one-dimensional domain
 		template<typename FloatType = double>
-		inline auto montecarlo1D() {
+		inline auto montecarlo1D(std::shared_ptr<random::random_context> rnd_ctx) {
 
-			// Return a one-dimensional Monte Carlo estimator
-			// as a lambda function
-			return [](
+			// Return a one-dimensional Monte Carlo estimator as a lambda function
+			return [rnd_ctx](
 				EndoFunction<FloatType> funcApprox,
 				EndoFunction<FloatType> fExpected,
 				estimate_options<FloatType, FloatType> options) {
+
+				random::random_source rnd = rnd_ctx->get_rnd();
 
 				if(options.domain.size() != 1) {
 					throw std::runtime_error(
@@ -189,7 +190,7 @@ namespace prec {
 
 				for (int i = 0; i < options.iterations; ++i) {
 					
-					FloatType x = random::uniform(options.domain[0].a, options.domain[0].b);
+					FloatType x = rnd.uniform(options.domain[0].a, options.domain[0].b);
 					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
 
 					max = std::max(max, diff);
@@ -213,21 +214,29 @@ namespace prec {
 		/// Use crude Monte Carlo integration to approximate error integrals
 		/// for multivariate real functions.
 		///
+		/// @param rnd_ctx A shared pointer to the random context to use
+		/// for random number generation.
 		/// @param dimensions The dimension of the space of inputs
+		///
+		/// Since multiple concurrent test cases may use the same estimator,
+		/// the creation of multiple random sources is handled by the random context itself.
+		///
 		/// @note You may specify a custom vector type to use as input,
 		/// but it must provide a constructor taking in the number of elements.
 		template <
 			typename FloatType = double,
 			typename Vector = std::vector<FloatType>
 		>
-		inline auto montecarlo(unsigned int dimensions) {
+		inline auto montecarlo(
+			std::shared_ptr<random::random_context> rnd_ctx, unsigned int dimensions) {
 
-			// Return an n-dimensional Monte Carlo estimator
-			// as a lambda function
-			return [dimensions](
+			// Return an n-dimensional Monte Carlo estimator as a lambda function
+			return [rnd_ctx, dimensions](
 				std::function<FloatType(Vector)> funcApprox,
 				std::function<FloatType(Vector)> fExpected,
 				estimate_options<FloatType, FloatType> options) {
+
+				random::random_source rnd = rnd_ctx->get_rnd();
 
 				if(options.domain.size() != dimensions) {
 					throw std::runtime_error(
@@ -251,7 +260,7 @@ namespace prec {
 
 				for (int i = 0; i < options.iterations; ++i) {
 					
-					random::sample_uniform(x, options.domain);
+					rnd.uniform(x, options.domain);
 
 					const FloatType diff = std::abs(funcApprox(x) - funcExpected(x));
 
