@@ -2,9 +2,13 @@
 [![Build Status](https://github.com/chaotic-society/chebyshev/actions/workflows/build.yml/badge.svg)](https://github.com/chaotic-society/chebyshev/actions/workflows/build.yml)
 [![Documentation](https://img.shields.io/badge/Doxygen-docs-blue?style=flat&cacheSeconds=https%3A%2F%2Fchaotic-society.github.io%2Ftheoretica%2F&link=https%3A%2F%2Fchaotic-society.github.io%2Fchebyshev%2F)](https://chaotic-society.github.io/chebyshev)
 
-Chebyshev is a header-only C++ testing framework designed for testing scientific software and scientific computing libraries. It is part of the larger Theoretica project, a mathematical library that is thoroughly tested using Chebyshev. The framework is composed of three modules: a `prec` module for precision testing, a `benchmark` module for benchmarks, and the `err` module for error checking. Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications.
+> A C++ testing framework designed for scientific software
+
+Chebyshev is a header-only C++ testing framework specialized in testing scientific software and scientific computing libraries. It was originally developed to test the larger [Theoretica](https://github.com/chaotic-society/theoretica) project. The framework is composed of three modules: a `prec` module for precision testing, a `benchmark` module for benchmarks, and the `err` module for error checking.
 
 ## Features
+Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications:
+
 - **Header-only:** Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.
 
 - **Error integral approximation:** Chebyshev provides estimators for the precision of functions over their domain.
@@ -18,33 +22,29 @@ Chebyshev is a header-only C++ testing framework designed for testing scientific
 - **Multi-platform support:** Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS, and is fully platform-independent.
 
 ## Interface
-The different modules are contained in their respective namespaces and are initialized through the `<module>::setup()` function and are terminated with the `<module>::terminate()` function, which outputs the results. The behavior of a module may be customized and extended by modifying the fields of the `<module>::settings` structure after the module has been initialized. The results of testing are also output to file in CSV or other formats for easy analysis, manipulation and visualization.
 
+The different modules are used through _contexts_, which handle requests and the underlying logic. You can create a context for a certain module using `<module>::make_context()`, which will return a `<module>_context` class which provides all relevant methods. The behavior of a module may be customized and extended by modifying its `settings` structure inside the context class. When the destructor of a context or `terminate()` is called, the results of testing are output to standard output and to file in CSV or other formats for easy analysis, manipulation and visualization.
 
 ### Precision testing
-The precision testing module, implemented in the `prec` namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, the following integrals:
+The precision testing module, implemented in the `prec` namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, error integrals such as the following:
 
 $$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |\tilde{f}(x) - f(x)| dx$$
 
-$$\epsilon_{rms} = \sqrt{\frac{1}{\mu(\Omega)} \int_\Omega |\tilde{f}(x) - f(x)|^2 dx}$$
-
 $$\epsilon_{max} = \max_{\Omega} |\tilde{f}(x) - f(x)|$$
-
-$$\epsilon_{rel} = \frac{\int_\Omega |\tilde{f}(x) - f(x)| dx}{\int_\Omega |f(x)|dx}$$
 
 The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test cases are validated through a _fail function_, which determines whether the test failed, depending on its results.
 
 
 ### Benchmarks
-The `benchmark` module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. The `benchmark::benchmark()` function works by running the function under consideration for multiple _runs_ and _iterations_, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function can be fully customized using, for example, randomized input over the domain of the function.
+The `benchmark` module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. The `benchmark()` method works by running the function under consideration for multiple _runs_ and _iterations_, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function can be fully customized using, for example, randomized input over the domain of the function.
 
 
 ### Error checking
-The `err` module makes it possible to test that functions correctly set `errno` or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The functions `err::check_errno` and `err::check_exception()` are used for these type of checks.
+The `err` module makes it possible to test that functions correctly set `errno` or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The methods `check_errno` and `check_exception()` are used for these type of checks.
 
 
 ### Output customization
-The additional `output` module, not directly used for testing, makes it possible to customize the output of the tests, such as which fields to print and how to display them. Customization options are available through the `output::settings` structure and are automatically applied to the other modules.
+The additional `output` module, not directly used for testing, makes it possible to customize the output of the tests, such as which fields to print and how to display them. Customization options are available through the `settings` structure.
 
 
 ### Randomized tests
@@ -80,15 +80,16 @@ Results have been saved in: example_results
  ┌───────────────────────────────────────────────────────────────┐
  │         Function │   Difference │    Tolerance │       Result │
  ├───────────────────────────────────────────────────────────────┤
- │                f │     -0.0e+00 │      2.0e-01 │         PASS │
+ │                f │      0.0e+00 │      2.0e-01 │         PASS │
  └───────────────────────────────────────────────────────────────┘
 
 Results have been saved in: example_results
 Finished testing example
 2 total tests, 0 failed (0%)
 ```
+
 ## Setup and Usage
-Chebyshev is a header-only library, so there is no need to build or install it separately. Simply include the relevant header files in your project and start using the framework straightaway. Only a compiler with C++14 support is needed to use the framework.
+Chebyshev is a header-only library, so there is no need to build or install it separately. Simply include the relevant header files in your project and start using the framework straightaway. Only a compiler with C++14 support is needed to use the framework. To use the library, simply include `chebyshev.h` or a specific `<module>.h` header (e.g. `benchmark.h`).
 
 
 ## Contributing
