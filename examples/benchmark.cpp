@@ -35,16 +35,16 @@ int main(int argc, char const *argv[]) {
 	auto ctx = benchmark::make_context("example", argc, argv);
 
 	// Set the output file for the benchmark module
-	ctx.settings.outputFiles = { "example_benchmark.csv" };
+	ctx.settings.outputFiles = { "examples/benchmark.csv" };
 
 
 	// Set options for multiple benchmarks
 	// with a benchmark_options structure,
 	// specialized for functions taking in doubles
 	auto opt = benchmark::benchmark_options<double>(
-		10, 	// runs
-		1E+06,	// iterations
-		benchmark::generator::uniform1D(0, 1000) // input generator
+		10, 	// Runs
+		1E+06,	// Iterations
+		benchmark::generator::uniform1D(0, 1000) // Input generator
 	);
 
 	// Benchmark the given functions
@@ -57,9 +57,8 @@ int main(int argc, char const *argv[]) {
 	// Specify parameters directly
 	ctx.benchmark<unsigned int>(
 		"h(n)", h,
-		[](random::random_source& rnd) {
-			return rnd.natural() % 1000;
-		},
-		10, 1000
+		benchmark::generator::discrete1D(0, 1000), // Input generator
+		10,		// Runs
+		1000	// Iterations
 	);
 }

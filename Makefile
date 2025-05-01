@@ -17,5 +17,5 @@ errors:
 	@g++ examples/errors.cpp ${CXXFLAGS} -o ./errors
 
 clean:
-	@rm *.csv
+	@rm examples/*.csv
 	@rm *.exe

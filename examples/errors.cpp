@@ -24,27 +24,28 @@ double g(double x) {
 
 int main(int argc, char const *argv[]) {
 
+
 	// Setup error checking
-	auto ctx = err::make_context("example", argc, argv);
+	err::err_context ctx ("example", argc, argv);
 
 
 	// Set the output file for the err module
-	ctx.settings.outputFiles = { "example_err.csv" };
+	ctx.settings.outputFiles = { "examples/errors.csv" };
 
 
-	// Make an assert
+	// Make an assert, checking that an expression is true
 	ctx.assert("std::sqrt", std::sqrt(4) == 2, "sqrt(4) is 2");
 
 
 	// Check errno value after function call
-	ctx.check_errno("f(x)", f, -1, EDOM);
+	ctx.errno_value("f(x)", f, -1, EDOM);
 
 
 	// Check that a function throws an exception
-	ctx.check_exception("g(x)", g, -1);
+	ctx.throws("g(x)", g, -1);
 
 
-	// Check that a function throws an exception,
-	// controlling its type.
-	ctx.check_exception<std::runtime_error>("g(x)", g, -2);
+	// Check that a function throws an exception
+	// of the given type
+	ctx.throws<std::runtime_error>("g(x)", g, -2);
 }

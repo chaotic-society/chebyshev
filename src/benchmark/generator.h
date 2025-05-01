@@ -18,11 +18,30 @@ namespace benchmark {
 	namespace generator {
 
 
-		/// Uniform generator over a domain
+		/// Uniform generator over a domain.
+		///
+		/// @param a The lower extreme of the domain
+		/// @param b The upper extreme of the domain
+		/// @return The input generator
 		inline auto uniform1D(long double a, long double b) {
 
 			return [a, b](random::random_source& rnd) {
 				return rnd.uniform(a, b);
+			};
+		}
+
+
+		/// Discrete uniform generator over a domain.
+		///
+		/// @param a The lower extreme of the domain
+		/// @param b The upper extreme of the domain
+		/// @return The input generator
+		inline auto discrete1D(long int a, long int b) {
+
+			long long int length = a < b ? (b - a) : (a - b);
+
+			return [a, length](random::random_source& rnd) {
+				return a + (rnd.natural() % uint64_t(length));
 			};
 		}
 

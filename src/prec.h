@@ -475,11 +475,11 @@ namespace prec {
 		/// @param evaluate The evaluated value
 		/// @param expected The expected value
 		/// @param opt The options for the evaluation
-		template<typename T = double>
+		template<typename Type = double>
 		inline void equals(
 			const std::string& name,
-			const T& evaluated, const T& expected,
-			equation_options<T> opt = equation_options<T>()) {
+			const Type& evaluated, const Type& expected,
+			equation_options<Type> opt = equation_options<Type>()) {
 
 			// Skip the test case if any tests have been picked
 			// and this one was not picked.
@@ -519,15 +519,15 @@ namespace prec {
 		/// @param distance The distance function to use
 		/// @param tolerance The tolerance for the evaluation
 		/// @param quiet Whether to output the result
-		template<typename T = double>
+		template<typename Type = double>
 		inline void equals(
 			const std::string& name,
-			const T& evaluated, const T& expected,
+			const Type& evaluated, const Type& expected,
 			long double tolerance,
-			DistanceFunction<T> distance,
+			DistanceFunction<Type> distance,
 			bool quiet = false) {
 
-			equation_options<T> opt {};
+			equation_options<Type> opt {};
 			opt.tolerance = tolerance;
 			opt.distance = distance;
 			opt.quiet = quiet;
@@ -592,10 +592,10 @@ namespace prec {
 		/// @param values A list of values to equate
 		/// @param tolerance The tolerance for the evaluation
 		/// @param quiet Whether to output the result
-		template<typename T>
+		template<typename Type>
 		inline void equals(
 			const std::string& name,
-			std::vector<std::array<T, 2>> values,
+			std::vector<std::array<Type, 2>> values,
 			long double tolerance = get_nan(),
 			bool quiet = false) {
 

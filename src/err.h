@@ -26,7 +26,7 @@ namespace chebyshev {
 	/// This module provides functions to test error reporting
 	/// with different methods. Assertions are checked with
 	/// err::assert, while the value of errno after a function
-	/// call can be checked using err::check_errno and the
+	/// call can be checked using err::errno_value and the
 	/// throwing of exceptions can be checked using check_exception.
 	namespace err {
 
@@ -285,7 +285,7 @@ namespace chebyshev {
 			/// @param x The input value to evaluate the function at
 			/// @param expected_errno The expected value of errno
 			template<typename Function, typename InputType>
-			inline void check_errno(
+			inline void errno_value(
 				const std::string& name,
 				Function f,
 				InputType x,
@@ -319,28 +319,29 @@ namespace chebyshev {
 			///
 			/// @param name The name of the function or test case
 			/// @param f The function to test
-			/// @param generator A function which takes in an index
-			/// and returns a (potentially random) input value
+			/// @param generator A function which returns an input value
 			/// @param expected_errno The expected value of errno
 			template<typename Function, typename InputType>
-			inline void check_errno(
+			inline void errno_value(
 				const std::string& name, Function f,
 				std::function<InputType()> generator,
 				int expected_errno,
 				bool quiet = false) {
 
-				check_errno(name, f, generator(), expected_errno, quiet);
+				errno_value(name, f, generator(), expected_errno, quiet);
 			}
 
 
-			/// Check errno value after function call
+			/// Check the value of errno after a function call,
+			/// comparing to multiple expected flags which should all
+			/// be set.
 			///
 			/// @param name The name of the function or test case
 			/// @param f The function to test
 			/// @param x The input value to evaluate the function at
 			/// @param expected_flags A list of the expected errno flags
 			template<typename Function, typename InputType>
-			inline void check_errno(
+			inline void errno_flags(
 				const std::string& name,
 				Function f,
 				InputType x,
@@ -375,31 +376,33 @@ namespace chebyshev {
 			}
 
 
-			/// Check errno value after function call
+			/// Check the value of errno after a function call,
+			/// comparing to multiple expected flags which should all
+			/// be set.
 			///
 			/// @param name The name of the function or test case
 			/// @param f The function to test
-			/// @param generator A function which takes in an index
-			/// and returns a (potentially random) input value
+			/// @param generator A function which returns the input value
 			/// @param expected_flags A list of the expected errno flags
 			template<typename Function, typename InputType>
-			void check_errno(
+			void errno_flags(
 				const std::string& name, Function f,
 				std::function<InputType()> generator,
 				std::vector<int>& expected_flags,
 				bool quiet = false) {
 
-				check_errno(name, f, generator(), expected_flags, quiet);
+				errno_flags(name, f, generator(), expected_flags, quiet);
 			}
 
 
-			/// Check that an exception is thrown during a function call
+			/// Check that an exception of any type is
+			/// thrown during a function call with the given input.
 			///
 			/// @param name The name of the function or test case
 			/// @param f The function to test
 			/// @param x The input value to use
 			template<typename Function, typename InputType>
-			inline void check_exception(
+			inline void throws(
 				const std::string& name,
 				Function f,
 				InputType x,
@@ -429,19 +432,19 @@ namespace chebyshev {
 			}
 
 
-			/// Check that an exception is thrown during a function call
+			/// Check that an exception of any type is
+			/// thrown during a function call with a generated input.
 			///
 			/// @param name The name of the function or test case
 			/// @param f The function to test
-			/// @param generator A function which takes in an index
-			/// and returns a (potentially random) input value
+			/// @param generator A function which returns the input value
 			template<typename Function, typename InputType>
-			inline void check_exception(
+			inline void throws(
 				const std::string& name, Function f,
 				std::function<InputType()> generator,
 				bool quiet = false) {
 
-				check_exception(name, f, generator(), quiet);
+				throws(name, f, generator(), quiet);
 			}
 
 
@@ -451,8 +454,12 @@ namespace chebyshev {
 			/// @param name The name of the function or test case
 			/// @param f The function to test
 			/// @param x The input value to use
-			template<typename ExceptionType, typename Function, typename InputType>
-			inline void check_exception(
+			template <
+				typename ExceptionType,
+				typename Function,
+				typename InputType
+			>
+			inline void throws(
 				const std::string& name,
 				Function f,
 				InputType x,
@@ -495,13 +502,17 @@ namespace chebyshev {
 			/// @param f The function to test
 			/// @param generator A function which takes in an index
 			/// and returns a (potentially random) input value
-			template<typename ExceptionType, typename Function, typename InputType>
-			inline void check_exception(
+			template <
+				typename ExceptionType,
+				typename Function,
+				typename InputType
+			>
+			inline void throws(
 				const std::string& name, Function f,
 				std::function<InputType()> generator,
 				bool quiet = false) {
 
-				check_exception(name, f, generator(), quiet);
+				throws(name, f, generator(), quiet);
 			}
 		};
 

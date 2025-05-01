@@ -31,11 +31,11 @@ double noise(random::random_source& rnd, double x) {
 int main(int argc, char const *argv[]) {
 
 	// Setup the precision testing environment
-	auto ctx = prec::make_context("example", argc, argv);
+	prec::prec_context ctx ("example", argc, argv);
 	
 
 	// Set the output file for the prec module
-	ctx.settings.outputFiles = { "example_prec.csv" };
+	ctx.settings.outputFiles = { "examples/precision.csv" };
 
 
 	// Estimate errors on g(x) on [0, 100]
