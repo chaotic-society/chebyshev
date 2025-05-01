@@ -17,13 +17,11 @@ var searchData=
   ['chebyshev_5foutput_5fwidth_14',['CHEBYSHEV_OUTPUT_WIDTH',['../common_8h.html#a3b5334414e528c1283f0beb5cf1afc89',1,'common.h']]],
   ['chebyshev_5fprec_5fiter_15',['CHEBYSHEV_PREC_ITER',['../common_8h.html#a2a491d0f6b10fde5a05b94541e77ff69',1,'common.h']]],
   ['chebyshev_5fprec_5ftolerance_16',['CHEBYSHEV_PREC_TOLERANCE',['../common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc',1,'common.h']]],
-  ['check_5ferrno_17',['check_errno',['../classchebyshev_1_1err_1_1err__context.html#a8c8f0edeec35dacf4aecf28945a7d7cd',1,'chebyshev::err::err_context::check_errno(const std::string &amp;name, Function f, std::function&lt; InputType()&gt; generator, int expected_errno, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#af5bea93fd0c6f5be2a0084d1a63a8abf',1,'chebyshev::err::err_context::check_errno(const std::string &amp;name, Function f, InputType x, std::vector&lt; int &gt; &amp;expected_flags, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#a5e4ba322255229c409a80c8b09b9911f',1,'chebyshev::err::err_context::check_errno(const std::string &amp;name, Function f, std::function&lt; InputType()&gt; generator, std::vector&lt; int &gt; &amp;expected_flags, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#acf5a68dc33360ed0e93e9eac6ddd8cc7',1,'chebyshev::err::err_context::check_errno(const std::string &amp;name, Function f, InputType x, int expected_errno, bool quiet=false)']]],
-  ['check_5fexception_18',['check_exception',['../classchebyshev_1_1err_1_1err__context.html#a5a0d0c77c9d0be744a682f3c827c5d9d',1,'chebyshev::err::err_context::check_exception(const std::string &amp;name, Function f, InputType x, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#a279741ef642aeb45943afda01e038993',1,'chebyshev::err::err_context::check_exception(const std::string &amp;name, Function f, std::function&lt; InputType()&gt; generator, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#a1a991b1e2fa5dd724a582593efd67605',1,'chebyshev::err::err_context::check_exception(const std::string &amp;name, Function f, InputType x, bool quiet=false)'],['../classchebyshev_1_1err_1_1err__context.html#afb5345e6969d0b91c99ebeee3680a96b',1,'chebyshev::err::err_context::check_exception(const std::string &amp;name, Function f, std::function&lt; InputType()&gt; generator, bool quiet=false)']]],
-  ['checking_19',['Error checking',['../index.html#autotoc_md5',1,'']]],
-  ['columnwidth_20',['columnWidth',['../structchebyshev_1_1output_1_1field__options.html#a2448131f826229e1cc2573d6473ed4a7',1,'chebyshev::output::field_options']]],
-  ['common_2eh_21',['common.h',['../common_8h.html',1,'']]],
-  ['contributing_22',['Contributing',['../index.html#autotoc_md10',1,'']]],
-  ['correcttype_23',['correctType',['../structchebyshev_1_1err_1_1exception__result.html#a31e71e069c79ef29722d88d973721c0c',1,'chebyshev::err::exception_result']]],
-  ['csv_24',['csv',['../namespacechebyshev_1_1output_1_1format.html#affbebddca646be0120a09ca36e62f8fa',1,'chebyshev::output::format']]],
-  ['customization_25',['Output customization',['../index.html#autotoc_md6',1,'']]]
+  ['checking_17',['Error checking',['../index.html#autotoc_md5',1,'']]],
+  ['columnwidth_18',['columnWidth',['../structchebyshev_1_1output_1_1field__options.html#a2448131f826229e1cc2573d6473ed4a7',1,'chebyshev::output::field_options']]],
+  ['common_2eh_19',['common.h',['../common_8h.html',1,'']]],
+  ['contributing_20',['Contributing',['../index.html#autotoc_md10',1,'']]],
+  ['correcttype_21',['correctType',['../structchebyshev_1_1err_1_1exception__result.html#a31e71e069c79ef29722d88d973721c0c',1,'chebyshev::err::exception_result']]],
+  ['csv_22',['csv',['../namespacechebyshev_1_1output_1_1format.html#affbebddca646be0120a09ca36e62f8fa',1,'chebyshev::output::format']]],
+  ['customization_23',['Output customization',['../index.html#autotoc_md6',1,'']]]
 ];

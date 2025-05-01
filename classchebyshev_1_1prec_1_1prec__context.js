@@ -2,10 +2,10 @@ var classchebyshev_1_1prec_1_1prec__context =
 [
     [ "prec_context", "classchebyshev_1_1prec_1_1prec__context.html#a6d6405e0062daeacc3b7e51030ee1e17", null ],
     [ "~prec_context", "classchebyshev_1_1prec_1_1prec__context.html#acd94a1accf686051a9cf1a2bc954d38a", null ],
-    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#abdeedcf21f3ba19e00b91350bd5a73f5", null ],
-    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#a5dfb4f9dd613d351ed385acfd0aca74c", null ],
+    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#a243fb836840b92985306f81414bbcc27", null ],
+    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#a6ad9cce244b95c613e63b1abacf0b149", null ],
     [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#a5255ca3395727c3d724a40d065b4c51a", null ],
-    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#ac4300546cdc16564484849a13af6ea2f", null ],
+    [ "equals", "classchebyshev_1_1prec_1_1prec__context.html#add46273cbacb6e201173d65458b6f030", null ],
     [ "estimate", "classchebyshev_1_1prec_1_1prec__context.html#ae63a26332f09505eb7d22cb35c3e0793", null ],
     [ "estimate", "classchebyshev_1_1prec_1_1prec__context.html#aab1555925e2b1f042ecf155677246f7f", null ],
     [ "estimate", "classchebyshev_1_1prec_1_1prec__context.html#a31ba430586fbc9cc8de01de02bcf2498", null ],
