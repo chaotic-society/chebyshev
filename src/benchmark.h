@@ -8,6 +8,8 @@
 
 #include <ctime>
 #include <iostream>
+#include <thread>
+#include <future>
 
 #include "./core/random.h"
 #include "./benchmark/timer.h"
@@ -25,6 +27,34 @@ namespace chebyshev {
 	/// vector of inputs. The benchmark::benchmark implements this
 	/// functionality and registers the results for analysis and output.
 	namespace benchmark {
+
+
+		/// Measure the total runtime of a function over
+		/// the given input for a single run. It is generally
+		/// not needed to call this function directly,
+		/// as benchmarks can be run and registered using
+		/// benchmark::benchmark.
+		///
+		/// @param func The function to measure the runtime of
+		/// @param input The vector of inputs
+		/// @return The total runtime of the function over the input vector.
+		template<typename InputType, typename Function>
+		inline long double runtime(
+			Function func, const std::vector<InputType>& input) {
+
+			if (input.size() == 0)
+				return 0.0;
+
+			// Dummy variable
+			__volatile__ auto c = func(input[0]);
+
+			timer t = timer();
+
+			for (unsigned int j = 0; j < input.size(); ++j)
+				c += func(input[j]);
+
+			return t();
+		}
 
 
 		/// @class benchmark_settings Global settings of the benchmark module
@@ -58,30 +88,21 @@ namespace chebyshev {
 		};
 
 
-		/// @class benchmark_results Results of benchmarks.
-		struct benchmark_results {
-			
-			/// Total number of benchmarks
-			unsigned int totalBenchmarks = 0;
-
-			/// Number of failed benchmarks
-			unsigned int failedBenchmarks = 0;
-
-			/// Results of the benchmarks.
-			std::map<std::string, std::vector<benchmark_result>> benchmarkResults {};
-
-		};
-
-
 		/// @class benchmark_context Benchmark module context.
 		class benchmark_context {
+
+		private:
+
+			/// Results of the benchmarks.
+			std::map <
+				std::string,
+				std::vector<std::future<benchmark_result>>
+			> benchmarkResults {};
+
 		public:
 
 			/// Settings for the benchmark context.
 			benchmark_settings settings;
-
-			/// Benchmark results.
-			benchmark_results results;
 
 			/// Output module settings for the context, dynamically allocated
 			/// and possibly shared between multiple contexts.
@@ -105,7 +126,6 @@ namespace chebyshev {
 
 				// Initialize other modules
 				settings = benchmark_settings();
-				results = benchmark_results();
 				output = std::make_shared<output::output_context>();
 				random = std::make_shared<random::random_context>();
 
@@ -125,7 +145,28 @@ namespace chebyshev {
 			/// If benchmarks have been run, their results will be printed.
 			///
 			/// @param exit Whether to exit after terminating the module.
-			inline void terminate(bool exit = true) {
+			inline void terminate(bool exit = false) {
+
+				// Ensure that all benchmarks have been run
+				this->wait_results();
+
+				std::map<std::string, std::vector<benchmark_result>> results;
+				unsigned int totalBenchmarks = 0;
+				unsigned int failedBenchmarks = 0;
+
+				// for (const auto& pair : benchmarkResults) {
+
+				// 	results[pair.first].reserve(pair.second.size());
+
+				// 	for (const auto& testCase : pair.second) {
+
+				// 		results[pair.first].push_back(pair.second);
+
+				// 		totalBenchmarks++;
+				// 		failedBenchmarks += v.get().failed ? 1 : 0;
+				// 	}
+				// }
+
 
 				// Ensure that an output file is specified
 				if(	 output->settings.outputToFile &&
@@ -136,9 +177,9 @@ namespace chebyshev {
 					settings.outputFiles = { settings.moduleName + "_results" };
 				}
 
-				std::vector<std::string> outputFiles;
 
 				// Print benchmark results
+				std::vector<std::string> outputFiles;
 				outputFiles  = settings.outputFiles;
 				outputFiles.insert(
 					outputFiles.end(),
@@ -147,30 +188,27 @@ namespace chebyshev {
 				);
 
 				output->print_results(
-					results.benchmarkResults,
+					results,
 					settings.benchmarkColumns,
 					outputFiles
 				);
 
 				// Print overall test results
 				std::cout << "Finished testing " << settings.moduleName << '\n';
-				std::cout << results.totalBenchmarks << " total tests, ";
-				std::cout << results.failedBenchmarks << " failed";
+				std::cout << totalBenchmarks << " total tests, ";
+				std::cout << failedBenchmarks << " failed";
 
 				// Print proportion of failed test, avoiding division by zero
-				if (results.totalBenchmarks > 0) {
+				if (totalBenchmarks > 0) {
 					std::cout << " (" << std::setprecision(3);
-					std::cout << (results.failedBenchmarks / (double) results.totalBenchmarks) * 100;
+					std::cout << (failedBenchmarks / (double) totalBenchmarks) * 100;
 					std::cout << "%)";
 				}
 				std::cout << std::endl;
 
-				// Discard previous results
-				results = benchmark_results();
-
 				if(exit) {
 					output->terminate();
-					std::exit(results.failedBenchmarks);
+					std::exit(failedBenchmarks);
 				}
 			}
 
@@ -188,45 +226,18 @@ namespace chebyshev {
 			~benchmark_context() {
 				terminate();
 			}
-			
-
-			/// Measure the total runtime of a function over
-			/// the given input for a single run. It is generally
-			/// not needed to call this function directly,
-			/// as benchmarks can be run and registered using
-			/// benchmark::benchmark.
-			///
-			/// @param func The function to measure the runtime of
-			/// @param input The vector of inputs
-			/// @return The total runtime of the function over the input vector.
-			template<typename InputType, typename Function>
-			inline long double runtime(
-				Function func, const std::vector<InputType>& input) {
-
-				if (input.size() == 0)
-					return 0.0;
-
-				// Dummy variable
-				__volatile__ auto c = func(input[0]);
-
-				timer t = timer();
-
-				for (unsigned int j = 0; j < input.size(); ++j)
-					c += func(input[j]);
-
-				return t();
-			}
 
 
 			/// Run a benchmark on a generic function, with the given input vector.
-			/// The result is registered inside results.benchmarkResults.
+			/// The result is registered inside benchmarkResults.
 			///
 			/// @param name The name of the test case
 			/// @param func The function to benchmark
 			/// @param input The vector of input values
 			/// (InputType must correspond to the argument of func, but may be any POD
-			/// or aggregate data type).
+			/// or aggregate data type, such as std::tuple).
 			/// @param runs The number of runs with the same input
+			/// (defaults to settings.defaultRuns).
 			template<typename InputType = double, typename Function>
 			inline void benchmark(
 				const std::string& name,
@@ -238,68 +249,73 @@ namespace chebyshev {
 				if (runs == 0)
 					runs = settings.defaultRuns;
 
-				// Whether the benchmark failed because of an exception
-				bool failed = false;
+				// Package task for multi-threaded execution
+				std::packaged_task<benchmark_result()> benchmark_task ([=]() {
 
-				// Running average
-				long double averageRuntime;
+					// Whether the benchmark failed because of an exception
+					bool failed = false;
 
-				// Running total sum of squares
-				long double sumSquares;
+					// Running average
+					long double averageRuntime;
 
-				// Total runtime
-				long double totalRuntime;
+					// Running total sum of squares
+					long double sumSquares;
 
-				try {
+					// Total runtime
+					long double totalRuntime;
 
-					// Use Welford's algorithm to compute the average and the variance
-					totalRuntime = runtime(func, input);
-					averageRuntime = totalRuntime / input.size();
-					sumSquares = 0.0;
+					try {
 
-					for (unsigned int i = 1; i < runs; ++i) {
-						
-						// Compute the runtime for a single run
-						// and update the running estimates
-						const long double currentRun = runtime(func, input);
-						const long double currentAverage = currentRun / input.size();
-						totalRuntime += currentRun;
+						// Use Welford's algorithm to compute
+						// the average and the variance
+						totalRuntime = runtime(func, input);
+						averageRuntime = totalRuntime / input.size();
+						sumSquares = 0.0;
 
-						const long double tmp = averageRuntime;
-						averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
-						sumSquares += (currentAverage - tmp)
-							* (currentAverage - averageRuntime);
+						for (unsigned int i = 1; i < runs; ++i) {
+							
+							// Compute the runtime for a single run
+							// and update the running estimates
+							const long double currentRun = runtime(func, input);
+							const long double currentAverage = currentRun / input.size();
+							totalRuntime += currentRun;
+
+							const long double tmp = averageRuntime;
+							averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
+							sumSquares += (currentAverage - tmp)
+								* (currentAverage - averageRuntime);
+						}
+
+					} catch(...) {
+
+						// Catch any exception and mark the benchmark as failed
+						failed = true;
 					}
 
-				} catch(...) {
+					benchmark_result res {};
+					res.name = name;
+					res.runs = runs;
+					res.iterations = input.size();
+					res.totalRuntime = totalRuntime;
+					res.averageRuntime = averageRuntime;
+					res.runsPerSecond = 1000.0 / res.averageRuntime;
+					res.failed = failed;
+					res.quiet = quiet;
 
-					// Catch any exception and mark the benchmark as failed
-					failed = true;
-				}
+					if (runs > 1)
+						res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));
 
-				benchmark_result res {};
-				res.name = name;
-				res.runs = runs;
-				res.iterations = input.size();
-				res.totalRuntime = totalRuntime;
-				res.averageRuntime = averageRuntime;
-				res.runsPerSecond = 1000.0 / res.averageRuntime;
-				res.failed = failed;
-				res.quiet = quiet;
+					return res;
+				});
 
-				if (runs > 1)
-					res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));
+				benchmark_task();
 
-				results.totalBenchmarks++;
-				if(failed)
-					results.failedBenchmarks++;
-
-				results.benchmarkResults[name].push_back(res);
+				benchmarkResults[name].push_back(benchmark_task.get_future());
 			}
 
 
 			/// Run a benchmark on a generic function, with the given options.
-			/// The result is registered inside results.benchmarkResults.
+			/// The result is registered inside benchmarkResults.
 			///
 			/// @param name The name of the test case
 			/// @param func The function to benchmark
@@ -324,7 +340,7 @@ namespace chebyshev {
 
 
 			/// Run a benchmark on a generic function, with the given argument options.
-			/// The result is registered inside results.benchmarkResults.
+			/// The result is registered inside benchmarkResults.
 			///
 			/// @param name The name of the test case
 			/// @param func The function to benchmark
@@ -354,6 +370,28 @@ namespace chebyshev {
 
 				benchmark(name, func, opt);
 			}
+
+
+			/// Wait for all concurrent benchmarks to finish execution.
+			inline void wait_results() {
+
+				for (const auto& pair : benchmarkResults)
+					for (const auto& testCase : pair.second)
+						testCase.wait();
+			}
+
+
+			/// Get a list of benchmarks results associated
+			/// to the given name or label.
+			// inline std::vector<benchmark_result> result(const std::string& name) {
+			// }
+
+
+			/// Get a benchmark result associated to the given
+			/// name or label and index.
+			// inline benchmark_result result(const std::string& name, unsigned int i) {
+			// }
+
 		};
 
 
