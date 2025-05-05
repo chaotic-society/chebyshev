@@ -15,6 +15,7 @@
 
 /// Define the CH_CUSTOM_RND macro and a type
 /// random_engine to use a custom random number generator.
+/// By default, the standard Mersenne Twister is used.
 #ifndef CH_CUSTOM_RND
 
 #include <random>
@@ -237,10 +238,14 @@ namespace chebyshev {
 			random_settings settings;
 
 			/// Initialize the random module with the given seed.
+			/// If no seed is provided, a random entropy source
+			/// is used instead.
 			inline void setup(uint64_t seed = 0) {
 
-				if(seed == 0)
-					seed = time(nullptr);
+				if(seed == 0) {
+					std::random_device entropy;
+					seed = entropy();
+				}
 
 				// Initialize the random source
 				rnd = random_engine(seed);
