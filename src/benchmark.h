@@ -100,7 +100,11 @@ namespace chebyshev {
 			std::mutex resultsMutex;
 
 			/// Threads running benchmarks.
-			std::vector<std::future<void>> benchmarkFutures {};
+			std::vector<std::thread> benchmarkThreads {};
+
+			/// Whether the context was previously terminated
+			/// by calling terminate() or the destructor.
+			bool wasTerminated {false};
 
 		public:
 
@@ -141,6 +145,8 @@ namespace chebyshev {
 				std::cout << moduleName << " module ..." << std::endl;
 
 				settings.moduleName = moduleName;
+				benchmarkResults.clear();
+				wasTerminated = false;
 			}
 
 
@@ -209,6 +215,8 @@ namespace chebyshev {
 					output->terminate();
 					std::exit(failedBenchmarks);
 				}
+
+				wasTerminated = true;
 			}
 
 
@@ -223,7 +231,9 @@ namespace chebyshev {
 
 			/// Terminate the benchmark module.
 			~benchmark_context() {
-				terminate();
+
+				if (!wasTerminated)
+					terminate();
 			}
 
 
@@ -267,13 +277,11 @@ namespace chebyshev {
 				unsigned int runs = 0,
 				bool quiet = false) {
 
-				std::cout << "Entering " << name << std::endl;
-
 				if (runs == 0)
 					runs = settings.defaultRuns;
 
 				// Package task for multi-threaded execution
-				std::packaged_task<void()> t ([this, name, func, input, runs, quiet]() {
+				benchmarkThreads.emplace_back([this, name, func, input, runs, quiet]() {
 
 					// Whether the benchmark failed because of an exception
 					bool failed = false;
@@ -331,11 +339,6 @@ namespace chebyshev {
 					std::lock_guard<std::mutex> lock(resultsMutex);
 					benchmarkResults[name].push_back(res);
 				});
-
-				benchmarkFutures.emplace_back(t.get_future());
-				t();
-
-				std::cout << "Exiting " << name << std::endl;
 			}
 
 
@@ -400,25 +403,30 @@ namespace chebyshev {
 			/// Wait for all concurrent benchmarks to finish execution.
 			inline void wait_results() {
 
-				std::cout << "Waiting for results" << std::endl;
+				for (auto& t : benchmarkThreads)
+					if (t.joinable())
+						t.join();
 
-				for (auto& t : benchmarkFutures)
-					t.wait();
-
-				benchmarkFutures.clear();
+				benchmarkThreads.clear();
 			}
 
 
 			/// Get a list of benchmarks results associated
 			/// to the given name or label.
-			// inline std::vector<benchmark_result> result(const std::string& name) {
-			// }
+			inline std::vector<benchmark_result> result(const std::string& name) {
+
+				this->wait_results();
+				return benchmarkResults[name];
+			}
 
 
 			/// Get a benchmark result associated to the given
 			/// name or label and index.
-			// inline benchmark_result result(const std::string& name, unsigned int i) {
-			// }
+			inline benchmark_result result(const std::string& name, unsigned int i) {
+				
+				this->wait_results();
+				return benchmarkResults[name].at(i);
+			}
 
 		};
 
