@@ -6,9 +6,11 @@
 #ifndef CHEBYSHEV_RANDOM_H
 #define CHEBYSHEV_RANDOM_H
 
+#include <cstdint>
 #include <cstdlib>
 #include <cmath>
-#include <cstdint>
+#include <mutex>
+
 
 #include "../core/common.h"
 
@@ -231,6 +233,9 @@ namespace chebyshev {
 			/// The random generator which will be used to seed all PRNGs.
 			random_engine rnd;
 
+			/// Mutex to lock access to the random_engine
+			std::mutex rndMutex;
+
 		public:
 
 			/// Settings for the random context.
@@ -263,9 +268,28 @@ namespace chebyshev {
 			}
 
 
+			/// Custom copy constructor to avoid copying std::mutex.
+			random_context(const random_context& other) {
+
+				rnd = other.rnd;
+				settings = other.settings;
+			}
+
+
+			/// Custom assignment operator to avoid copying std::mutex.
+			inline random_context& operator=(const random_context& other) {
+
+				rnd = other.rnd;
+				settings = other.settings;
+				return *this;
+			}
+
+
 			/// Instantiate a new random source,
 			/// automatically seeded with a new random seed.
 			inline random_source get_rnd() {
+
+				std::lock_guard<std::mutex> lock(rndMutex);
 				return random_source(rnd());
 			}
 			

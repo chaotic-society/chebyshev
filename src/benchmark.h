@@ -94,10 +94,13 @@ namespace chebyshev {
 		private:
 
 			/// Results of the benchmarks.
-			std::map <
-				std::string,
-				std::vector<std::future<benchmark_result>>
-			> benchmarkResults {};
+			std::map <std::string, std::vector<benchmark_result>> benchmarkResults {};
+
+			/// Mutex to lock benchmarkResults.
+			std::mutex resultsMutex;
+
+			/// Threads running benchmarks.
+			std::vector<std::future<void>> benchmarkFutures {};
 
 		public:
 
@@ -150,22 +153,17 @@ namespace chebyshev {
 				// Ensure that all benchmarks have been run
 				this->wait_results();
 
-				std::map<std::string, std::vector<benchmark_result>> results;
+				std::lock_guard<std::mutex> lock(resultsMutex);
+
 				unsigned int totalBenchmarks = 0;
 				unsigned int failedBenchmarks = 0;
 
-				// for (const auto& pair : benchmarkResults) {
-
-				// 	results[pair.first].reserve(pair.second.size());
-
-				// 	for (const auto& testCase : pair.second) {
-
-				// 		results[pair.first].push_back(pair.second);
-
-				// 		totalBenchmarks++;
-				// 		failedBenchmarks += v.get().failed ? 1 : 0;
-				// 	}
-				// }
+				for (const auto& pair : benchmarkResults) {
+					for (const auto& testCase : pair.second) {
+						totalBenchmarks++;
+						failedBenchmarks += testCase.failed ? 1 : 0;
+					}
+				}
 
 
 				// Ensure that an output file is specified
@@ -188,10 +186,11 @@ namespace chebyshev {
 				);
 
 				output->print_results(
-					results,
+					benchmarkResults,
 					settings.benchmarkColumns,
 					outputFiles
 				);
+
 
 				// Print overall test results
 				std::cout << "Finished testing " << settings.moduleName << '\n';
@@ -228,6 +227,28 @@ namespace chebyshev {
 			}
 
 
+			/// Custom copy constructor to avoid copying std::mutex.
+			benchmark_context(const benchmark_context& other) {
+
+				benchmarkResults = other.benchmarkResults;
+				settings = other.settings;
+				output = other.output;
+				random = other.random;
+			}
+
+
+			/// Custom assignment operator to avoid copying std::mutex.
+			inline benchmark_context& operator=(const benchmark_context& other) {
+
+				benchmarkResults = other.benchmarkResults;
+				settings = other.settings;
+				output = other.output;
+				random = other.random;
+
+				return *this;
+			}
+
+
 			/// Run a benchmark on a generic function, with the given input vector.
 			/// The result is registered inside benchmarkResults.
 			///
@@ -246,11 +267,13 @@ namespace chebyshev {
 				unsigned int runs = 0,
 				bool quiet = false) {
 
+				std::cout << "Entering " << name << std::endl;
+
 				if (runs == 0)
 					runs = settings.defaultRuns;
 
 				// Package task for multi-threaded execution
-				std::packaged_task<benchmark_result()> benchmark_task ([=]() {
+				std::packaged_task<void()> t ([this, name, func, input, runs, quiet]() {
 
 					// Whether the benchmark failed because of an exception
 					bool failed = false;
@@ -305,12 +328,14 @@ namespace chebyshev {
 					if (runs > 1)
 						res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));
 
-					return res;
+					std::lock_guard<std::mutex> lock(resultsMutex);
+					benchmarkResults[name].push_back(res);
 				});
 
-				benchmark_task();
+				benchmarkFutures.emplace_back(t.get_future());
+				t();
 
-				benchmarkResults[name].push_back(benchmark_task.get_future());
+				std::cout << "Exiting " << name << std::endl;
 			}
 
 
@@ -375,9 +400,12 @@ namespace chebyshev {
 			/// Wait for all concurrent benchmarks to finish execution.
 			inline void wait_results() {
 
-				for (const auto& pair : benchmarkResults)
-					for (const auto& testCase : pair.second)
-						testCase.wait();
+				std::cout << "Waiting for results" << std::endl;
+
+				for (auto& t : benchmarkFutures)
+					t.wait();
+
+				benchmarkFutures.clear();
 			}
 
 
@@ -402,7 +430,7 @@ namespace chebyshev {
 		/// @param argv An array of command line arguments as C-like strings.
 		benchmark_context make_context(const std::string& moduleName,
 				int argc = 0, const char** argv = nullptr) {
-			
+
 			return benchmark_context(moduleName, argc, argv);
 		}
 	}
