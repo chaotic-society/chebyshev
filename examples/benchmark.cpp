@@ -61,11 +61,4 @@ int main(int argc, char const *argv[]) {
 		10,		// Runs
 		1E+04	// Iterations
 	);
-
-	ctx.benchmark<uint64_t>(
-		"h(n)", h,
-		benchmark::generator::discrete1D(0, 10), // Input generator
-		100,		// Runs
-		1E+03	// Iterations
-	);
 }

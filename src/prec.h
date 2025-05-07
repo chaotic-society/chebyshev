@@ -25,7 +25,8 @@ namespace chebyshev {
 namespace prec {
 
 
-	/// @class prec_settings Global settings of the precision testing module.
+	/// @class prec_settings
+	/// Settings for the precision testing module, used in prec_context.
 	struct prec_settings {
 		
 		/// Name of the module being tested
@@ -69,7 +70,8 @@ namespace prec {
 	};
 
 
-	/// @class prec_results Test results of the precision testing module.
+	/// @class prec_results
+	/// Structure holding results of the precision testing module.
 	struct prec_results {
 
 		/// Total number of tests run
@@ -87,7 +89,8 @@ namespace prec {
 	};
 
 
-	/// @class prec_context Precision testing context.
+	/// @class prec_context
+	/// Precision testing context, handling precision test cases.
 	class prec_context {
 	public:
 
