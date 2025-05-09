@@ -98,8 +98,8 @@ namespace benchmark {
 		/// Results of the benchmarks.
 		std::map <std::string, std::vector<benchmark_result>> benchmarkResults {};
 
-		/// Mutex to lock benchmarkResults.
-		std::mutex resultsMutex;
+		/// Mutex to lock benchmark results.
+		std::mutex benchmarkMutex;
 
 		/// Threads running benchmarks.
 		std::vector<std::thread> benchmarkThreads {};
@@ -161,7 +161,7 @@ namespace benchmark {
 			// Ensure that all benchmarks have been run
 			this->wait_results();
 
-			std::lock_guard<std::mutex> lock(resultsMutex);
+			std::lock_guard<std::mutex> lock(benchmarkMutex);
 
 			unsigned int totalBenchmarks = 0;
 			unsigned int failedBenchmarks = 0;
@@ -242,6 +242,7 @@ namespace benchmark {
 		/// Custom copy constructor to avoid copying std::mutex.
 		benchmark_context(const benchmark_context& other) {
 
+			std::lock_guard<std::mutex> lock(benchmarkMutex);
 			benchmarkResults = other.benchmarkResults;
 			settings = other.settings;
 			output = other.output;
@@ -252,6 +253,7 @@ namespace benchmark {
 		/// Custom assignment operator to avoid copying std::mutex.
 		inline benchmark_context& operator=(const benchmark_context& other) {
 
+			std::lock_guard<std::mutex> lock(benchmarkMutex);
 			benchmarkResults = other.benchmarkResults;
 			settings = other.settings;
 			output = other.output;
@@ -338,7 +340,7 @@ namespace benchmark {
 				if (runs > 1)
 					res.stdevRuntime = std::sqrt(sumSquares / (runs - 1));
 
-				std::lock_guard<std::mutex> lock(resultsMutex);
+				std::lock_guard<std::mutex> lock(benchmarkMutex);
 				benchmarkResults[name].push_back(res);
 			});
 		}
@@ -415,7 +417,7 @@ namespace benchmark {
 
 		/// Get a list of benchmarks results associated
 		/// to the given name or label.
-		inline std::vector<benchmark_result> result(const std::string& name) {
+		inline std::vector<benchmark_result> get_benchmark(const std::string& name) {
 
 			this->wait_results();
 			return benchmarkResults[name];
@@ -424,7 +426,7 @@ namespace benchmark {
 
 		/// Get a benchmark result associated to the given
 		/// name or label and index.
-		inline benchmark_result result(const std::string& name, unsigned int i) {
+		inline benchmark_result get_benchmark(const std::string& name, unsigned int i) {
 			
 			this->wait_results();
 			return benchmarkResults[name].at(i);

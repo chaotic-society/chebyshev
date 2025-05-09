@@ -11,6 +11,8 @@
 #include <map>
 #include <iostream>
 #include <memory>
+#include <mutex>
+#include <thread>
 
 #include "./prec/prec_structures.h"
 #include "./core/output.h"
@@ -70,35 +72,30 @@ namespace prec {
 	};
 
 
-	/// @class prec_results
-	/// Structure holding results of the precision testing module.
-	struct prec_results {
-
-		/// Total number of tests run
-		unsigned int totalTests = 0;
-
-		/// Number of failed tests
-		unsigned int failedTests = 0;
+	/// @class prec_context
+	/// Precision testing context, handling precision test cases.
+	class prec_context {
+	private:
 
 		/// Results of error estimation
 		std::map<std::string, std::vector<estimate_result>> estimateResults {};
 
+		/// Mutex to lock access to estimate results
+		std::mutex estimateMutex;
+
+		/// Thread handles for estimate test cases
+		std::vector<std::thread> estimateThreads;
+
 		/// Results of equation evaluation
 		std::map<std::string, std::vector<equation_result>> equationResults {};
-		
-	};
 
+		/// Whether the context was already terminated
+		bool wasTerminated {false};
 
-	/// @class prec_context
-	/// Precision testing context, handling precision test cases.
-	class prec_context {
 	public:
 
 		/// Settings for the precision testing context
 		prec_settings settings;
-		
-		/// Results of precision testing
-		prec_results results;
 
 		/// Output module settings for the context, dynamically allocated
 		/// and possibly shared between multiple contexts.
@@ -120,7 +117,6 @@ namespace prec {
 
 			// Initialize other modules
 			settings = prec_settings();
-			results = prec_results();
 			output = std::make_shared<output::output_context>();
 			random = std::make_shared<random::random_context>();
 
@@ -133,13 +129,37 @@ namespace prec {
 			std::cout << moduleName << " module ..." << std::endl;
 
 			settings.moduleName = moduleName;
+			wasTerminated = false;
 		}
 
 
 		/// Terminate the precision testing module
 		///
 		/// @param exit Whether to exit after finishing execution.
-		inline void terminate(bool exit = true) {
+		inline void terminate(bool exit = false) {
+
+			// Ensure all test cases have been executed
+			this->wait_results();
+
+			std::lock_guard<std::mutex> lock(estimateMutex);
+
+
+			unsigned int totalTests = 0;
+			unsigned int failedTests = 0;
+
+			for (const auto& pair : estimateResults) {
+				for (const auto& testCase : pair.second) {
+					totalTests++;
+					failedTests += testCase.failed ? 1 : 0;
+				}
+			}
+
+			for (const auto& pair : equationResults) {
+				for (const auto& testCase : pair.second) {
+					totalTests++;
+					failedTests += testCase.failed ? 1 : 0;
+				}
+			}
 
 
 			// Ensure that an output file is specified
@@ -165,7 +185,7 @@ namespace prec {
 			);
 
 			output->print_results(
-				results.estimateResults, settings.estimateColumns, outputFiles
+				estimateResults, settings.estimateColumns, outputFiles
 			);
 
 
@@ -178,30 +198,29 @@ namespace prec {
 			);
 
 			output->print_results(
-				results.equationResults, settings.equationColumns, outputFiles
+				equationResults, settings.equationColumns, outputFiles
 			);
 
 
 			// Print overall test results
 			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << results.totalTests << " total tests, ";
-			std::cout << results.failedTests << " failed";
+			std::cout << totalTests << " total tests, ";
+			std::cout << failedTests << " failed";
 
 			// Print proportion of failed test, avoiding division by zero
-			if (results.totalTests > 0) {
+			if (totalTests > 0) {
 				std::cout << " (" << std::setprecision(3);
-				std::cout << (results.failedTests / (double) results.totalTests) * 100;
+				std::cout << (failedTests / (double) totalTests) * 100;
 				std::cout << "%)";
 			}
 			std::cout << std::endl;
 
-			// Discard previous results
-			results = prec_results();
-
 			if(exit) {
 				output->terminate();
-				std::exit(results.failedTests);
+				std::exit(failedTests);
 			}
+
+			wasTerminated = true;
 		}
 
 
@@ -216,7 +235,34 @@ namespace prec {
 
 		/// Destructor for the context, automatically terminates the module.
 		~prec_context() {
-			terminate();
+			if (!wasTerminated)
+				terminate();
+		}
+
+
+		/// Custom copy constructor to avoid copying std::mutex.
+		prec_context(const prec_context& other) {
+
+			std::lock_guard<std::mutex> lock(estimateMutex);
+			estimateResults = other.estimateResults;
+			equationResults = other.equationResults;
+			settings = other.settings;
+			output = other.output;
+			random = other.random;
+		}
+
+
+		/// Custom assignment operator to avoid copying std::mutex.
+		inline prec_context& operator=(const prec_context& other) {
+
+			std::lock_guard<std::mutex> lock(estimateMutex);
+			estimateResults = other.estimateResults;
+			equationResults = other.equationResults;
+			settings = other.settings;
+			output = other.output;
+			random = other.random;
+
+			return *this;
 		}
 
 
@@ -245,23 +291,23 @@ namespace prec {
 				if(settings.pickedTests.find(name) == settings.pickedTests.end())
 					return;
 
-			// Use the estimator to estimate error integrals.
-			auto res = opt.estimator(funcApprox, funcExpected, opt);
+			estimateThreads.emplace_back([this, name, funcApprox, funcExpected, opt]() {
 
-			res.name = name;
-			res.domain = opt.domain;
-			res.tolerance = opt.tolerance;
-			res.quiet = opt.quiet;
-			res.iterations = opt.iterations;
+				// Use the estimator to estimate error integrals.
+				auto res = opt.estimator(funcApprox, funcExpected, opt);
 
-			// Use the fail function to determine whether the test failed.
-			res.failed = opt.fail(res);
+				res.name = name;
+				res.domain = opt.domain;
+				res.tolerance = opt.tolerance;
+				res.quiet = opt.quiet;
+				res.iterations = opt.iterations;
 
-			results.totalTests++;
-			if(res.failed)
-				results.failedTests++;
+				// Use the fail function to determine whether the test failed.
+				res.failed = opt.fail(res);
 
-			results.estimateResults[name].push_back(res);
+				std::lock_guard<std::mutex> lock(estimateMutex);
+				estimateResults[name].push_back(res);
+			});
 		}
 
 
@@ -504,12 +550,8 @@ namespace prec {
 			res.tolerance = opt.tolerance;
 			res.quiet = opt.quiet;
 
-			results.totalTests++;
-			if(res.failed)
-				results.failedTests++;
-
 			// Register the result of the equation by name
-			results.equationResults[name].push_back(res);
+			equationResults[name].push_back(res);
 		}
 
 
@@ -579,12 +621,8 @@ namespace prec {
 			res.evaluated = evaluated;
 			res.expected = expected;
 
-			results.totalTests++;
-			if(res.failed)
-				results.failedTests++;
-
 			// Register the result of the equation by name
-			results.equationResults[name].push_back(res);
+			equationResults[name].push_back(res);
 		}
 
 
@@ -614,6 +652,50 @@ namespace prec {
 			for (const auto& v : values)
 				equals(name, v[0], v[1], tolerance, quiet);
 		}
+
+
+		/// Wait for all concurrent test cases to finish execution.
+		inline void wait_results() {
+
+			for (auto& t : estimateThreads)
+				if (t.joinable())
+					t.join();
+
+			estimateThreads.clear();
+		}
+
+
+		/// Get the results of error estimation by label.
+		inline std::vector<estimate_result> get_estimate(const std::string& name) {
+
+			this->wait_results();
+
+			std::lock_guard<std::mutex> lock(estimateMutex);
+			return estimateResults[name];
+		}
+
+
+		/// Get a single result of error estimation by label and index.
+		inline estimate_result get_estimate(const std::string& name, unsigned int index) {
+
+			this->wait_results();
+
+			std::lock_guard<std::mutex> lock(estimateMutex);
+			return estimateResults[name].at(index);
+		}
+
+
+		/// Get the results of equation testing by label.
+		inline std::vector<equation_result> get_equation(const std::string& name) {
+			return equationResults[name];
+		}
+
+
+		/// Get a single result of equation testing by label and index.
+		inline equation_result get_equation(const std::string& name, unsigned int index) {
+			return equationResults[name].at(index);
+		}
+	
 	};
 
 

@@ -37,6 +37,8 @@ int main(int argc, char const *argv[]) {
 	// Set the output file for the prec module
 	ctx.settings.outputFiles = { "examples/precision.csv" };
 
+	ctx.settings.defaultIterations = 1E+06;
+
 
 	// Estimate errors on g(x) on [0, 100]
 	ctx.estimate("g(x)", g, f, prec::interval(0, 100));
@@ -52,8 +54,10 @@ int main(int argc, char const *argv[]) {
 
 	// Construct options from the test interval and estimator
 	auto opt = prec::estimate_options<double, double>(
-		prec::interval(1.0, 10.0),
-		prec::estimator::quadrature1D<double>()
+		prec::interval(1.0, 10.0),					// Interval of estimation
+		prec::estimator::quadrature1D<double>(),	// Estimator
+		1E-02,	// Tolerance
+		1E+06	// Iterations
 	);
 
 
@@ -64,11 +68,11 @@ int main(int argc, char const *argv[]) {
 	// Precision test an idempotent function
 	ctx.idempotence("absolute(x)", absolute, opt);
 
-
 	// Get a source of random numbers
 	random::random_source rnd = ctx.random->get_rnd();
-	auto almost_zero = [&](double x) {
-		return noise(rnd, x);
+	auto almost_zero = [rnd](double x) {
+		random::random_source r = rnd;
+		return noise(r, x);
 	};
 
 	// Precision test an homogeneous function
@@ -76,4 +80,5 @@ int main(int argc, char const *argv[]) {
 
 	// You can use ctx.terminate() to print the results,
 	// or leave it to the destructor to do it automatically.
+	// ctx.terminate();
 }

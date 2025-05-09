@@ -130,8 +130,10 @@ namespace chebyshev {
 				interval omega,
 				Estimator_t estimator,
 				long double tolerance,
+				unsigned int iterations,
 				bool quiet = false)
-			: domain({omega}), estimator(estimator), tolerance(tolerance), quiet(quiet) {}
+			: domain({omega}), estimator(estimator), tolerance(tolerance),
+			  iterations(iterations), quiet(quiet) {}
 
 
 			/// Construct estimate options from a multidimensional
@@ -147,8 +149,10 @@ namespace chebyshev {
 				std::vector<interval> omega,
 				Estimator_t estimator,
 				long double tolerance,
+				unsigned int iterations,
 				bool quiet = false)
-			: domain(omega), estimator(estimator), tolerance(tolerance), quiet(quiet) {}
+			: domain(omega), estimator(estimator),
+			  tolerance(tolerance), iterations(iterations), quiet(quiet) {}
 			
 		};
 
