@@ -141,7 +141,6 @@ namespace prec {
 			// Ensure all test cases have been executed
 			this->wait_results();
 
-			std::lock_guard<std::mutex> lock(estimateMutex);
 
 
 			unsigned int totalTests = 0;
@@ -409,7 +408,7 @@ namespace prec {
 			const estimate_options<Type, Type>& opt) {
 
 			// Apply the identity function
-			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+			EndoFunction<Type> funcApprox = [id](Type x) -> Type {
 				return id(x);
 			};
 
@@ -438,7 +437,7 @@ namespace prec {
 			const estimate_options<Type, Type>& opt) {
 
 			// Apply the involution two times
-			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+			EndoFunction<Type> funcApprox = [invol](Type x) -> Type {
 				return invol(invol(x));
 			};
 
@@ -467,12 +466,12 @@ namespace prec {
 			const estimate_options<Type, Type>& opt) {
 
 			// Apply the idem two times
-			EndoFunction<Type> funcApprox = [&](Type x) -> Type {
+			EndoFunction<Type> funcApprox = [idem](Type x) -> Type {
 				return idem(idem(x));
 			};
 
 			// And compare it to the identity
-			EndoFunction<Type> funcExpected = [&](Type x) -> Type {
+			EndoFunction<Type> funcExpected = [idem](Type x) -> Type {
 				return idem(x);
 			};
 
@@ -503,13 +502,13 @@ namespace prec {
 
 			// Apply the homogeneous function
 			std::function<OutputType(InputType)> funcApprox =
-				[&](InputType x) -> OutputType {
+				[=](InputType x) -> OutputType {
 					return hom(x);
 				};
 
 			// And compare it to the zero element
 			std::function<OutputType(InputType)> funcExpected =
-				[&](InputType x) -> OutputType {
+				[=](InputType x) -> OutputType {
 					return zero_element;
 				};
 
@@ -670,18 +669,16 @@ namespace prec {
 
 			this->wait_results();
 
-			std::lock_guard<std::mutex> lock(estimateMutex);
 			return estimateResults[name];
 		}
 
 
 		/// Get a single result of error estimation by label and index.
-		inline estimate_result get_estimate(const std::string& name, unsigned int index) {
+		inline estimate_result get_estimate(const std::string& name, unsigned int i) {
 
 			this->wait_results();
 
-			std::lock_guard<std::mutex> lock(estimateMutex);
-			return estimateResults[name].at(index);
+			return estimateResults[name].at(i);
 		}
 
 
@@ -692,8 +689,8 @@ namespace prec {
 
 
 		/// Get a single result of equation testing by label and index.
-		inline equation_result get_equation(const std::string& name, unsigned int index) {
-			return equationResults[name].at(index);
+		inline equation_result get_equation(const std::string& name, unsigned int i) {
+			return equationResults[name].at(i);
 		}
 	
 	};
