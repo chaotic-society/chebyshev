@@ -82,38 +82,27 @@ namespace err {
 	};
 
 
-	/// @class err_results
-	/// Structure holding the results of error checking.
-	struct err_results {
-		
-		// Total number of checks
-		unsigned int totalChecks = 0;
+	/// @class err_context
+	/// Error checking context, for assertions and exception checking.
+	class err_context {
+	private:
 
-		/// Number of failed checks
-		unsigned int failedChecks = 0;
-
-		/// Results of checking assertions
+		/// Results of checking assertions.
 		std::map<std::string, std::vector<assert_result>> assertResults {};
 
-		/// Results of checking errno
+		/// Results of checking errno.
 		std::map<std::string, std::vector<errno_result>> errnoResults {};
 
-		/// Results of exception testing
+		/// Results of exception testing.
 		std::map<std::string, std::vector<exception_result>> exceptionResults {};
 
-	};
+		/// Whether the context was already terminated.
+		bool wasTerminated {false};
 
-
-	/// @class err_context
-	/// Error checking context
-	class err_context {
 	public:
 
 		/// Settings for the benchmark context.
 		err_settings settings;
-
-		/// Benchmark results.
-		err_results results;
 
 		/// Output module settings for the context, dynamically allocated
 		/// and possibly shared between multiple contexts.
@@ -136,7 +125,6 @@ namespace err {
 
 			// Initialize other modules
 			settings = err_settings();
-			results = err_results();
 			output = std::make_shared<output::output_context>();
 			random = std::make_shared<random::random_context>();
 
@@ -148,6 +136,7 @@ namespace err {
 			std::cout << moduleName << " module ..." << std::endl;
 
 			settings.moduleName = moduleName;
+			wasTerminated = false;
 		}
 
 
@@ -155,7 +144,31 @@ namespace err {
 		/// If test cases have been run, their results will be printed.
 		///
 		/// @param exit Whether to exit after terminating the module.
-		inline void terminate(bool exit = true) {
+		inline void terminate(bool exit = false) {
+
+			unsigned int failedChecks = 0;
+			unsigned int totalChecks = 0;
+
+			for (const auto& pair : assertResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
+
+			for (const auto& pair : errnoResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
+
+			for (const auto& pair : exceptionResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
 
 			// Ensure that an output file is specified
 			if(	 settings.outputToFile &&
@@ -180,7 +193,7 @@ namespace err {
 
 
 			output->print_results(
-				results.assertResults,
+				assertResults,
 				settings.assertColumns,
 				outputFiles
 			);
@@ -195,7 +208,7 @@ namespace err {
 
 
 			output->print_results(
-				results.errnoResults,
+				errnoResults,
 				settings.errnoColumns,
 				outputFiles
 			);
@@ -210,31 +223,32 @@ namespace err {
 
 
 			output->print_results(
-				results.exceptionResults,
+				exceptionResults,
 				settings.exceptionColumns,
 				outputFiles
 			);
 
-			// Print overall test results
+			// Print overall checks results
 			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << results.totalChecks << " total tests, ";
-			std::cout << results.failedChecks << " failed";
+			std::cout << totalChecks << " total checks, ";
+			std::cout << failedChecks << " failed";
 
-			// Print proportion of failed test, avoiding division by zero
-			if (results.totalChecks > 0) {
-				std::cout << " (" << std::setprecision(3);
-				std::cout << (results.failedChecks / (double) results.totalChecks) * 100;
-				std::cout << "%)";
+			// Print proportion of failed checks, avoiding division by zero
+			if (totalChecks > 0) {
+
+				const double percent = (failedChecks / (double) totalChecks) * 100;
+				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
+				
+			} else {
+				std::cout << "No checks were run!" << std::endl;
 			}
-			std::cout << std::endl;
-
-			// Discard previous results
-			results = err_results();
 
 			if(exit) {
 				output->terminate();
-				std::exit(results.failedChecks);
+				std::exit(failedChecks);
 			}
+
+			wasTerminated = true;
 		}
 
 
@@ -246,10 +260,12 @@ namespace err {
 
 			setup(moduleName, argc, argv);
 		}
-			
+		
+
 		/// Terminate the error checking module.
 		~err_context() {
-			terminate();
+			if (!wasTerminated)
+				terminate();
 		}
 
 
@@ -272,12 +288,7 @@ namespace err {
 			res.description = description;
 			res.quiet = quiet;
 
-			results.totalChecks++;
-
-			if(!exp)
-				results.failedChecks++;
-
-			results.assertResults[name].push_back(res);
+			assertResults[name].push_back(res);
 		}
 
 
@@ -309,12 +320,7 @@ namespace err {
 			res.failed = (errno != expected_errno);
 			res.quiet = quiet;
 
-			results.totalChecks++;
-
-			if(res.failed)
-				results.failedChecks++;
-
-			results.errnoResults[name].push_back(res);
+			errnoResults[name].push_back(res);
 		}
 
 
@@ -370,12 +376,7 @@ namespace err {
 				if(!(errno & flag))
 					res.failed = true;
 
-			results.totalChecks++;
-
-			if(res.failed)
-				results.failedChecks++;
-
-			results.errnoResults[name].push_back(res);
+			errnoResults[name].push_back(res);
 		}
 
 
@@ -427,11 +428,7 @@ namespace err {
 			res.correctType = true;
 			res.quiet = quiet;
 
-			results.totalChecks++;
-			if(!thrown)
-				results.failedChecks++;
-
-			results.exceptionResults[name].push_back(res);
+			exceptionResults[name].push_back(res);
 		}
 
 
@@ -490,11 +487,7 @@ namespace err {
 			res.correctType = correctType;
 			res.quiet = quiet;
 
-			results.totalChecks++;
-			if(!thrown)
-				results.failedChecks++;
-
-			results.exceptionResults[name].push_back(res);
+			exceptionResults[name].push_back(res);
 		}
 
 
@@ -517,6 +510,43 @@ namespace err {
 
 			throws(name, f, generator(), quiet);
 		}
+
+
+		/// Get the results of an assertion by name or label.
+		inline std::vector<assert_result> get_assertion(const std::string& name) {
+			return assertResults[name];
+		}
+
+
+		/// Get a single result of an assertion by label and index.
+		inline assert_result get_assertion(const std::string& name, unsigned int i) {
+			return assertResults[name].at(i);
+		}
+
+
+		/// Get the results of errno checking by name or label.
+		inline std::vector<errno_result> get_errno(const std::string& name) {
+			return errnoResults[name];
+		}
+
+
+		/// Get a single result of errno checking by label and index.
+		inline errno_result get_errno(const std::string& name, unsigned int i) {
+			return errnoResults[name].at(i);
+		}
+
+
+		/// Get the results of exception checking by name or label.
+		inline std::vector<exception_result> get_exception(const std::string& name) {
+			return exceptionResults[name];
+		}
+
+
+		/// Get a single result of exception checking by label and index.
+		inline exception_result get_exception(const std::string& name, unsigned int i) {
+			return exceptionResults[name].at(i);
+		}
+
 	};
 
 

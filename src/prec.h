@@ -140,8 +140,7 @@ namespace prec {
 
 			// Ensure all test cases have been executed
 			this->wait_results();
-
-
+			// std::lock_guard<std::mutex> lock(estimateMutex);
 
 			unsigned int totalTests = 0;
 			unsigned int failedTests = 0;
@@ -208,11 +207,13 @@ namespace prec {
 
 			// Print proportion of failed test, avoiding division by zero
 			if (totalTests > 0) {
-				std::cout << " (" << std::setprecision(3);
-				std::cout << (failedTests / (double) totalTests) * 100;
-				std::cout << "%)";
+
+				const double percent = (failedTests / (double) totalTests) * 100;
+				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
+				
+			} else {
+				std::cout << "No tests were run!" << std::endl;
 			}
-			std::cout << std::endl;
 
 			if(exit) {
 				output->terminate();
@@ -665,6 +666,10 @@ namespace prec {
 
 
 		/// Get the results of error estimation by label.
+		///
+		/// @note This function waits for all previous test cases to end
+		/// before returning, so it is advised to retrieve test results after
+		/// all tests have been requested.
 		inline std::vector<estimate_result> get_estimate(const std::string& name) {
 
 			this->wait_results();
@@ -674,6 +679,10 @@ namespace prec {
 
 
 		/// Get a single result of error estimation by label and index.
+		///
+		/// @note This function waits for all previous test cases to end
+		/// before returning, so it is advised to retrieve test results after
+		/// all tests have been requested.
 		inline estimate_result get_estimate(const std::string& name, unsigned int i) {
 
 			this->wait_results();

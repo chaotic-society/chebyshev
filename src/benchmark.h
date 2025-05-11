@@ -207,11 +207,13 @@ namespace benchmark {
 
 			// Print proportion of failed test, avoiding division by zero
 			if (totalBenchmarks > 0) {
-				std::cout << " (" << std::setprecision(3);
-				std::cout << (failedBenchmarks / (double) totalBenchmarks) * 100;
-				std::cout << "%)";
+
+				const double percent = (failedBenchmarks / (double) totalBenchmarks) * 100;
+				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
+				
+			} else {
+				std::cout << "No benchmarks were run!" << std::endl;
 			}
-			std::cout << std::endl;
 
 			if(exit) {
 				output->terminate();
@@ -417,6 +419,10 @@ namespace benchmark {
 
 		/// Get a list of benchmarks results associated
 		/// to the given name or label.
+		///
+		/// @note This function waits for all previous test cases to end
+		/// before returning, so it is advised to retrieve test results after
+		/// all tests have been requested.
 		inline std::vector<benchmark_result> get_benchmark(const std::string& name) {
 
 			this->wait_results();
@@ -426,6 +432,10 @@ namespace benchmark {
 
 		/// Get a benchmark result associated to the given
 		/// name or label and index.
+		///
+		/// @note This function waits for all previous test cases to end
+		/// before returning, so it is advised to retrieve test results after
+		/// all tests have been requested.
 		inline benchmark_result get_benchmark(const std::string& name, unsigned int i) {
 			
 			this->wait_results();
