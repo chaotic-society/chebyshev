@@ -7,9 +7,9 @@ var namespacechebyshev_1_1benchmark =
     [ "benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html", "classchebyshev_1_1benchmark_1_1benchmark__context" ],
     [ "benchmark_options", "structchebyshev_1_1benchmark_1_1benchmark__options.html", "structchebyshev_1_1benchmark_1_1benchmark__options" ],
     [ "benchmark_result", "structchebyshev_1_1benchmark_1_1benchmark__result.html", "structchebyshev_1_1benchmark_1_1benchmark__result" ],
-    [ "benchmark_results", "structchebyshev_1_1benchmark_1_1benchmark__results.html", "structchebyshev_1_1benchmark_1_1benchmark__results" ],
     [ "benchmark_settings", "structchebyshev_1_1benchmark_1_1benchmark__settings.html", "structchebyshev_1_1benchmark_1_1benchmark__settings" ],
     [ "timer", "classchebyshev_1_1benchmark_1_1timer.html", "classchebyshev_1_1benchmark_1_1timer" ],
     [ "InputGenerator", "namespacechebyshev_1_1benchmark.html#a49821ce69e65e0b837c4f0de2ab014f2", null ],
-    [ "make_context", "namespacechebyshev_1_1benchmark.html#aa8a60c1eaf820eae579ec4ce354d3a49", null ]
+    [ "make_context", "namespacechebyshev_1_1benchmark.html#aa8a60c1eaf820eae579ec4ce354d3a49", null ],
+    [ "runtime", "namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482", null ]
 ];

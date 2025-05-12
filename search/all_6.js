@@ -4,8 +4,14 @@ var searchData=
   ['generate_5ftable_1',['generate_table',['../classchebyshev_1_1output_1_1output__context.html#a3a57d0ade83292781e3f3d32ab71a089',1,'chebyshev::output::output_context']]],
   ['generator_2eh_2',['generator.h',['../generator_8h.html',1,'']]],
   ['get_3',['get',['../classchebyshev_1_1benchmark_1_1timer.html#aca2757a7a4f328d8dd5c644b5b7c7b9d',1,'chebyshev::benchmark::timer']]],
-  ['get_5fnan_4',['get_nan',['../namespacechebyshev.html#a62181021524138fb26d708e15a8feb06',1,'chebyshev']]],
-  ['get_5frnd_5',['get_rnd',['../classchebyshev_1_1random_1_1random__context.html#ad457ad848edde5711741b8860558c6bb',1,'chebyshev::random::random_context']]],
-  ['get_5fseed_6',['get_seed',['../structchebyshev_1_1random_1_1random__source.html#a1eb21154df7a43ff5bdd13ca57b59f21',1,'chebyshev::random::random_source']]],
-  ['getting_20started_7',['Getting Started',['../index.html#autotoc_md8',1,'']]]
+  ['get_5fassertion_4',['get_assertion',['../classchebyshev_1_1err_1_1err__context.html#a70f181c9ddf208c6c78c491a7a4d0848',1,'chebyshev::err::err_context::get_assertion(const std::string &amp;name)'],['../classchebyshev_1_1err_1_1err__context.html#a8325a356cf707ae35e92cedd33c9e4d3',1,'chebyshev::err::err_context::get_assertion(const std::string &amp;name, unsigned int i)']]],
+  ['get_5fbenchmark_5',['get_benchmark',['../classchebyshev_1_1benchmark_1_1benchmark__context.html#a9b379a9f1b4aabf09ba58d6332793ec9',1,'chebyshev::benchmark::benchmark_context::get_benchmark(const std::string &amp;name)'],['../classchebyshev_1_1benchmark_1_1benchmark__context.html#ab791452c877c980097c8738ed14682c5',1,'chebyshev::benchmark::benchmark_context::get_benchmark(const std::string &amp;name, unsigned int i)']]],
+  ['get_5fequation_6',['get_equation',['../classchebyshev_1_1prec_1_1prec__context.html#a6561d7f849be92720bc8bbd62ee1907b',1,'chebyshev::prec::prec_context::get_equation(const std::string &amp;name)'],['../classchebyshev_1_1prec_1_1prec__context.html#a5bf7979df212ff5a2c2f800a67187ebf',1,'chebyshev::prec::prec_context::get_equation(const std::string &amp;name, unsigned int i)']]],
+  ['get_5ferrno_7',['get_errno',['../classchebyshev_1_1err_1_1err__context.html#a2efc256503d107a6d1122913b9fc6d13',1,'chebyshev::err::err_context::get_errno(const std::string &amp;name)'],['../classchebyshev_1_1err_1_1err__context.html#a7fb49f321bdad6c0f1361698854f2a17',1,'chebyshev::err::err_context::get_errno(const std::string &amp;name, unsigned int i)']]],
+  ['get_5festimate_8',['get_estimate',['../classchebyshev_1_1prec_1_1prec__context.html#aef25b652b7d03d78ab81f1b662ce5b8d',1,'chebyshev::prec::prec_context::get_estimate(const std::string &amp;name)'],['../classchebyshev_1_1prec_1_1prec__context.html#a8fa74d9ccb71266ba7218a2a9c0aab8b',1,'chebyshev::prec::prec_context::get_estimate(const std::string &amp;name, unsigned int i)']]],
+  ['get_5fexception_9',['get_exception',['../classchebyshev_1_1err_1_1err__context.html#a8d66501e19fd07991498bd874bbf26a0',1,'chebyshev::err::err_context::get_exception(const std::string &amp;name)'],['../classchebyshev_1_1err_1_1err__context.html#ad12c52b8466556c4062deb0f493548b8',1,'chebyshev::err::err_context::get_exception(const std::string &amp;name, unsigned int i)']]],
+  ['get_5fnan_10',['get_nan',['../namespacechebyshev.html#a62181021524138fb26d708e15a8feb06',1,'chebyshev']]],
+  ['get_5frnd_11',['get_rnd',['../classchebyshev_1_1random_1_1random__context.html#ad457ad848edde5711741b8860558c6bb',1,'chebyshev::random::random_context']]],
+  ['get_5fseed_12',['get_seed',['../structchebyshev_1_1random_1_1random__source.html#a1eb21154df7a43ff5bdd13ca57b59f21',1,'chebyshev::random::random_source']]],
+  ['getting_20started_13',['Getting Started',['../index.html#autotoc_md8',1,'']]]
 ];

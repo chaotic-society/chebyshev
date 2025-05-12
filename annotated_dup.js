@@ -5,14 +5,12 @@ var annotated_dup =
         [ "benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html", "classchebyshev_1_1benchmark_1_1benchmark__context" ],
         [ "benchmark_options", "structchebyshev_1_1benchmark_1_1benchmark__options.html", "structchebyshev_1_1benchmark_1_1benchmark__options" ],
         [ "benchmark_result", "structchebyshev_1_1benchmark_1_1benchmark__result.html", "structchebyshev_1_1benchmark_1_1benchmark__result" ],
-        [ "benchmark_results", "structchebyshev_1_1benchmark_1_1benchmark__results.html", "structchebyshev_1_1benchmark_1_1benchmark__results" ],
         [ "benchmark_settings", "structchebyshev_1_1benchmark_1_1benchmark__settings.html", "structchebyshev_1_1benchmark_1_1benchmark__settings" ],
         [ "timer", "classchebyshev_1_1benchmark_1_1timer.html", "classchebyshev_1_1benchmark_1_1timer" ]
       ] ],
       [ "err", "namespacechebyshev_1_1err.html", [
         [ "assert_result", "structchebyshev_1_1err_1_1assert__result.html", "structchebyshev_1_1err_1_1assert__result" ],
         [ "err_context", "classchebyshev_1_1err_1_1err__context.html", "classchebyshev_1_1err_1_1err__context" ],
-        [ "err_results", "structchebyshev_1_1err_1_1err__results.html", "structchebyshev_1_1err_1_1err__results" ],
         [ "err_settings", "structchebyshev_1_1err_1_1err__settings.html", "structchebyshev_1_1err_1_1err__settings" ],
         [ "errno_result", "structchebyshev_1_1err_1_1errno__result.html", "structchebyshev_1_1err_1_1errno__result" ],
         [ "exception_result", "structchebyshev_1_1err_1_1exception__result.html", "structchebyshev_1_1err_1_1exception__result" ]
@@ -29,7 +27,6 @@ var annotated_dup =
         [ "estimate_result", "structchebyshev_1_1prec_1_1estimate__result.html", "structchebyshev_1_1prec_1_1estimate__result" ],
         [ "interval", "structchebyshev_1_1prec_1_1interval.html", "structchebyshev_1_1prec_1_1interval" ],
         [ "prec_context", "classchebyshev_1_1prec_1_1prec__context.html", "classchebyshev_1_1prec_1_1prec__context" ],
-        [ "prec_results", "structchebyshev_1_1prec_1_1prec__results.html", "structchebyshev_1_1prec_1_1prec__results" ],
         [ "prec_settings", "structchebyshev_1_1prec_1_1prec__settings.html", "structchebyshev_1_1prec_1_1prec__settings" ]
       ] ],
       [ "random", "namespacechebyshev_1_1random.html", [
