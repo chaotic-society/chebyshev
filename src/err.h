@@ -18,516 +18,549 @@
 namespace chebyshev {
 
 
-	// To err is human; to forgive, divine.
+// To err is human; to forgive, divine.
 
 
-	/// @namespace chebyshev::err Error checking module
-	///
-	/// This module provides functions to test error reporting
-	/// with different methods. Assertions are checked with
-	/// err::assert, while the value of errno after a function
-	/// call can be checked using err::errno_value and the
-	/// throwing of exceptions can be checked using check_exception.
-	namespace err {
+/// @namespace chebyshev::err Error checking module
+///
+/// This module provides functions to test error reporting
+/// with different methods. Assertions are checked with
+/// err::assert, while the value of errno after a function
+/// call can be checked using err::errno_value and the
+/// throwing of exceptions can be checked using check_exception.
+namespace err {
 
 
-		/// @class err_settings
-		/// Global settings of the error testing module.
-		struct err_settings {
-				
-			/// Name of the module being tested
-			std::string moduleName = "unknown";
-
-			/// Whether to print to an output file.
-			bool outputToFile = true;
-
-			/// The files to write all error checking results to.
-			std::vector<std::string> outputFiles {};
-
-			/// The files to write assertion results results to
-			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> assertOutputFiles {};
-
-			/// Default columns to print for assertions.
-			std::vector<std::string> assertColumns = {
-				"name", "evaluated", "failed", "description"
-			};
-
-			/// The files to write errno checking results to
-			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> errnoOutputFiles {};
-
-			/// Default columns to print for errno checks.
-			std::vector<std::string> errnoColumns = {
-				"name", "evaluated", "expectedFlags", "failed"
-			};
-
-			/// The files to write exception results results to
-			/// (if empty, all results are output to a generic file).
-			std::vector<std::string> exceptionOutputFiles {};
-
-			/// Default columns to print for exception checks.
-			std::vector<std::string> exceptionColumns = {
-				"name", "thrown", "correctType", "failed"
-			};
-
-			/// Target checks marked for execution,
-			/// can be picked by passing test case names
-			/// by command line. (all tests will be executed if empty)
-			std::map<std::string, bool> pickedChecks {};
-
-			/// Whether to print to standard output
-			bool quiet = false;
-
-		};
-
-
-		/// @class err_results Results of error checking
-		struct err_results {
+	/// @class err_settings
+	/// Settings of the error testing module, used in err_context.
+	struct err_settings {
 			
-			// Total number of checks
-			unsigned int totalChecks = 0;
+		/// Name of the module being tested
+		std::string moduleName = "unknown";
 
-			/// Number of failed checks
-			unsigned int failedChecks = 0;
+		/// Whether to print to an output file.
+		bool outputToFile = true;
 
-			/// Results of checking assertions
-			std::map<std::string, std::vector<assert_result>> assertResults {};
+		/// The files to write all error checking results to.
+		std::vector<std::string> outputFiles {};
 
-			/// Results of checking errno
-			std::map<std::string, std::vector<errno_result>> errnoResults {};
+		/// The files to write assertion results results to
+		/// (if empty, all results are output to a generic file).
+		std::vector<std::string> assertOutputFiles {};
 
-			/// Results of exception testing
-			std::map<std::string, std::vector<exception_result>> exceptionResults {};
-
+		/// Default columns to print for assertions.
+		std::vector<std::string> assertColumns = {
+			"name", "evaluated", "failed", "description"
 		};
 
-
-		class err_context {
-		public:
-
-			/// Settings for the benchmark context.
-			err_settings settings;
-
-			/// Benchmark results.
-			err_results results;
-
-			/// Output module settings for the context, dynamically allocated
-			/// and possibly shared between multiple contexts.
-			std::shared_ptr<output::output_context> output;
-
-			/// Random module settings for the context, dynamically allocated
-			/// and possibly shared between multiple contexts.
-			std::shared_ptr<random::random_context> random;
-
-
-			/// Setup error checking module.
-			///
-			/// @param moduleName Name of the module under test.
-			/// @param argc The number of command line arguments
-			/// @param argv A list of C-style strings containing
-			/// the command line arguments.
-			inline void setup(
-				const std::string& moduleName,
-				int argc = 0, const char** argv = nullptr) {
-
-				// Initialize other modules
-				settings = err_settings();
-				results = err_results();
-				output = std::make_shared<output::output_context>();
-				random = std::make_shared<random::random_context>();
-
-				if(argc && argv)
-					for (int i = 1; i < argc; ++i)
-						settings.pickedChecks[argv[i]] = true;
-
-				std::cout << "Starting error checking on ";
-				std::cout << moduleName << " module ..." << std::endl;
-
-				settings.moduleName = moduleName;
-			}
-
-
-			/// Terminate the error testing environment.
-			/// If test cases have been run, their results will be printed.
-			///
-			/// @param exit Whether to exit after terminating the module.
-			inline void terminate(bool exit = true) {
-
-				// Ensure that an output file is specified
-				if(	 settings.outputToFile &&
-					!output->settings.outputFiles.size() &&
-					!settings.assertOutputFiles.size() &&
-					!settings.errnoOutputFiles.size() &&
-					!settings.exceptionOutputFiles.size() &&
-					!settings.outputFiles.size()) {
-					
-					settings.outputFiles = { settings.moduleName + "_results" };
-				}
-
-				std::vector<std::string> outputFiles;
-
-				// Print assert results
-				outputFiles = settings.outputFiles;
-				outputFiles.insert(
-					outputFiles.end(),
-					settings.assertOutputFiles.begin(),
-					settings.assertOutputFiles.end()
-				);
-
-
-				output->print_results(
-					results.assertResults,
-					settings.assertColumns,
-					outputFiles
-				);
-
-				// Print errno checking results
-				outputFiles = settings.outputFiles;
-				outputFiles.insert(
-					outputFiles.end(),
-					settings.errnoOutputFiles.begin(),
-					settings.errnoOutputFiles.end()
-				);
-
-
-				output->print_results(
-					results.errnoResults,
-					settings.errnoColumns,
-					outputFiles
-				);
-
-				// Print exception checking results
-				outputFiles  = settings.outputFiles;
-				outputFiles.insert(
-					outputFiles.end(),
-					settings.exceptionOutputFiles.begin(),
-					settings.exceptionOutputFiles.end()
-				);
-
-
-				output->print_results(
-					results.exceptionResults,
-					settings.exceptionColumns,
-					outputFiles
-				);
-
-				// Print overall test results
-				std::cout << "Finished testing " << settings.moduleName << '\n';
-				std::cout << results.totalChecks << " total tests, ";
-				std::cout << results.failedChecks << " failed";
-
-				// Print proportion of failed test, avoiding division by zero
-				if (results.totalChecks > 0) {
-					std::cout << " (" << std::setprecision(3);
-					std::cout << (results.failedChecks / (double) results.totalChecks) * 100;
-					std::cout << "%)";
-				}
-				std::cout << std::endl;
-
-				// Discard previous results
-				results = err_results();
-
-				if(exit) {
-					output->terminate();
-					std::exit(results.failedChecks);
-				}
-			}
-
-
-			/// Setup the error checking module
-			err_context(
-				std::string moduleName,
-				int argc = 0,
-				const char** argv = nullptr) {
-
-				setup(moduleName, argc, argv);
-			}
-				
-			/// Terminate the error checking module.
-			~err_context() {
-				terminate();
-			}
-
-
-			/// Assert that an expression is true.
-			///
-			/// @param name Name of the check (function name or test case name).
-			/// @param exp Expression to test for truth.
-			/// @param description Description of the assertion.
-			inline void assert(
-				const std::string& name,
-				bool exp,
-				std::string description = "",
-				bool quiet = false) {
-
-				assert_result res {};
-
-				res.name = name;
-				res.evaluated = exp;
-				res.failed = !exp;
-				res.description = description;
-				res.quiet = quiet;
-
-				results.totalChecks++;
-
-				if(!exp)
-					results.failedChecks++;
-
-				results.assertResults[name].push_back(res);
-			}
-
-
-			/// Check errno value after function call
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param x The input value to evaluate the function at
-			/// @param expected_errno The expected value of errno
-			template<typename Function, typename InputType>
-			inline void errno_value(
-				const std::string& name,
-				Function f,
-				InputType x,
-				int expected_errno,
-				bool quiet = false) {
-
-				errno_result res {};
-				errno = 0;
-
-				try {
-					volatile auto r = f(x);
-					r = *(&r);
-				} catch(...) {}
-
-				res.name = name;
-				res.evaluated = errno;
-				res.expectedFlags = { expected_errno };
-				res.failed = (errno != expected_errno);
-				res.quiet = quiet;
-
-				results.totalChecks++;
-
-				if(res.failed)
-					results.failedChecks++;
-
-				results.errnoResults[name].push_back(res);
-			}
-
-
-			/// Check errno value after function call
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param generator A function which returns an input value
-			/// @param expected_errno The expected value of errno
-			template<typename Function, typename InputType>
-			inline void errno_value(
-				const std::string& name, Function f,
-				std::function<InputType()> generator,
-				int expected_errno,
-				bool quiet = false) {
-
-				errno_value(name, f, generator(), expected_errno, quiet);
-			}
-
-
-			/// Check the value of errno after a function call,
-			/// comparing to multiple expected flags which should all
-			/// be set.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param x The input value to evaluate the function at
-			/// @param expected_flags A list of the expected errno flags
-			template<typename Function, typename InputType>
-			inline void errno_flags(
-				const std::string& name,
-				Function f,
-				InputType x,
-				std::vector<int>& expected_flags,
-				bool quiet = false) {
-
-
-				errno_result res {};
-				errno = 0;
-
-				try {
-					volatile auto r = f(x);
-					r = *(&r);
-				} catch(...) {}
-
-				res.name = name;
-				res.evaluated = errno;
-				res.expectedFlags = expected_flags;
-				res.quiet = quiet;
-
-				res.failed = false;
-				for (int flag : expected_flags)
-					if(!(errno & flag))
-						res.failed = true;
-
-				results.totalChecks++;
-
-				if(res.failed)
-					results.failedChecks++;
-
-				results.errnoResults[name].push_back(res);
-			}
-
-
-			/// Check the value of errno after a function call,
-			/// comparing to multiple expected flags which should all
-			/// be set.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param generator A function which returns the input value
-			/// @param expected_flags A list of the expected errno flags
-			template<typename Function, typename InputType>
-			void errno_flags(
-				const std::string& name, Function f,
-				std::function<InputType()> generator,
-				std::vector<int>& expected_flags,
-				bool quiet = false) {
-
-				errno_flags(name, f, generator(), expected_flags, quiet);
-			}
-
-
-			/// Check that an exception of any type is
-			/// thrown during a function call with the given input.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param x The input value to use
-			template<typename Function, typename InputType>
-			inline void throws(
-				const std::string& name,
-				Function f,
-				InputType x,
-				bool quiet = false) {
-
-				exception_result res {};
-				bool thrown = false;
-
-				try {
-					volatile auto r = f(x);
-					r = *(&r);
-				} catch(...) {
-					thrown = true;
-				}
-
-				res.name = name;
-				res.thrown = thrown;
-				res.failed = !thrown;
-				res.correctType = true;
-				res.quiet = quiet;
-
-				results.totalChecks++;
-				if(!thrown)
-					results.failedChecks++;
-
-				results.exceptionResults[name].push_back(res);
-			}
-
-
-			/// Check that an exception of any type is
-			/// thrown during a function call with a generated input.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param generator A function which returns the input value
-			template<typename Function, typename InputType>
-			inline void throws(
-				const std::string& name, Function f,
-				std::function<InputType()> generator,
-				bool quiet = false) {
-
-				throws(name, f, generator(), quiet);
-			}
-
-
-			/// Check that an exception is thrown during a function call
-			/// and that the type of the exception is correct.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param x The input value to use
-			template <
-				typename ExceptionType,
-				typename Function,
-				typename InputType
-			>
-			inline void throws(
-				const std::string& name,
-				Function f,
-				InputType x,
-				bool quiet = false) {
-
-				exception_result res {};
-				bool thrown = false;
-				bool correctType = false;
-
-				try {
-					volatile auto r = f(x);
-					r = *(&r);
-				} catch(ExceptionType& exc) {
-
-					correctType = true;
-					thrown = true;
-
-				} catch(...) {
-					thrown = true;
-				}
-
-				res.name = name;
-				res.thrown = thrown;
-				res.failed = !(thrown && correctType);
-				res.correctType = correctType;
-				res.quiet = quiet;
-
-				results.totalChecks++;
-				if(!thrown)
-					results.failedChecks++;
-
-				results.exceptionResults[name].push_back(res);
-			}
-
-
-			/// Check that an exception is thrown during a function call
-			/// and that the type of the exception is correct.
-			///
-			/// @param name The name of the function or test case
-			/// @param f The function to test
-			/// @param generator A function which takes in an index
-			/// and returns a (potentially random) input value
-			template <
-				typename ExceptionType,
-				typename Function,
-				typename InputType
-			>
-			inline void throws(
-				const std::string& name, Function f,
-				std::function<InputType()> generator,
-				bool quiet = false) {
-
-				throws(name, f, generator(), quiet);
-			}
+		/// The files to write errno checking results to
+		/// (if empty, all results are output to a generic file).
+		std::vector<std::string> errnoOutputFiles {};
+
+		/// Default columns to print for errno checks.
+		std::vector<std::string> errnoColumns = {
+			"name", "evaluated", "expectedFlags", "failed"
 		};
 
+		/// The files to write exception results results to
+		/// (if empty, all results are output to a generic file).
+		std::vector<std::string> exceptionOutputFiles {};
 
-		/// Construct an error checking context with the given parameters.
+		/// Default columns to print for exception checks.
+		std::vector<std::string> exceptionColumns = {
+			"name", "thrown", "correctType", "failed"
+		};
+
+		/// Target checks marked for execution,
+		/// can be picked by passing test case names
+		/// by command line. (all tests will be executed if empty)
+		std::map<std::string, bool> pickedChecks {};
+
+		/// Whether to print to standard output
+		bool quiet = false;
+
+	};
+
+
+	/// @class err_context
+	/// Error checking context, for assertions and exception checking.
+	class err_context {
+	private:
+
+		/// Results of checking assertions.
+		std::map<std::string, std::vector<assert_result>> assertResults {};
+
+		/// Results of checking errno.
+		std::map<std::string, std::vector<errno_result>> errnoResults {};
+
+		/// Results of exception testing.
+		std::map<std::string, std::vector<exception_result>> exceptionResults {};
+
+		/// Whether the context was already terminated.
+		bool wasTerminated {false};
+
+	public:
+
+		/// Settings for the benchmark context.
+		err_settings settings;
+
+		/// Output module settings for the context, dynamically allocated
+		/// and possibly shared between multiple contexts.
+		std::shared_ptr<output::output_context> output;
+
+		/// Random module settings for the context, dynamically allocated
+		/// and possibly shared between multiple contexts.
+		std::shared_ptr<random::random_context> random;
+
+
+		/// Setup error checking module.
 		///
 		/// @param moduleName Name of the module under test.
-		/// @param argc The number of command line arguments.
-		/// @param argv An array of command line arguments as C-like strings.
-		err_context make_context(const std::string& moduleName,
-				int argc = 0, const char** argv = nullptr) {
-			
-			return err_context(moduleName, argc, argv);
+		/// @param argc The number of command line arguments
+		/// @param argv A list of C-style strings containing
+		/// the command line arguments.
+		inline void setup(
+			const std::string& moduleName,
+			int argc = 0, const char** argv = nullptr) {
+
+			// Initialize other modules
+			settings = err_settings();
+			output = std::make_shared<output::output_context>();
+			random = std::make_shared<random::random_context>();
+
+			if(argc && argv)
+				for (int i = 1; i < argc; ++i)
+					settings.pickedChecks[argv[i]] = true;
+
+			std::cout << "Starting error checking on ";
+			std::cout << moduleName << " module ..." << std::endl;
+
+			settings.moduleName = moduleName;
+			wasTerminated = false;
 		}
+
+
+		/// Terminate the error testing environment.
+		/// If test cases have been run, their results will be printed.
+		///
+		/// @param exit Whether to exit after terminating the module.
+		inline void terminate(bool exit = false) {
+
+			unsigned int failedChecks = 0;
+			unsigned int totalChecks = 0;
+
+			for (const auto& pair : assertResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
+
+			for (const auto& pair : errnoResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
+
+			for (const auto& pair : exceptionResults) {
+				for (const auto& testCase : pair.second) {
+					totalChecks++;
+					failedChecks += testCase.failed ? 1 : 0;
+				}
+			}
+
+			// Ensure that an output file is specified
+			if(	 settings.outputToFile &&
+				!output->settings.outputFiles.size() &&
+				!settings.assertOutputFiles.size() &&
+				!settings.errnoOutputFiles.size() &&
+				!settings.exceptionOutputFiles.size() &&
+				!settings.outputFiles.size()) {
+				
+				settings.outputFiles = { settings.moduleName + "_results" };
+			}
+
+			std::vector<std::string> outputFiles;
+
+			// Print assert results
+			outputFiles = settings.outputFiles;
+			outputFiles.insert(
+				outputFiles.end(),
+				settings.assertOutputFiles.begin(),
+				settings.assertOutputFiles.end()
+			);
+
+
+			output->print_results(
+				assertResults,
+				settings.assertColumns,
+				outputFiles
+			);
+
+			// Print errno checking results
+			outputFiles = settings.outputFiles;
+			outputFiles.insert(
+				outputFiles.end(),
+				settings.errnoOutputFiles.begin(),
+				settings.errnoOutputFiles.end()
+			);
+
+
+			output->print_results(
+				errnoResults,
+				settings.errnoColumns,
+				outputFiles
+			);
+
+			// Print exception checking results
+			outputFiles  = settings.outputFiles;
+			outputFiles.insert(
+				outputFiles.end(),
+				settings.exceptionOutputFiles.begin(),
+				settings.exceptionOutputFiles.end()
+			);
+
+
+			output->print_results(
+				exceptionResults,
+				settings.exceptionColumns,
+				outputFiles
+			);
+
+			// Print overall checks results
+			std::cout << "Finished testing " << settings.moduleName << '\n';
+			std::cout << totalChecks << " total checks, ";
+			std::cout << failedChecks << " failed";
+
+			// Print proportion of failed checks, avoiding division by zero
+			if (totalChecks > 0) {
+
+				const double percent = (failedChecks / (double) totalChecks) * 100;
+				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
+				
+			} else {
+				std::cout << "No checks were run!" << std::endl;
+			}
+
+			if(exit) {
+				output->terminate();
+				std::exit(failedChecks);
+			}
+
+			wasTerminated = true;
+		}
+
+
+		/// Setup the error checking module
+		err_context(
+			std::string moduleName,
+			int argc = 0,
+			const char** argv = nullptr) {
+
+			setup(moduleName, argc, argv);
+		}
+		
+
+		/// Terminate the error checking module.
+		~err_context() {
+			if (!wasTerminated)
+				terminate();
+		}
+
+
+		/// Assert that an expression is true.
+		///
+		/// @param name Name of the check (function name or test case name).
+		/// @param exp Expression to test for truth.
+		/// @param description Description of the assertion.
+		inline void assert(
+			const std::string& name,
+			bool exp,
+			std::string description = "",
+			bool quiet = false) {
+
+			assert_result res {};
+
+			res.name = name;
+			res.evaluated = exp;
+			res.failed = !exp;
+			res.description = description;
+			res.quiet = quiet;
+
+			assertResults[name].push_back(res);
+		}
+
+
+		/// Check errno value after function call
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param x The input value to evaluate the function at
+		/// @param expected_errno The expected value of errno
+		template<typename Function, typename InputType>
+		inline void errno_value(
+			const std::string& name,
+			Function f,
+			InputType x,
+			int expected_errno,
+			bool quiet = false) {
+
+			errno_result res {};
+			errno = 0;
+
+			try {
+				volatile auto r = f(x);
+				r = *(&r);
+			} catch(...) {}
+
+			res.name = name;
+			res.evaluated = errno;
+			res.expectedFlags = { expected_errno };
+			res.failed = (errno != expected_errno);
+			res.quiet = quiet;
+
+			errnoResults[name].push_back(res);
+		}
+
+
+		/// Check errno value after function call
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param generator A function which returns an input value
+		/// @param expected_errno The expected value of errno
+		template<typename Function, typename InputType>
+		inline void errno_value(
+			const std::string& name, Function f,
+			std::function<InputType()> generator,
+			int expected_errno,
+			bool quiet = false) {
+
+			errno_value(name, f, generator(), expected_errno, quiet);
+		}
+
+
+		/// Check the value of errno after a function call,
+		/// comparing to multiple expected flags which should all
+		/// be set.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param x The input value to evaluate the function at
+		/// @param expected_flags A list of the expected errno flags
+		template<typename Function, typename InputType>
+		inline void errno_flags(
+			const std::string& name,
+			Function f,
+			InputType x,
+			std::vector<int>& expected_flags,
+			bool quiet = false) {
+
+
+			errno_result res {};
+			errno = 0;
+
+			try {
+				volatile auto r = f(x);
+				r = *(&r);
+			} catch(...) {}
+
+			res.name = name;
+			res.evaluated = errno;
+			res.expectedFlags = expected_flags;
+			res.quiet = quiet;
+
+			res.failed = false;
+			for (int flag : expected_flags)
+				if(!(errno & flag))
+					res.failed = true;
+
+			errnoResults[name].push_back(res);
+		}
+
+
+		/// Check the value of errno after a function call,
+		/// comparing to multiple expected flags which should all
+		/// be set.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param generator A function which returns the input value
+		/// @param expected_flags A list of the expected errno flags
+		template<typename Function, typename InputType>
+		void errno_flags(
+			const std::string& name, Function f,
+			std::function<InputType()> generator,
+			std::vector<int>& expected_flags,
+			bool quiet = false) {
+
+			errno_flags(name, f, generator(), expected_flags, quiet);
+		}
+
+
+		/// Check that an exception of any type is
+		/// thrown during a function call with the given input.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param x The input value to use
+		template<typename Function, typename InputType>
+		inline void throws(
+			const std::string& name,
+			Function f,
+			InputType x,
+			bool quiet = false) {
+
+			exception_result res {};
+			bool thrown = false;
+
+			try {
+				volatile auto r = f(x);
+				r = *(&r);
+			} catch(...) {
+				thrown = true;
+			}
+
+			res.name = name;
+			res.thrown = thrown;
+			res.failed = !thrown;
+			res.correctType = true;
+			res.quiet = quiet;
+
+			exceptionResults[name].push_back(res);
+		}
+
+
+		/// Check that an exception of any type is
+		/// thrown during a function call with a generated input.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param generator A function which returns the input value
+		template<typename Function, typename InputType>
+		inline void throws(
+			const std::string& name, Function f,
+			std::function<InputType()> generator,
+			bool quiet = false) {
+
+			throws(name, f, generator(), quiet);
+		}
+
+
+		/// Check that an exception is thrown during a function call
+		/// and that the type of the exception is correct.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param x The input value to use
+		template <
+			typename ExceptionType,
+			typename Function,
+			typename InputType
+		>
+		inline void throws(
+			const std::string& name,
+			Function f,
+			InputType x,
+			bool quiet = false) {
+
+			exception_result res {};
+			bool thrown = false;
+			bool correctType = false;
+
+			try {
+				volatile auto r = f(x);
+				r = *(&r);
+			} catch(ExceptionType& exc) {
+
+				correctType = true;
+				thrown = true;
+
+			} catch(...) {
+				thrown = true;
+			}
+
+			res.name = name;
+			res.thrown = thrown;
+			res.failed = !(thrown && correctType);
+			res.correctType = correctType;
+			res.quiet = quiet;
+
+			exceptionResults[name].push_back(res);
+		}
+
+
+		/// Check that an exception is thrown during a function call
+		/// and that the type of the exception is correct.
+		///
+		/// @param name The name of the function or test case
+		/// @param f The function to test
+		/// @param generator A function which takes in an index
+		/// and returns a (potentially random) input value
+		template <
+			typename ExceptionType,
+			typename Function,
+			typename InputType
+		>
+		inline void throws(
+			const std::string& name, Function f,
+			std::function<InputType()> generator,
+			bool quiet = false) {
+
+			throws(name, f, generator(), quiet);
+		}
+
+
+		/// Get the results of an assertion by name or label.
+		inline std::vector<assert_result> get_assertion(const std::string& name) {
+			return assertResults[name];
+		}
+
+
+		/// Get a single result of an assertion by label and index.
+		inline assert_result get_assertion(const std::string& name, unsigned int i) {
+			return assertResults[name].at(i);
+		}
+
+
+		/// Get the results of errno checking by name or label.
+		inline std::vector<errno_result> get_errno(const std::string& name) {
+			return errnoResults[name];
+		}
+
+
+		/// Get a single result of errno checking by label and index.
+		inline errno_result get_errno(const std::string& name, unsigned int i) {
+			return errnoResults[name].at(i);
+		}
+
+
+		/// Get the results of exception checking by name or label.
+		inline std::vector<exception_result> get_exception(const std::string& name) {
+			return exceptionResults[name];
+		}
+
+
+		/// Get a single result of exception checking by label and index.
+		inline exception_result get_exception(const std::string& name, unsigned int i) {
+			return exceptionResults[name].at(i);
+		}
+
+	};
+
+
+	/// Construct an error checking context with the given parameters.
+	///
+	/// @param moduleName Name of the module under test.
+	/// @param argc The number of command line arguments.
+	/// @param argv An array of command line arguments as C-like strings.
+	err_context make_context(const std::string& moduleName,
+			int argc = 0, const char** argv = nullptr) {
+		
+		return err_context(moduleName, argc, argv);
 	}
-}
+
+}}
 
 #endif

@@ -19,7 +19,7 @@ double g(double x) {
 }
 
 
-unsigned int h(unsigned int n) {
+uint64_t h(uint64_t n) {
 	
 	if(n == 0)
 		return 0;
@@ -55,10 +55,10 @@ int main(int argc, char const *argv[]) {
 	// of your function if it isn't deduced.
 
 	// Specify parameters directly
-	ctx.benchmark<unsigned int>(
+	ctx.benchmark<uint64_t>(
 		"h(n)", h,
-		benchmark::generator::discrete1D(0, 1000), // Input generator
+		benchmark::generator::discrete1D(0, 10), // Input generator
 		10,		// Runs
-		1000	// Iterations
+		1E+04	// Iterations
 	);
 }
