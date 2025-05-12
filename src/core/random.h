@@ -252,10 +252,14 @@ namespace random {
 		random_settings settings;
 
 		/// Initialize the random module with the given seed.
-		inline void setup(uint64_t seed = 0) {
-
-			if(seed == 0)
-				seed = time(nullptr);
+		/// If no seed is provided, a random entropy source
+		/// is used instead.
+    		inline void setup(uint64_t seed = 0) {
+		
+			if(seed == 0) {
+				std::random_device entropy;
+				seed = entropy();
+			}
 
 			// Initialize the random source
 			rnd = random_engine(seed);
@@ -270,21 +274,6 @@ namespace random {
 		random_context(uint64_t seed = 0) {
 			setup(seed);
 		}
-
-    
-			/// Initialize the random module with the given seed.
-			/// If no seed is provided, a random entropy source
-			/// is used instead.
-    inline void setup(uint64_t seed = 0) {
-
-      if(seed == 0) {
-				std::random_device entropy;
-				seed = entropy();
-			}
-
-			// Initialize the random source
-			rnd = random_engine(seed);
-    }
 
 		/// Custom copy constructor to avoid copying std::mutex.
 		random_context(const random_context& other) {
