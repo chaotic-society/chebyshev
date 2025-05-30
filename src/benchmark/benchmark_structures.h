@@ -43,6 +43,9 @@ namespace chebyshev {
 			/// Number of runs per second.
 			long double runsPerSecond = get_nan<long double>();
 
+			/// The seed used for randomized input generation.
+			uint64_t seed = 0;
+
 			/// Whether the benchmark failed because
 			/// an exception was thrown.
 			bool failed = true;
@@ -78,6 +81,10 @@ namespace chebyshev {
 
 			/// Whether to print to standard output or not.
 			bool quiet = false;
+
+			/// The seed to use for randomized input generation
+			/// (by default, a random seed is generated using the random context).
+			uint64_t seed = 0;
 
 
 			/// Default constructor for benchmark options.

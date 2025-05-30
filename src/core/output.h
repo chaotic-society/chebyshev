@@ -580,6 +580,7 @@ namespace chebyshev {
 				settings.fieldNames["stdevRuntime"] = "Stdev. Time (ms)";
 				settings.fieldNames["runsPerSecond"] = "Runs per Sec.";
 				settings.fieldNames["runs"] = "Runs";
+				settings.fieldNames["seed"] = "Seed";
 
 				// Error checking
 				settings.fieldNames["correctType"] = "Correct Type";
@@ -752,6 +753,8 @@ namespace chebyshev {
 						value << r.runsPerSecond;
 				} else if(fieldName == "failed") {
 					value << r.failed;
+				} else if(fieldName == "seed") {
+					value << r.seed;
 				} else {
 					
 					if(r.additionalFields.find(fieldName) == r.additionalFields.end())

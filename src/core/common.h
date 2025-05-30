@@ -45,7 +45,8 @@ namespace chebyshev {
 
 
 	/// An endofunction is a function which has the same type
-	/// of input and output (e.g. a real function of real variable).
+	/// of input and output, such as a real function of real variable
+	/// \f$f: \mathbb{R} \rightarrow \mathbb{R}\f$.
 	template<typename Type = double>
 	using EndoFunction = std::function<Type(Type)>;
 

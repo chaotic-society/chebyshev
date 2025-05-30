@@ -59,6 +59,6 @@ int main(int argc, char const *argv[]) {
 		"h(n)", h,
 		benchmark::generator::discrete1D(0, 10), // Input generator
 		10,		// Runs
-		1E+04	// Iterations
+		1E+05	// Iterations
 	);
 }

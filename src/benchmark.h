@@ -358,18 +358,84 @@ namespace benchmark {
 		inline void benchmark(
 			const std::string& name,
 			Function func,
-			const benchmark_options<InputType>& opt) {
+			benchmark_options<InputType> opt) {
 
+			if (opt.runs == 0)
+				opt.runs = settings.defaultRuns;
 
 			// Generate input set
-			random::random_source rnd = random->get_rnd();
+			random::random_source rnd (opt.seed);
+
+			if (opt.seed == 0)
+				rnd = random->get_rnd();
+
 			std::vector<InputType> input (opt.iterations);
 
 			for (unsigned int i = 0; i < opt.iterations; ++i)
 				input[i] = opt.inputGenerator(rnd);
 
-			// Benchmark over input set
-			benchmark(name, func, input, opt.runs, opt.quiet);
+			uint64_t seed = rnd.get_seed();
+
+			// Package task for multi-threaded execution
+			benchmarkThreads.emplace_back([this, input, name, func, opt, seed]() {
+
+				// Whether the benchmark failed because of an exception
+				bool failed = false;
+
+				// Running average
+				long double averageRuntime;
+
+				// Running total sum of squares
+				long double sumSquares;
+
+				// Total runtime
+				long double totalRuntime;
+
+				try {
+
+					// Use Welford's algorithm to compute
+					// the average and the variance
+					totalRuntime = runtime(func, input);
+					averageRuntime = totalRuntime / input.size();
+					sumSquares = 0.0;
+
+					for (unsigned int i = 1; i < opt.runs; ++i) {
+						
+						// Compute the runtime for a single run
+						// and update the running estimates
+						const long double currentRun = runtime(func, input);
+						const long double currentAverage = currentRun / input.size();
+						totalRuntime += currentRun;
+
+						const long double tmp = averageRuntime;
+						averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
+						sumSquares += (currentAverage - tmp)
+							* (currentAverage - averageRuntime);
+					}
+
+				} catch(...) {
+
+					// Catch any exception and mark the benchmark as failed
+					failed = true;
+				}
+
+				benchmark_result res {};
+				res.name = name;
+				res.runs = opt.runs;
+				res.iterations = input.size();
+				res.totalRuntime = totalRuntime;
+				res.averageRuntime = averageRuntime;
+				res.runsPerSecond = 1000.0 / res.averageRuntime;
+				res.failed = failed;
+				res.quiet = opt.quiet;
+				res.seed = seed;
+
+				if (opt.runs > 1)
+					res.stdevRuntime = std::sqrt(sumSquares / (opt.runs - 1));
+
+				std::lock_guard<std::mutex> lock(benchmarkMutex);
+				benchmarkResults[name].push_back(res);
+			});
 		}
 
 
