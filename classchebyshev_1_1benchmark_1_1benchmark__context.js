@@ -3,7 +3,7 @@ var classchebyshev_1_1benchmark_1_1benchmark__context =
     [ "benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a2175133947d86cf0c029f63ab79af97b", null ],
     [ "~benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html#add18f8dc146560aeb79b84dbcea5d37d", null ],
     [ "benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a22f75d8f589734bd45bd9aa4c70a9c37", null ],
-    [ "benchmark", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a549c91b313b3261842d61e8321f04ba6", null ],
+    [ "benchmark", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a45401273300f59b88a27fc9a8ec80f03", null ],
     [ "benchmark", "classchebyshev_1_1benchmark_1_1benchmark__context.html#ad40ac7a51f3166f874b3a1d3afc5e6a2", null ],
     [ "benchmark", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a6b986ca5c399318e34c2773449a73b1c", null ],
     [ "get_benchmark", "classchebyshev_1_1benchmark_1_1benchmark__context.html#a9b379a9f1b4aabf09ba58d6332793ec9", null ],
