@@ -6,5 +6,6 @@ var searchData=
   ['meanerr_3',['meanErr',['../structchebyshev_1_1prec_1_1estimate__result.html#a467791c833ffbfeadb37171a962c5d01',1,'chebyshev::prec::estimate_result']]],
   ['modulename_4',['modulename',['../structchebyshev_1_1benchmark_1_1benchmark__settings.html#a61f4bc92a7787b88c2938a7caf7b3589',1,'chebyshev::benchmark::benchmark_settings::moduleName'],['../structchebyshev_1_1err_1_1err__settings.html#a58a890858306a0a9183cf33e31370aed',1,'chebyshev::err::err_settings::moduleName'],['../structchebyshev_1_1prec_1_1prec__settings.html#a4c295d5ad65f0b0504f5933c1d9ff90b',1,'chebyshev::prec::prec_settings::moduleName']]],
   ['montecarlo_5',['montecarlo',['../namespacechebyshev_1_1prec_1_1estimator.html#a49ede6ca712c0a273b7af46fe9084d8a',1,'chebyshev::prec::estimator']]],
-  ['montecarlo1d_6',['montecarlo1D',['../namespacechebyshev_1_1prec_1_1estimator.html#a52ce20822e4a3208540388c3564a7a03',1,'chebyshev::prec::estimator']]]
+  ['montecarlo1d_6',['montecarlo1D',['../namespacechebyshev_1_1prec_1_1estimator.html#a52ce20822e4a3208540388c3564a7a03',1,'chebyshev::prec::estimator']]],
+  ['multithreading_7',['multithreading',['../structchebyshev_1_1benchmark_1_1benchmark__settings.html#a7112aac6e43aa7f66c8d6b5c5cac4ce4',1,'chebyshev::benchmark::benchmark_settings::multithreading'],['../structchebyshev_1_1prec_1_1prec__settings.html#a4bf111c7b4a0aa2c6665376314aedb7f',1,'chebyshev::prec::prec_settings::multithreading']]]
 ];

@@ -133,50 +133,58 @@ $(document).ready(function(){initNavTree('common_8h_source.html',''); initResiza
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &lt;limits&gt;</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;../prec/interval.h&quot;</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="common_8h.html#ab46614359717672dc9a4eed4669be6e6">   37</a></span><span class="keyword">using </span><a class="code hl_typedef" href="common_8h.html#ab46614359717672dc9a4eed4669be6e6">real_t</a> = double;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#define CAST_LAMBDA(func, type) [=](type x){ return func(static_cast&lt;type&gt;(x)); }</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">   42</a></span><span class="keyword">using </span><a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> = <span class="keywordtype">long</span> double;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechebyshev.html">chebyshev</a> {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Type = <span class="keywordtype">double</span>&gt;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">   51</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a> = std::function&lt;<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>(<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>)&gt;;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &quot;../prec/interval.h&quot;</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#define CAST_LAMBDA(func, type) [=](type x){ return func(static_cast&lt;type&gt;(x)); }</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> FloatType = <span class="keywordtype">long</span> <span class="keywordtype">double</span>&gt;</div>
-<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">   56</a></span>    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">get_nan</a>() {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="keywordflow">return</span> std::numeric_limits&lt;FloatType&gt;::quiet_NaN();</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechebyshev.html">chebyshev</a> {</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Type = <span class="keywordtype">double</span>&gt;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">   60</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">EndoFunction</a> = std::function&lt;<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>(<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>)&gt;;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> FloatType = <span class="keywordtype">long</span> <span class="keywordtype">double</span>&gt;</div>
+<div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">   65</a></span>    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">FloatType</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">get_nan</a>() {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">return</span> std::numeric_limits&lt;FloatType&gt;::quiet_NaN();</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
 </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">   62</a></span>    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> <a class="code hl_variable" href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">PI_CONST</a> = 3.141592653589793238462643L;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#ifndef CHEBYSHEV_NO_ALIAS</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechebyshev.html">ch</a> = <a class="code hl_namespace" href="namespacechebyshev.html">chebyshev</a>;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacechebyshev_html"><div class="ttname"><a href="namespacechebyshev.html">chebyshev</a></div><div class="ttdoc">General namespace of the framework.</div><div class="ttdef"><b>Definition</b> benchmark.h:20</div></div>
-<div class="ttc" id="anamespacechebyshev_html_a62181021524138fb26d708e15a8feb06"><div class="ttname"><a href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">chebyshev::get_nan</a></div><div class="ttdeci">constexpr FloatType get_nan()</div><div class="ttdoc">Get a quiet NaN of the specified floating point type.</div><div class="ttdef"><b>Definition</b> common.h:56</div></div>
-<div class="ttc" id="anamespacechebyshev_html_a94d6aae363e21a096f05814053ec8462"><div class="ttname"><a href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">chebyshev::EndoFunction</a></div><div class="ttdeci">std::function&lt; Type(Type)&gt; EndoFunction</div><div class="ttdoc">An endofunction is a function which has the same type of input and output, such as a real function of...</div><div class="ttdef"><b>Definition</b> common.h:51</div></div>
-<div class="ttc" id="anamespacechebyshev_html_ae88ed08a93a405eeeb6820fcd3c64278"><div class="ttname"><a href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">chebyshev::PI_CONST</a></div><div class="ttdeci">const long double PI_CONST</div><div class="ttdoc">The Pi mathematical constant.</div><div class="ttdef"><b>Definition</b> common.h:62</div></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">   71</a></span>    <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> <a class="code hl_variable" href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">PI_CONST</a> = 3.141592653589793238462643L;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>}</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#ifndef CHEBYSHEV_NO_ALIAS</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacechebyshev.html">ch</a> = <a class="code hl_namespace" href="namespacechebyshev.html">chebyshev</a>;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="acommon_8h_html_a66366fa662e4cc69622c5b058d2a6d6e"><div class="ttname"><a href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a></div><div class="ttdeci">long double prec_t</div><div class="ttdoc">Floating-point type of higher precision, used in computations, such as error estimation.</div><div class="ttdef"><b>Definition</b> common.h:42</div></div>
+<div class="ttc" id="acommon_8h_html_ab46614359717672dc9a4eed4669be6e6"><div class="ttname"><a href="common_8h.html#ab46614359717672dc9a4eed4669be6e6">real_t</a></div><div class="ttdeci">double real_t</div><div class="ttdoc">Floating-point type, used as default for function arguments.</div><div class="ttdef"><b>Definition</b> common.h:37</div></div>
+<div class="ttc" id="anamespacechebyshev_html"><div class="ttname"><a href="namespacechebyshev.html">chebyshev</a></div><div class="ttdoc">General namespace of the framework.</div><div class="ttdef"><b>Definition</b> benchmark.h:22</div></div>
+<div class="ttc" id="anamespacechebyshev_html_a62181021524138fb26d708e15a8feb06"><div class="ttname"><a href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">chebyshev::get_nan</a></div><div class="ttdeci">constexpr FloatType get_nan()</div><div class="ttdoc">Get a quiet NaN of the specified floating point type.</div><div class="ttdef"><b>Definition</b> common.h:65</div></div>
+<div class="ttc" id="anamespacechebyshev_html_a94d6aae363e21a096f05814053ec8462"><div class="ttname"><a href="namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462">chebyshev::EndoFunction</a></div><div class="ttdeci">std::function&lt; Type(Type)&gt; EndoFunction</div><div class="ttdoc">An endofunction is a function which has the same type of input and output, such as a real function of...</div><div class="ttdef"><b>Definition</b> common.h:60</div></div>
+<div class="ttc" id="anamespacechebyshev_html_ae88ed08a93a405eeeb6820fcd3c64278"><div class="ttname"><a href="namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278">chebyshev::PI_CONST</a></div><div class="ttdeci">const long double PI_CONST</div><div class="ttdoc">The Pi mathematical constant.</div><div class="ttdef"><b>Definition</b> common.h:71</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_aebb8dcc11953d78e620bbef0b9e2183.html">core</a></li><li class="navelem"><a class="el" href="common_8h.html">common.h</a></li>
-    <li class="footer">Generated on Fri May 30 2025 20:40:32 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Mon Jun 23 2025 20:31:04 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

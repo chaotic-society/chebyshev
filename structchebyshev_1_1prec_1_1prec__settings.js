@@ -8,6 +8,7 @@ var structchebyshev_1_1prec_1_1prec__settings =
     [ "estimateColumns", "structchebyshev_1_1prec_1_1prec__settings.html#ab3dd46f2d87d90c5ae0e57b40c084133", null ],
     [ "estimateOutputFiles", "structchebyshev_1_1prec_1_1prec__settings.html#a65bf09dd17a8237a5fc2065acca4a0eb", null ],
     [ "moduleName", "structchebyshev_1_1prec_1_1prec__settings.html#a4c295d5ad65f0b0504f5933c1d9ff90b", null ],
+    [ "multithreading", "structchebyshev_1_1prec_1_1prec__settings.html#a4bf111c7b4a0aa2c6665376314aedb7f", null ],
     [ "outputFiles", "structchebyshev_1_1prec_1_1prec__settings.html#a8030d4fc5cb2db1d0f114260cc99ecf6", null ],
     [ "pickedTests", "structchebyshev_1_1prec_1_1prec__settings.html#a0aae58d83eb64ce64b188f398ae6308b", null ]
 ];

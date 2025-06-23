@@ -6,6 +6,8 @@ var common_8h =
     [ "CHEBYSHEV_PREC_ITER", "common_8h.html#a2a491d0f6b10fde5a05b94541e77ff69", null ],
     [ "CHEBYSHEV_PREC_TOLERANCE", "common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc", null ],
     [ "EndoFunction", "common_8h.html#a94d6aae363e21a096f05814053ec8462", null ],
+    [ "prec_t", "common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e", null ],
+    [ "real_t", "common_8h.html#ab46614359717672dc9a4eed4669be6e6", null ],
     [ "get_nan", "common_8h.html#a62181021524138fb26d708e15a8feb06", null ],
     [ "PI_CONST", "common_8h.html#ae88ed08a93a405eeeb6820fcd3c64278", null ]
 ];

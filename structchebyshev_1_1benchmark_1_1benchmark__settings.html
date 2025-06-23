@@ -140,6 +140,9 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <tr class="memitem:a3e946296d556324231705e5dfeb76ffb" id="r_a3e946296d556324231705e5dfeb76ffb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#a3e946296d556324231705e5dfeb76ffb">benchmarkColumns</a></td></tr>
 <tr class="memdesc:a3e946296d556324231705e5dfeb76ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default columns to print for benchmarks.  <br /></td></tr>
 <tr class="separator:a3e946296d556324231705e5dfeb76ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7112aac6e43aa7f66c8d6b5c5cac4ce4" id="r_a7112aac6e43aa7f66c8d6b5c5cac4ce4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html#a7112aac6e43aa7f66c8d6b5c5cac4ce4">multithreading</a> = <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">true</a></td></tr>
+<tr class="memdesc:a7112aac6e43aa7f66c8d6b5c5cac4ce4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to use multithreading for the execution of benchmarks (defaults to true).  <br /></td></tr>
+<tr class="separator:a7112aac6e43aa7f66c8d6b5c5cac4ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Global settings of the benchmark module, used in <a class="el" href="classchebyshev_1_1benchmark_1_1benchmark__context.html" title="Benchmark module context, handling benchmark requests concurrently.">benchmark_context</a>. </p>
@@ -163,6 +166,23 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 </div>
 </div>
+<a id="a7112aac6e43aa7f66c8d6b5c5cac4ce4" name="a7112aac6e43aa7f66c8d6b5c5cac4ce4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7112aac6e43aa7f66c8d6b5c5cac4ce4">&#9670;&#160;</a></span>multithreading</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">bool</a> chebyshev::benchmark::benchmark_settings::multithreading = <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">true</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether to use multithreading for the execution of benchmarks (defaults to true). </p>
+<p>If your code is not thread-safe (for example, if it accesses shared memory inside the tested functions), you may need to disable multithreading. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="benchmark_8h_source.html">benchmark.h</a></li>
 </ul>
@@ -172,7 +192,7 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1benchmark.html">benchmark</a></li><li class="navelem"><a class="el" href="structchebyshev_1_1benchmark_1_1benchmark__settings.html">benchmark_settings</a></li>
-    <li class="footer">Generated on Fri May 30 2025 20:40:32 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Mon Jun 23 2025 20:31:04 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
