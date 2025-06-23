@@ -36,7 +36,7 @@ int main(int argc, char const *argv[]) {
 
 	// Set the output file for the benchmark module
 	ctx.settings.outputFiles = { "examples/benchmark.csv" };
-
+	ctx.settings.benchmarkColumns.emplace_back("seed");
 
 	// Set options for multiple benchmarks
 	// with a benchmark_options structure,

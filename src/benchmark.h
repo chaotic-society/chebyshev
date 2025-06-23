@@ -10,8 +10,10 @@
 #include <iostream>
 #include <thread>
 #include <future>
+#include <memory>
 
 #include "./core/random.h"
+#include "./core/output.h"
 #include "./benchmark/timer.h"
 #include "./benchmark/generator.h"
 #include "./benchmark/benchmark_structures.h"
@@ -85,6 +87,13 @@ namespace benchmark {
 		std::vector<std::string> benchmarkColumns = {
 			"name", "averageRuntime", "stdevRuntime", "runsPerSecond"
 		};
+
+		/// Whether to use multithreading for the execution
+		/// of benchmarks (defaults to true).
+		/// If your code is not thread-safe (for example, if it
+		/// accesses shared memory inside the tested functions),
+		/// you may need to disable multithreading.
+		bool multithreading = true;
 		
 	};
 
@@ -286,8 +295,7 @@ namespace benchmark {
 			if (runs == 0)
 				runs = settings.defaultRuns;
 
-			// Package task for multi-threaded execution
-			benchmarkThreads.emplace_back([this, name, func, input, runs, quiet]() {
+			auto task = [this, name, func, input, runs, quiet]() {
 
 				// Whether the benchmark failed because of an exception
 				bool failed = false;
@@ -344,7 +352,10 @@ namespace benchmark {
 
 				std::lock_guard<std::mutex> lock(benchmarkMutex);
 				benchmarkResults[name].push_back(res);
-			});
+			};
+
+			settings.multithreading ?
+				benchmarkThreads.emplace_back(task) : task();
 		}
 
 

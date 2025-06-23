@@ -33,6 +33,15 @@
 #endif
 
 
+/// Floating-point type, used as default for function arguments.
+using real_t = double;
+
+
+/// Floating-point type of higher precision, used in computations,
+/// such as error estimation.
+using prec_t = long double;
+
+
 #include <limits>
 #include <vector>
 #include "../prec/interval.h"

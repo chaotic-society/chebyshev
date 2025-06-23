@@ -9,9 +9,12 @@
 #include <vector>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
+#include <iomanip>
 
 #include "./core/common.h"
 #include "./core/random.h"
+#include "./core/output.h"
 #include "./err/err_structures.h"
 
 

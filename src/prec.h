@@ -69,6 +69,13 @@ namespace prec {
 		/// by command line (all tests will be executed if empty).
 		std::map<std::string, bool> pickedTests {};
 
+		/// Whether to use multithreading for the execution
+		/// of accuracy estimation tasks (defaults to true).
+		/// If your code is not thread-safe (for example, if it
+		/// accesses shared memory inside the tested functions),
+		/// you may need to disable multithreading.
+		bool multithreading = true;
+
 	};
 
 
@@ -291,7 +298,7 @@ namespace prec {
 				if(settings.pickedTests.find(name) == settings.pickedTests.end())
 					return;
 
-			estimateThreads.emplace_back([this, name, funcApprox, funcExpected, opt]() {
+			auto task = [this, name, funcApprox, funcExpected, opt]() {
 
 				// Use the estimator to estimate error integrals.
 				auto res = opt.estimator(funcApprox, funcExpected, opt);
@@ -307,7 +314,10 @@ namespace prec {
 
 				std::lock_guard<std::mutex> lock(estimateMutex);
 				estimateResults[name].push_back(res);
-			});
+			};
+
+			settings.multithreading ?
+				estimateThreads.emplace_back(task) : task();
 		}
 
 
