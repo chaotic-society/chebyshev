@@ -219,7 +219,7 @@ namespace prec {
 				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
 				
 			} else {
-				std::cout << "No tests were run!" << std::endl;
+				std::cout << "\nNo tests were run!" << std::endl;
 			}
 
 			if(exit) {

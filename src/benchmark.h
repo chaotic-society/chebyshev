@@ -221,7 +221,7 @@ namespace benchmark {
 				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
 				
 			} else {
-				std::cout << "No benchmarks were run!" << std::endl;
+				std::cout << "\nNo benchmarks were run!" << std::endl;
 			}
 
 			if(exit) {

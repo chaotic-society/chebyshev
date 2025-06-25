@@ -243,7 +243,7 @@ namespace err {
 				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
 				
 			} else {
-				std::cout << "No checks were run!" << std::endl;
+				std::cout << "\nNo checks were run!" << std::endl;
 			}
 
 			if(exit) {
