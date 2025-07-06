@@ -301,13 +301,13 @@ namespace benchmark {
 				bool failed = false;
 
 				// Running average
-				long double averageRuntime;
+				prec_t averageRuntime;
 
 				// Running total sum of squares
-				long double sumSquares;
+				prec_t sumSquares;
 
 				// Total runtime
-				long double totalRuntime;
+				prec_t totalRuntime;
 
 				try {
 
@@ -321,11 +321,11 @@ namespace benchmark {
 						
 						// Compute the runtime for a single run
 						// and update the running estimates
-						const long double currentRun = runtime(func, input);
-						const long double currentAverage = currentRun / input.size();
+						const prec_t currentRun = runtime(func, input);
+						const prec_t currentAverage = currentRun / input.size();
 						totalRuntime += currentRun;
 
-						const long double tmp = averageRuntime;
+						const prec_t tmp = averageRuntime;
 						averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
 						sumSquares += (currentAverage - tmp)
 							* (currentAverage - averageRuntime);
@@ -394,13 +394,13 @@ namespace benchmark {
 				bool failed = false;
 
 				// Running average
-				long double averageRuntime;
+				prec_t averageRuntime;
 
 				// Running total sum of squares
-				long double sumSquares;
+				prec_t sumSquares;
 
 				// Total runtime
-				long double totalRuntime;
+				prec_t totalRuntime;
 
 				try {
 
@@ -414,11 +414,11 @@ namespace benchmark {
 						
 						// Compute the runtime for a single run
 						// and update the running estimates
-						const long double currentRun = runtime(func, input);
-						const long double currentAverage = currentRun / input.size();
+						const prec_t currentRun = runtime(func, input);
+						const prec_t currentAverage = currentRun / input.size();
 						totalRuntime += currentRun;
 
-						const long double tmp = averageRuntime;
+						const prec_t tmp = averageRuntime;
 						averageRuntime = tmp + (currentAverage - tmp) / (i + 1);
 						sumSquares += (currentAverage - tmp)
 							* (currentAverage - averageRuntime);

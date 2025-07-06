@@ -32,16 +32,16 @@ namespace chebyshev {
 			unsigned int iterations = 0;
 
 			/// Total runtime over all runs and iterations.
-			long double totalRuntime = get_nan<long double>();
+			prec_t totalRuntime = get_nan<prec_t>();
 
 			/// Estimated average runtime.
-			long double averageRuntime = get_nan<long double>();
+			prec_t averageRuntime = get_nan<prec_t>();
 
 			/// Sample standard deviation of the runtime.
-			long double stdevRuntime = get_nan<long double>();
+			prec_t stdevRuntime = get_nan<prec_t>();
 
 			/// Number of runs per second.
-			long double runsPerSecond = get_nan<long double>();
+			prec_t runsPerSecond = get_nan<prec_t>();
 
 			/// The seed used for randomized input generation.
 			uint64_t seed = 0;
@@ -54,7 +54,7 @@ namespace chebyshev {
 			bool quiet = false;
 
 			/// Additional fields in floating point representation.
-			std::map<std::string, long double> additionalFields {};
+			std::map<std::string, prec_t> additionalFields {};
 
 		};
 
@@ -67,7 +67,7 @@ namespace chebyshev {
 
 		/// @class benchmark_options
 		/// A structure holding the options of a benchmark.
-		template<typename InputType = double>
+		template<typename InputType = real_t>
 		struct benchmark_options {
 			
 			/// Number of runs (run with the same input values).

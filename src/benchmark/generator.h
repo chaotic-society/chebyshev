@@ -23,9 +23,9 @@ namespace benchmark {
 		/// @param a The lower extreme of the domain
 		/// @param b The upper extreme of the domain
 		/// @return The input generator
-		inline auto uniform1D(long double a, long double b) {
+		inline auto uniform1D(real_t a, real_t b) {
 
-			return [a, b](random::random_source& rnd) {
+			return [a, b](random::random_source& rnd) -> real_t {
 				return rnd.uniform(a, b);
 			};
 		}

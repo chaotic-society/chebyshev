@@ -73,9 +73,9 @@ namespace random {
 		/// @param b The upper extreme of the interval
 		/// @return A pseudorandom number uniformly
 		/// distributed over (a, b).
-		inline long double uniform(long double a, long double b) {
+		inline real_t uniform(real_t a, real_t b) {
 
-			const long double u = natural() / (long double) (uint64_t(1) << 63);
+			const real_t u = natural() / (real_t) (uint64_t(1) << 63);
 			return u * (b - a) + a;
 		}
 
@@ -88,7 +88,7 @@ namespace random {
 		/// @param b The upper extreme of the interval
 		/// @return A reference to the overwritten vector.
 		template<typename Vector>
-		inline Vector& uniform(Vector& x, long double a, long double b) {
+		inline Vector& uniform(Vector& x, real_t a, real_t b) {
 
 			for (int i = 0; i < x.size(); ++i)
 				x[i] = uniform(a, b);
@@ -124,13 +124,13 @@ namespace random {
 		/// @param m The mean of the distribution
 		/// @param s The standard deviation of the distribution
 		/// @return A pseudorandom number Gaussian distributed.
-		inline long double gaussian(long double m, long double s) {
+		inline real_t gaussian(real_t m, real_t s) {
 
-			const long double x = uniform(0.0, 1.0);
-			const long double y = uniform(0.0, 1.0);
+			const real_t x = uniform(0.0, 1.0);
+			const real_t y = uniform(0.0, 1.0);
 
-			const long double v = std::sqrt(-2 * std::log(x));
-			const long double u = v * std::cos(2 * PI_CONST * y);
+			const real_t v = std::sqrt(-2 * std::log(x));
+			const real_t u = v * std::cos(2 * PI_CONST * y);
 
 			return m + s * u;
 		}

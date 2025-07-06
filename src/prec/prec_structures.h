@@ -31,25 +31,25 @@ namespace chebyshev {
 			std::vector<interval> domain {};
 
 			/// Tolerance on the max absolute error.
-			long double tolerance = 0;
+			prec_t tolerance = 0;
 
 			/// Estimated maximum absolute error on interval.
-			long double maxErr = get_nan<long double>();
+			prec_t maxErr = get_nan<prec_t>();
 
 			/// Estimated mean error on interval.
-			long double meanErr = get_nan<long double>();
+			prec_t meanErr = get_nan<prec_t>();
 
 			/// Estimated RMS error on interval.
-			long double rmsErr = get_nan<long double>();
+			prec_t rmsErr = get_nan<prec_t>();
 
 			/// Estimated relative error on interval.
-			long double relErr = get_nan<long double>();
+			prec_t relErr = get_nan<prec_t>();
 
 			/// Estimated absolute error on interval.
-			long double absErr = get_nan<long double>();
+			prec_t absErr = get_nan<prec_t>();
 
 			/// Additional fields by name, as a floating point value.
-			std::map<std::string, long double> additionalFields {};
+			std::map<std::string, prec_t> additionalFields {};
 
 			/// Whether the test failed.
 			bool failed = false;
@@ -68,7 +68,7 @@ namespace chebyshev {
 
 		/// Distance function between two elements.
 		template<typename Type>
-		using DistanceFunction = std::function<long double(Type, Type)>;
+		using DistanceFunction = std::function<prec_t(Type, Type)>;
 
 
 		/// @class estimate_options
@@ -95,7 +95,7 @@ namespace chebyshev {
 			};
 
 			/// The tolerance to use to determine whether the test failed.
-			long double tolerance = CHEBYSHEV_PREC_TOLERANCE;
+			prec_t tolerance = CHEBYSHEV_PREC_TOLERANCE;
 
 			/// Number of function evaluations to use.
 			unsigned int iterations = CHEBYSHEV_PREC_ITER;
@@ -129,7 +129,7 @@ namespace chebyshev {
 			estimate_options(
 				interval omega,
 				Estimator_t estimator,
-				long double tolerance,
+				prec_t tolerance,
 				unsigned int iterations,
 				bool quiet = false)
 			: domain({omega}), estimator(estimator), tolerance(tolerance),
@@ -148,7 +148,7 @@ namespace chebyshev {
 			estimate_options(
 				std::vector<interval> omega,
 				Estimator_t estimator,
-				long double tolerance,
+				prec_t tolerance,
 				unsigned int iterations,
 				bool quiet = false)
 			: domain(omega), estimator(estimator),
@@ -170,20 +170,20 @@ namespace chebyshev {
 			std::string name = "unknown";
 
 			/// Evaluated value.
-			long double evaluated = get_nan<long double>();
+			prec_t evaluated = get_nan<prec_t>();
 
 			/// Expected value.
-			long double expected = get_nan<long double>();
+			prec_t expected = get_nan<prec_t>();
 			
 			/// Evaluated difference between expected and evaluated values.
-			long double difference = get_nan<long double>();
+			prec_t difference = get_nan<prec_t>();
 
 			/// Additional fields by name,
 			/// as a floating point value.
-			std::map<std::string, long double> additionalFields {};
+			std::map<std::string, prec_t> additionalFields {};
 
 			/// Tolerance on the absolute difference.
-			long double tolerance = 0;
+			prec_t tolerance = 0;
 
 			/// Whether the test failed.
 			bool failed = true;
@@ -199,13 +199,13 @@ namespace chebyshev {
 		struct equation_options {
 			
 			/// Tolerance on the absolute difference.
-			long double tolerance = CHEBYSHEV_PREC_TOLERANCE;
+			prec_t tolerance = CHEBYSHEV_PREC_TOLERANCE;
 
 			/// Distance function to measure the distance
 			/// between the expected and evaluated value.
 			DistanceFunction<T> distance = [](T x, T y) {
 				const auto diff = x - y;
-				return (long double) (diff > 0 ? diff : -diff);
+				return (prec_t) (diff > 0 ? diff : -diff);
 			};
 
 			/// Print to standard output or not.
@@ -218,12 +218,12 @@ namespace chebyshev {
 
 			/// Construct equation options from the tolerance,
 			/// setting the distance function to a simple Euclidean distance.
-			equation_options(long double tolerance) : tolerance(tolerance) {}
+			equation_options(prec_t tolerance) : tolerance(tolerance) {}
 
 
 			/// Construct equation options from the tolerance,
 			/// the distance function and the quiet flag (defaults to false).
-			equation_options(long double tolerance, DistanceFunction<T> dist, bool quiet = false)
+			equation_options(prec_t tolerance, DistanceFunction<T> dist, bool quiet = false)
 			: tolerance(tolerance), distance(dist), quiet(quiet) {}
 		};
 

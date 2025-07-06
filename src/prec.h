@@ -41,7 +41,7 @@ namespace prec {
 		FailFunction defaultFailFunction = fail::fail_on_max_err();
 
 		/// Default tolerance on max absolute error
-		long double defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
+		prec_t defaultTolerance = CHEBYSHEV_PREC_TOLERANCE;
 
 		/// The files to write all precision testing results to
 		std::vector<std::string> outputFiles {};
@@ -344,7 +344,7 @@ namespace prec {
 			Function1 funcApprox,
 			Function2 funcExpected,
 			std::vector<interval> domain,
-			long double tolerance, unsigned int iterations,
+			prec_t tolerance, unsigned int iterations,
 			FailFunction fail,
 			Estimator<R, Args...> estimator,
 			bool quiet = false) {
@@ -380,7 +380,7 @@ namespace prec {
 			EndoFunction<double> funcApprox,
 			EndoFunction<double> funcExpected,
 			interval domain,
-			long double tolerance = get_nan(),
+			prec_t tolerance = get_nan(),
 			unsigned int iterations = 0,
 			FailFunction fail = fail::fail_on_max_err(),
 			Estimator<double, double> estimator = estimator::quadrature1D<double>(),
@@ -548,7 +548,7 @@ namespace prec {
 
 			equation_result res {};
 
-			long double diff = opt.distance(evaluated, expected);
+			prec_t diff = opt.distance(evaluated, expected);
 
 			// Mark the test as failed if the
 			// distance between the two values
@@ -578,7 +578,7 @@ namespace prec {
 		inline void equals(
 			const std::string& name,
 			const Type& evaluated, const Type& expected,
-			long double tolerance,
+			prec_t tolerance,
 			DistanceFunction<Type> distance,
 			bool quiet = false) {
 
@@ -601,8 +601,8 @@ namespace prec {
 		/// @param quiet Whether to output the result
 		inline void equals(
 			const std::string& name,
-			long double evaluated, long double expected,
-			long double tolerance = get_nan(),
+			prec_t evaluated, prec_t expected,
+			prec_t tolerance = get_nan(),
 			bool quiet = false) {
 
 			if (tolerance != tolerance)
@@ -616,7 +616,7 @@ namespace prec {
 
 			equation_result res {};
 
-			long double diff = distance::abs_distance(evaluated, expected);
+			prec_t diff = distance::abs_distance(evaluated, expected);
 
 			// Mark the test as failed if the
 			// distance between the two values
@@ -647,7 +647,7 @@ namespace prec {
 		inline void equals(
 			const std::string& name,
 			std::vector<std::array<Type, 2>> values,
-			long double tolerance = get_nan(),
+			prec_t tolerance = get_nan(),
 			bool quiet = false) {
 
 			if (tolerance != tolerance)

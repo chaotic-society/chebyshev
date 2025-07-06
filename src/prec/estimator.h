@@ -26,7 +26,7 @@ namespace prec {
 		/// Use Simpson's quadrature scheme to approximate error integrals
 		/// for univariate real functions (endofunctions on real number types).
 		/// The estimator is returned as a lambda function.
-		template<typename FloatType = double>
+		template<typename FloatType = real_t>
 		inline auto quadrature1D() {
 
 			return [](
@@ -130,10 +130,10 @@ namespace prec {
 				IntType lower = extreme1 < extreme2 ? extreme1 : extreme2;
 				IntType upper = extreme1 > extreme2 ? extreme1 : extreme2;
 
-				long double maxErr = 0;
-				long double sumDiff = 0;
-				long double sumSqr = 0;
-				long double sumAbs = 0;
+				prec_t maxErr = 0;
+				prec_t sumDiff = 0;
+				prec_t sumSqr = 0;
+				prec_t sumAbs = 0;
 				uint64_t totalPoints = 0;
 
 				for (IntType n = lower; n <= upper; ++n) {
@@ -141,13 +141,13 @@ namespace prec {
 					const ReturnType resExpected = funcExpected(n);
 					const ReturnType resApprox = funcApprox(n);
 
-					const long double diff = (long double) resExpected > resApprox ?
+					const prec_t diff = (prec_t) resExpected > resApprox ?
 						(resExpected - resApprox) : (resApprox - resExpected);
 
 					maxErr = std::max(maxErr, diff);
 					sumDiff += diff;
 					sumSqr += diff * diff;
-					sumAbs += std::abs((long double) funcExpected(n));
+					sumAbs += std::abs((prec_t) funcExpected(n));
 					totalPoints++;
 				}
 
@@ -165,7 +165,7 @@ namespace prec {
 		/// Use crude Monte Carlo integration to approximate error integrals
 		/// for univariate real functions. A uniform random sampler is used
 		/// to sample points over the one-dimensional domain
-		template<typename FloatType = double>
+		template<typename FloatType = real_t>
 		inline auto montecarlo1D(std::shared_ptr<random::random_context> rnd_ctx) {
 
 			// Return a one-dimensional Monte Carlo estimator as a lambda function
@@ -224,7 +224,7 @@ namespace prec {
 		/// @note You may specify a custom vector type to use as input,
 		/// but it must provide a constructor taking in the number of elements.
 		template <
-			typename FloatType = double,
+			typename FloatType = real_t,
 			typename Vector = std::vector<FloatType>
 		>
 		inline auto montecarlo(

@@ -56,19 +56,19 @@ namespace chebyshev {
 	/// An endofunction is a function which has the same type
 	/// of input and output, such as a real function of real variable
 	/// \f$f: \mathbb{R} \rightarrow \mathbb{R}\f$.
-	template<typename Type = double>
+	template<typename Type = real_t>
 	using EndoFunction = std::function<Type(Type)>;
 
 
 	/// Get a quiet NaN of the specified floating point type.
-	template<typename FloatType = long double>
+	template<typename FloatType = real_t>
 	inline constexpr FloatType get_nan() {
 		return std::numeric_limits<FloatType>::quiet_NaN();
 	}
 
 
 	/// The Pi mathematical constant
-	const long double PI_CONST = 3.141592653589793238462643L;
+	const prec_t PI_CONST = 3.141592653589793238462643L;
 	
 }
 

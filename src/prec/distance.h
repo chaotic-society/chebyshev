@@ -23,7 +23,7 @@ namespace prec {
 	namespace distance {
 
 		/// Absolute distance between two real values.
-		template<typename Type = double>
+		template<typename Type = real_t>
 		inline Type abs_distance(Type a, Type b) {
 			return _internal::abs(b - a);
 		}

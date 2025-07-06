@@ -38,7 +38,7 @@ namespace chebyshev {
 			FieldInterpreter fieldInterpreter = [](const std::string& s) { return s; };
 
 			/// Additional custom options.
-			std::map<std::string, long double> additionalFields {};
+			std::map<std::string, prec_t> additionalFields {};
 
 			// Default constructor
 			field_options() {}
