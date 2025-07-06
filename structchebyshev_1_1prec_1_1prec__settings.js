@@ -2,7 +2,7 @@ var structchebyshev_1_1prec_1_1prec__settings =
 [
     [ "defaultFailFunction", "structchebyshev_1_1prec_1_1prec__settings.html#a7b21b27a0a641844f348044f498251de", null ],
     [ "defaultIterations", "structchebyshev_1_1prec_1_1prec__settings.html#a8f635eb97a7b74d79b637900cf1cde49", null ],
-    [ "defaultTolerance", "structchebyshev_1_1prec_1_1prec__settings.html#aebadd8eaa0af57a3e64d86b40907225b", null ],
+    [ "defaultTolerance", "structchebyshev_1_1prec_1_1prec__settings.html#a35bca3b32d69a71da4e215bc016f1913", null ],
     [ "equationColumns", "structchebyshev_1_1prec_1_1prec__settings.html#affe9c210579daae3ddfdc7384dd7f684", null ],
     [ "equationOutputFiles", "structchebyshev_1_1prec_1_1prec__settings.html#a7714b4d58aecedb9de1ed59122a21b16", null ],
     [ "estimateColumns", "structchebyshev_1_1prec_1_1prec__settings.html#ab3dd46f2d87d90c5ae0e57b40c084133", null ],

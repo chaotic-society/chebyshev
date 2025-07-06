@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['gaussian_0',['gaussian',['../structchebyshev_1_1random_1_1random__source.html#a82d064a78e52b6dcc9ce6d93224c9118',1,'chebyshev::random::random_source']]],
+  ['gaussian_0',['gaussian',['../structchebyshev_1_1random_1_1random__source.html#a196376b49027135078480abf15fde9d3',1,'chebyshev::random::random_source']]],
   ['generate_5ftable_1',['generate_table',['../classchebyshev_1_1output_1_1output__context.html#a3a57d0ade83292781e3f3d32ab71a089',1,'chebyshev::output::output_context']]],
   ['get_2',['get',['../classchebyshev_1_1benchmark_1_1timer.html#aca2757a7a4f328d8dd5c644b5b7c7b9d',1,'chebyshev::benchmark::timer']]],
   ['get_5fassertion_3',['get_assertion',['../classchebyshev_1_1err_1_1err__context.html#a70f181c9ddf208c6c78c491a7a4d0848',1,'chebyshev::err::err_context::get_assertion(const std::string &amp;name)'],['../classchebyshev_1_1err_1_1err__context.html#a8325a356cf707ae35e92cedd33c9e4d3',1,'chebyshev::err::err_context::get_assertion(const std::string &amp;name, unsigned int i)']]],

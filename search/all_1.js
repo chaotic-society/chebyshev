@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structchebyshev_1_1prec_1_1interval.html#af4e482073a425487335374ea22aab045',1,'chebyshev::prec::interval']]],
+  ['b_0',['b',['../structchebyshev_1_1prec_1_1interval.html#ad2b1739ac98f0d0c80b0c2c1271978de',1,'chebyshev::prec::interval']]],
   ['barebone_1',['barebone',['../namespacechebyshev_1_1output_1_1format.html#a4349cd54e726ac0ad2841afd221cff50',1,'chebyshev::output::format']]],
   ['benchmark_2',['benchmark',['../classchebyshev_1_1benchmark_1_1benchmark__context.html#ad40ac7a51f3166f874b3a1d3afc5e6a2',1,'chebyshev::benchmark::benchmark_context::benchmark(const std::string &amp;name, Function func, const std::vector&lt; InputType &gt; &amp;input, unsigned int runs=0, bool quiet=false)'],['../classchebyshev_1_1benchmark_1_1benchmark__context.html#a45401273300f59b88a27fc9a8ec80f03',1,'chebyshev::benchmark::benchmark_context::benchmark(const std::string &amp;name, Function func, benchmark_options&lt; InputType &gt; opt)'],['../classchebyshev_1_1benchmark_1_1benchmark__context.html#a6b986ca5c399318e34c2773449a73b1c',1,'chebyshev::benchmark::benchmark_context::benchmark(const std::string &amp;name, Function func, InputGenerator&lt; InputType &gt; inputGenerator, unsigned int runs=0, unsigned int iterations=0, bool quiet=false)']]],
   ['benchmark_2eh_3',['benchmark.h',['../benchmark_8h.html',1,'']]],

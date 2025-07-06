@@ -2,7 +2,7 @@ var namespacechebyshev_1_1benchmark =
 [
     [ "generator", "namespacechebyshev_1_1benchmark_1_1generator.html", [
       [ "discrete1D", "namespacechebyshev_1_1benchmark_1_1generator.html#a4f6a07bdc6de5048603dbef56f52dc69", null ],
-      [ "uniform1D", "namespacechebyshev_1_1benchmark_1_1generator.html#a2b7b21e8465fd92fe51d3d380e68694c", null ]
+      [ "uniform1D", "namespacechebyshev_1_1benchmark_1_1generator.html#acb0a8c405a5edd543ddbc22b5aa049c9", null ]
     ] ],
     [ "benchmark_context", "classchebyshev_1_1benchmark_1_1benchmark__context.html", "classchebyshev_1_1benchmark_1_1benchmark__context" ],
     [ "benchmark_options", "structchebyshev_1_1benchmark_1_1benchmark__options.html", "structchebyshev_1_1benchmark_1_1benchmark__options" ],

@@ -6,5 +6,5 @@ var namespacechebyshev =
     [ "random", "namespacechebyshev_1_1random.html", "namespacechebyshev_1_1random" ],
     [ "EndoFunction", "namespacechebyshev.html#a94d6aae363e21a096f05814053ec8462", null ],
     [ "get_nan", "namespacechebyshev.html#a62181021524138fb26d708e15a8feb06", null ],
-    [ "PI_CONST", "namespacechebyshev.html#ae88ed08a93a405eeeb6820fcd3c64278", null ]
+    [ "PI_CONST", "namespacechebyshev.html#aaa08adef34e5995110a4902503269be8", null ]
 ];

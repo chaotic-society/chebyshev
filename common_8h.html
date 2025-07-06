@@ -160,7 +160,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>prec_t</b> = long do
 <tr class="memdesc:a66366fa662e4cc69622c5b058d2a6d6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Floating-point type of higher precision, used in computations, such as error estimation. <br /></td></tr>
 <tr class="separator:a66366fa662e4cc69622c5b058d2a6d6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94d6aae363e21a096f05814053ec8462" id="r_a94d6aae363e21a096f05814053ec8462"><td class="memTemplParams" colspan="2"><a id="a94d6aae363e21a096f05814053ec8462" name="a94d6aae363e21a096f05814053ec8462"></a>
-template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>  = double&gt; </td></tr>
+template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>  = real_t&gt; </td></tr>
 <tr class="memitem:a94d6aae363e21a096f05814053ec8462"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">using</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><b>chebyshev::EndoFunction</b> = std::function&lt; <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>(<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>)&gt;</td></tr>
 <tr class="memdesc:a94d6aae363e21a096f05814053ec8462"><td class="mdescLeft">&#160;</td><td class="mdescRight">An endofunction is a function which has the same type of input and output, such as a real function of real variable \(f: \mathbb{R} \rightarrow \mathbb{R}\). <br /></td></tr>
 <tr class="separator:a94d6aae363e21a096f05814053ec8462"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,17 +168,17 @@ template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a62181021524138fb26d708e15a8feb06" id="r_a62181021524138fb26d708e15a8feb06"><td class="memTemplParams" colspan="2"><a id="a62181021524138fb26d708e15a8feb06" name="a62181021524138fb26d708e15a8feb06"></a>
-template&lt;typename FloatType  = long double&gt; </td></tr>
+template&lt;typename FloatType  = real_t&gt; </td></tr>
 <tr class="memitem:a62181021524138fb26d708e15a8feb06"><td class="memTemplItemLeft" align="right" valign="top">constexpr FloatType&#160;</td><td class="memTemplItemRight" valign="bottom"><b>chebyshev::get_nan</b> ()</td></tr>
 <tr class="memdesc:a62181021524138fb26d708e15a8feb06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a quiet NaN of the specified floating point type. <br /></td></tr>
 <tr class="separator:a62181021524138fb26d708e15a8feb06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ae88ed08a93a405eeeb6820fcd3c64278" id="r_ae88ed08a93a405eeeb6820fcd3c64278"><td class="memItemLeft" align="right" valign="top"><a id="ae88ed08a93a405eeeb6820fcd3c64278" name="ae88ed08a93a405eeeb6820fcd3c64278"></a>
-<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">long</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">double</a>&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev::PI_CONST</b> = 3.141592653589793238462643<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">L</a></td></tr>
-<tr class="memdesc:ae88ed08a93a405eeeb6820fcd3c64278"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Pi mathematical constant. <br /></td></tr>
-<tr class="separator:ae88ed08a93a405eeeb6820fcd3c64278"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa08adef34e5995110a4902503269be8" id="r_aaa08adef34e5995110a4902503269be8"><td class="memItemLeft" align="right" valign="top"><a id="aaa08adef34e5995110a4902503269be8" name="aaa08adef34e5995110a4902503269be8"></a>
+<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>chebyshev::PI_CONST</b> = 3.141592653589793238462643<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">L</a></td></tr>
+<tr class="memdesc:aaa08adef34e5995110a4902503269be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Pi mathematical constant. <br /></td></tr>
+<tr class="separator:aaa08adef34e5995110a4902503269be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Common definitions for the framework. </p>
@@ -188,7 +188,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_aebb8dcc11953d78e620bbef0b9e2183.html">core</a></li><li class="navelem"><a class="el" href="common_8h.html">common.h</a></li>
-    <li class="footer">Generated on Wed Jun 25 2025 21:06:53 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sun Jul 6 2025 20:20:36 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

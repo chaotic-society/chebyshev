@@ -361,13 +361,13 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                <span class="keywordtype">bool</span> failed = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                <span class="comment">// Running average</span></div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> averageRuntime;</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> averageRuntime;</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
 <div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                <span class="comment">// Running total sum of squares</span></div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> sumSquares;</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> sumSquares;</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>                <span class="comment">// Total runtime</span></div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> totalRuntime;</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> totalRuntime;</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                <span class="keywordflow">try</span> {</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
@@ -381,11 +381,11 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>                        </div>
 <div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>                        <span class="comment">// Compute the runtime for a single run</span></div>
 <div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>                        <span class="comment">// and update the running estimates</span></div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentRun = <a class="code hl_function" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentAverage = currentRun / input.size();</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> currentRun = <a class="code hl_function" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> currentAverage = currentRun / input.size();</div>
 <div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                        totalRuntime += currentRun;</div>
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span> </div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> tmp = averageRuntime;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> tmp = averageRuntime;</div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                        averageRuntime = tmp + (currentAverage - tmp) / (i + 1);</div>
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                        sumSquares += (currentAverage - tmp)</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                            * (currentAverage - averageRuntime);</div>
@@ -450,13 +450,13 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>                <span class="keywordtype">bool</span> failed = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
 <div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>                <span class="comment">// Running average</span></div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> averageRuntime;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> averageRuntime;</div>
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span> </div>
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>                <span class="comment">// Running total sum of squares</span></div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> sumSquares;</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> sumSquares;</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>                <span class="comment">// Total runtime</span></div>
-<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                <span class="keywordtype">long</span> <span class="keywordtype">double</span> totalRuntime;</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>                <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> totalRuntime;</div>
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span> </div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>                <span class="keywordflow">try</span> {</div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span> </div>
@@ -470,11 +470,11 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>                        </div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>                        <span class="comment">// Compute the runtime for a single run</span></div>
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>                        <span class="comment">// and update the running estimates</span></div>
-<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentRun = <a class="code hl_function" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
-<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> currentAverage = currentRun / input.size();</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> currentRun = <a class="code hl_function" href="namespacechebyshev_1_1benchmark.html#a3a72a7a0c66e23610b5330f8e3d17482">runtime</a>(func, input);</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> currentAverage = currentRun / input.size();</div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>                        totalRuntime += currentRun;</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span> </div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                        <span class="keyword">const</span> <span class="keywordtype">long</span> <span class="keywordtype">double</span> tmp = averageRuntime;</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                        <span class="keyword">const</span> <a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> tmp = averageRuntime;</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>                        averageRuntime = tmp + (currentAverage - tmp) / (i + 1);</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>                        sumSquares += (currentAverage - tmp)</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>                            * (currentAverage - averageRuntime);</div>
@@ -597,6 +597,7 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div class="ttc" id="aclasschebyshev_1_1benchmark_1_1benchmark__context_html_ae7e2952687bcaa84aa6b46d54729f0b5"><div class="ttname"><a href="classchebyshev_1_1benchmark_1_1benchmark__context.html#ae7e2952687bcaa84aa6b46d54729f0b5">chebyshev::benchmark::benchmark_context::output</a></div><div class="ttdeci">std::shared_ptr&lt; output::output_context &gt; output</div><div class="ttdoc">Output module settings for the context, dynamically allocated and possibly shared between multiple co...</div><div class="ttdef"><b>Definition</b> benchmark.h:127</div></div>
 <div class="ttc" id="aclasschebyshev_1_1benchmark_1_1benchmark__context_html_af22fa2682b1926625d8cd1e61c321cf8"><div class="ttname"><a href="classchebyshev_1_1benchmark_1_1benchmark__context.html#af22fa2682b1926625d8cd1e61c321cf8">chebyshev::benchmark::benchmark_context::terminate</a></div><div class="ttdeci">void terminate(bool exit=false)</div><div class="ttdoc">Terminate the benchmarking environment.</div><div class="ttdef"><b>Definition</b> benchmark.h:168</div></div>
 <div class="ttc" id="aclasschebyshev_1_1benchmark_1_1timer_html"><div class="ttname"><a href="classchebyshev_1_1benchmark_1_1timer.html">chebyshev::benchmark::timer</a></div><div class="ttdoc">Timer class to measure elapsed time in milliseconds.</div><div class="ttdef"><b>Definition</b> timer.h:18</div></div>
+<div class="ttc" id="acommon_8h_html_a66366fa662e4cc69622c5b058d2a6d6e"><div class="ttname"><a href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a></div><div class="ttdeci">long double prec_t</div><div class="ttdoc">Floating-point type of higher precision, used in computations, such as error estimation.</div><div class="ttdef"><b>Definition</b> common.h:42</div></div>
 <div class="ttc" id="acommon_8h_html_a7eb19df08db299b8016adc888768a41b"><div class="ttname"><a href="common_8h.html#a7eb19df08db299b8016adc888768a41b">CHEBYSHEV_BENCHMARK_ITER</a></div><div class="ttdeci">#define CHEBYSHEV_BENCHMARK_ITER</div><div class="ttdoc">Default number of benchmark iterations.</div><div class="ttdef"><b>Definition</b> common.h:22</div></div>
 <div class="ttc" id="acommon_8h_html_acfbfcbde585622ab8d5f0e0bdcbedb36"><div class="ttname"><a href="common_8h.html#acfbfcbde585622ab8d5f0e0bdcbedb36">CHEBYSHEV_BENCHMARK_RUNS</a></div><div class="ttdeci">#define CHEBYSHEV_BENCHMARK_RUNS</div><div class="ttdoc">Default number of benchmark runs.</div><div class="ttdef"><b>Definition</b> common.h:27</div></div>
 <div class="ttc" id="agenerator_8h_html"><div class="ttname"><a href="generator_8h.html">generator.h</a></div><div class="ttdoc">Input generators for benchmarks.</div></div>
@@ -632,7 +633,7 @@ $(document).ready(function(){initNavTree('benchmark_8h_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="benchmark_8h.html">benchmark.h</a></li>
-    <li class="footer">Generated on Wed Jun 25 2025 21:06:53 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sun Jul 6 2025 20:20:36 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

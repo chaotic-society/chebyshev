@@ -7,6 +7,6 @@ var searchData=
   ['simple_4',['simple',['../namespacechebyshev_1_1output_1_1format.html#ab0344d2271f7ed288fe61dab13d6b063',1,'chebyshev::output::format']]],
   ['start_5',['start',['../classchebyshev_1_1benchmark_1_1timer.html#ad35e5865e8dc34e703251d4c97d96f15',1,'chebyshev::benchmark::timer']]],
   ['started_6',['Getting Started',['../index.html#autotoc_md8',1,'']]],
-  ['stdevruntime_7',['stdevRuntime',['../structchebyshev_1_1benchmark_1_1benchmark__result.html#afd39d6a1a1cc5e6709e153d79dec709d',1,'chebyshev::benchmark::benchmark_result']]],
+  ['stdevruntime_7',['stdevRuntime',['../structchebyshev_1_1benchmark_1_1benchmark__result.html#aaf04bb87304b7edfdc565bad48c478d4',1,'chebyshev::benchmark::benchmark_result']]],
   ['string_8',['string',['../structchebyshev_1_1random_1_1random__source.html#aba3887ffbd0bf4a568d5bd75986b03ac',1,'chebyshev::random::random_source::string(size_t length)'],['../structchebyshev_1_1random_1_1random__source.html#a7216fa0842e24668529e38ea51303a67',1,'chebyshev::random::random_source::string(size_t length, std::string alphabet)'],['../structchebyshev_1_1random_1_1random__source.html#a5e4673f127c9e2961a3d4dcda8080785',1,'chebyshev::random::random_source::string(size_t length, std::vector&lt; char &gt; alphabet)'],['../structchebyshev_1_1random_1_1random__source.html#aec730071624914593dbe94050d1bbd0d',1,'chebyshev::random::random_source::string(size_t length, std::vector&lt; T &gt; alphabet)']]]
 ];
