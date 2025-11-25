@@ -388,7 +388,7 @@ namespace benchmark {
 			uint64_t seed = rnd.get_seed();
 
 			// Package task for multi-threaded execution
-			benchmarkThreads.emplace_back([this, input, name, func, opt, seed]() {
+			auto task = [this, input, name, func, opt, seed]() {
 
 				// Whether the benchmark failed because of an exception
 				bool failed = false;
@@ -446,7 +446,10 @@ namespace benchmark {
 
 				std::lock_guard<std::mutex> lock(benchmarkMutex);
 				benchmarkResults[name].push_back(res);
-			});
+			};
+
+			settings.multithreading ?
+				benchmarkThreads.emplace_back(task) : task();
 		}
 
 
