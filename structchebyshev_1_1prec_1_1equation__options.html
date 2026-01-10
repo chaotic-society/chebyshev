@@ -159,10 +159,8 @@ template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= [](<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">T</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a>, <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">T</a> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">y</a>) {</div>
-<div class="line">                <span class="keyword">const</span> <span class="keyword">auto</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> = <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">x</a> - <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">y</a>;</div>
-<div class="line">                <span class="keywordflow">return</span> (<a class="code hl_typedef" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a>) (<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> &gt; 0 ? <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a> : -<a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">diff</a>);</div>
+<div class="line">                <span class="keywordflow">return</span> <a class="code hl_function" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">get_nan</a>();</div>
 <div class="line">            }</div>
-<div class="ttc" id="acommon_8h_html_a66366fa662e4cc69622c5b058d2a6d6e"><div class="ttname"><a href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a></div><div class="ttdeci">long double prec_t</div><div class="ttdoc">Floating-point type of higher precision, used in computations, such as error estimation.</div><div class="ttdef"><b>Definition</b> common.h:42</div></div>
 <div class="ttc" id="anamespacechebyshev_html_a62181021524138fb26d708e15a8feb06"><div class="ttname"><a href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">chebyshev::get_nan</a></div><div class="ttdeci">constexpr FloatType get_nan()</div><div class="ttdoc">Get a quiet NaN of the specified floating point type.</div><div class="ttdef"><b>Definition</b> common.h:65</div></div>
 </div><!-- fragment -->
 <p>Distance function to measure the distance between the expected and evaluated value. </p>
@@ -178,7 +176,7 @@ template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><b>prec</b></li><li class="navelem"><a class="el" href="structchebyshev_1_1prec_1_1equation__options.html">equation_options</a></li>
-    <li class="footer">Generated on Tue Nov 25 2025 15:54:50 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sat Jan 10 2026 12:48:23 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
