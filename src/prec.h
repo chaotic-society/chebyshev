@@ -502,13 +502,13 @@ namespace prec {
 		/// @param zero_element The zero element of type OutputType
 		/// (defaults to OutputType(0.0)).
 		template <
-			typename InputType, typename OutputType = InputType,
+			typename OutputType, typename InputType = OutputType,
 			typename Homogeneous = std::function<OutputType(InputType)>
 		>
 		inline void homogeneous(
 			const std::string& name,
 			Homogeneous hom,
-			const estimate_options<InputType, OutputType>& opt,
+			const estimate_options<OutputType, InputType>& opt,
 			OutputType zero_element = OutputType(0.0)) {
 
 			// Apply the homogeneous function
@@ -538,7 +538,7 @@ namespace prec {
 		inline void equals(
 			const std::string& name,
 			const Type& evaluated, const Type& expected,
-			equation_options<Type> opt = equation_options<Type>()) {
+			equation_options<Type> opt) {
 
 			// Skip the test case if any tests have been picked
 			// and this one was not picked.
@@ -553,7 +553,7 @@ namespace prec {
 			// Mark the test as failed if the
 			// distance between the two values
 			// is bigger than the tolerance.
-			res.failed = (diff > opt.tolerance);
+			res.failed = (diff > opt.tolerance) || (diff != diff);
 
 			res.name = name;
 			res.difference = diff;
@@ -620,8 +620,8 @@ namespace prec {
 
 			// Mark the test as failed if the
 			// distance between the two values
-			// is bigger than the tolerance.
-			res.failed = (diff > tolerance);
+			// is bigger than the tolerance or is NaN.
+			res.failed = (diff > tolerance) || (diff != diff);
 
 			res.name = name;
 			res.difference = diff;

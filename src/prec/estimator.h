@@ -171,7 +171,7 @@ namespace prec {
 			// Return a one-dimensional Monte Carlo estimator as a lambda function
 			return [rnd_ctx](
 				EndoFunction<FloatType> funcApprox,
-				EndoFunction<FloatType> fExpected,
+				EndoFunction<FloatType> funcExpected,
 				estimate_options<FloatType, FloatType> options) {
 
 				random::random_source rnd = rnd_ctx->get_rnd();
@@ -233,8 +233,8 @@ namespace prec {
 			// Return an n-dimensional Monte Carlo estimator as a lambda function
 			return [rnd_ctx, dimensions](
 				std::function<FloatType(Vector)> funcApprox,
-				std::function<FloatType(Vector)> fExpected,
-				estimate_options<FloatType, FloatType> options) {
+				std::function<FloatType(Vector)> funcExpected,
+				estimate_options<FloatType, std::vector<FloatType>> options) {
 
 				random::random_source rnd = rnd_ctx->get_rnd();
 
@@ -258,7 +258,7 @@ namespace prec {
 
 				Vector x (dimensions);
 
-				for (int i = 0; i < options.iterations; ++i) {
+				for (unsigned int i = 0; i < options.iterations; ++i) {
 					
 					rnd.uniform(x, options.domain);
 

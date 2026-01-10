@@ -204,8 +204,7 @@ namespace chebyshev {
 			/// Distance function to measure the distance
 			/// between the expected and evaluated value.
 			DistanceFunction<T> distance = [](T x, T y) {
-				const auto diff = x - y;
-				return (prec_t) (diff > 0 ? diff : -diff);
+				return get_nan();
 			};
 
 			/// Print to standard output or not.

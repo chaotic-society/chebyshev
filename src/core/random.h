@@ -90,7 +90,7 @@ namespace random {
 		template<typename Vector>
 		inline Vector& uniform(Vector& x, real_t a, real_t b) {
 
-			for (int i = 0; i < x.size(); ++i)
+			for (unsigned int i = 0; i < x.size(); ++i)
 				x[i] = uniform(a, b);
 		
 			return x;
@@ -112,7 +112,7 @@ namespace random {
 				);
 			}
 
-			for (int i = 0; i < x.size(); ++i)
+			for (unsigned int i = 0; i < x.size(); ++i)
 				x[i] = uniform(intervals[i].a, intervals[i].b);
 		
 			return x;
