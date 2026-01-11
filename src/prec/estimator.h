@@ -164,7 +164,10 @@ namespace prec {
 
 		/// Use crude Monte Carlo integration to approximate error integrals
 		/// for univariate real functions. A uniform random sampler is used
-		/// to sample points over the one-dimensional domain
+		/// to sample points over the one-dimensional domain.
+		///
+		/// @param rnd_ctx A shared pointer to the random context to use
+		/// for random number generation.
 		template<typename FloatType = real_t>
 		inline auto montecarlo1D(std::shared_ptr<random::random_context> rnd_ctx) {
 
@@ -203,7 +206,7 @@ namespace prec {
 				res.maxErr = max;
 				res.meanErr = sum / options.iterations;
 				res.absErr = sum * (length / options.iterations);
-				res.rmsErr = sumSqr * (length / options.iterations);
+				res.rmsErr = std::sqrt(sumSqr * (length / options.iterations));
 				res.relErr = sum / sumAbs;
 
 				return res;
@@ -276,7 +279,7 @@ namespace prec {
 				res.maxErr = max;
 				res.meanErr = sum / options.iterations;
 				res.absErr = sum * (volume / options.iterations);
-				res.rmsErr = sumSqr * (volume / options.iterations);
+				res.rmsErr = std::sqrt(sumSqr * (volume / options.iterations));
 				res.relErr = sum / sumAbs;
 
 				return res;
