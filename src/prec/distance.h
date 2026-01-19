@@ -19,13 +19,13 @@ namespace _internal {
 
 namespace prec {
 
-	/// @namespace chebyshev::prec::distance Distance functions for use in prec::equals
+	/// @namespace chebyshev::prec::distance Distance functions for use in prec_context::equals()
 	namespace distance {
 
 		/// Absolute distance between two real values.
 		template<typename Type = real_t>
-		inline Type abs_distance(Type a, Type b) {
-			return _internal::abs(b - a);
+		inline prec_t abs_distance(Type a, Type b) {
+			return prec_t(_internal::abs(b - a));
 		}
 
 	}
