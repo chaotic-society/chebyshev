@@ -189,7 +189,7 @@ var NAVTREEINDEX0 =
 "dir_d28a4824dc47e487b107a5db32ef43c4.html":[3,0,3],
 "dir_e7ebcb9b067f42e96b6aa92c053707aa.html":[3,0,0],
 "distance_8h.html":[3,0,4,0],
-"distance_8h.html#a915ed90adbfbac977b743b9fec7b7b9b":[3,0,4,0,0],
+"distance_8h.html#a6a1df60f444cb66abfcd46ac46ab2d61":[3,0,4,0,0],
 "distance_8h_source.html":[3,0,4,0],
 "err_8h.html":[3,0,7],
 "err_8h.html#a12b673979668b1153d5364b047b7ad4c":[3,0,7,2],
