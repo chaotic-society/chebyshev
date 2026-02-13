@@ -75,7 +75,9 @@ namespace random {
 		/// distributed over (a, b).
 		inline real_t uniform(real_t a, real_t b) {
 
-			const real_t u = natural() / (real_t) (uint64_t(1) << 63);
+			const uint64_t max = uint64_t(1) << 31;
+			const real_t u = (natural() % max) / prec_t(max);
+			
 			return u * (b - a) + a;
 		}
 
