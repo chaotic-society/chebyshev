@@ -616,7 +616,7 @@ namespace prec {
 
 			equation_result res {};
 
-			prec_t diff = distance::abs_distance(evaluated, expected);
+			prec_t diff = distance::absolute(evaluated, expected);
 
 			// Mark the test as failed if the
 			// distance between the two values
