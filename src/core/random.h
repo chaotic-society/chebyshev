@@ -92,8 +92,8 @@ namespace random {
 		template<typename Vector>
 		inline Vector& uniform(Vector& x, real_t a, real_t b) {
 
-			for (unsigned int i = 0; i < x.size(); ++i)
-				x[i] = uniform(a, b);
+			for (auto& x_i : x)
+				x_i = uniform(a, b);
 		
 			return x;
 		}
@@ -126,7 +126,7 @@ namespace random {
 		/// @param m The mean of the distribution
 		/// @param s The standard deviation of the distribution
 		/// @return A pseudorandom number Gaussian distributed.
-		inline real_t gaussian(real_t m, real_t s) {
+		inline real_t gaussian(real_t mean, real_t sigma) {
 
 			const real_t x = uniform(0.0, 1.0);
 			const real_t y = uniform(0.0, 1.0);
@@ -134,7 +134,24 @@ namespace random {
 			const real_t v = std::sqrt(-2 * std::log(x));
 			const real_t u = v * std::cos(2 * PI_CONST * y);
 
-			return m + s * u;
+			return mean + sigma * u;
+		}
+
+
+		/// Fill an already allocated vector with Gaussian
+		/// distributed numbers with the same mean and standard deviation.
+		///
+		/// @param x The already initialized vector to fill.
+		/// @param m The mean of the distribution
+		/// @param s The standard deviation of the distribution
+		/// @return A reference to the overwritten vector.
+		template<typename Vector>
+		inline Vector& gaussian(Vector& x, real_t mean, real_t sigma) {
+
+			for (auto& x_i : x)
+				x_i = gaussian(mean, sigma);
+		
+			return x;
 		}
 
 
