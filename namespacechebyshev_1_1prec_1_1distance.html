@@ -113,8 +113,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ae5967aaf86976295ff42c3e1315ddec5" id="r_ae5967aaf86976295ff42c3e1315ddec5"><td class="memTemplParams" colspan="2"><a id="ae5967aaf86976295ff42c3e1315ddec5" name="ae5967aaf86976295ff42c3e1315ddec5"></a>
 template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a>  = real_t&gt; </td></tr>
 <tr class="memitem:ae5967aaf86976295ff42c3e1315ddec5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><b>absolute</b> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> a, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Type</a> b)</td></tr>
-<tr class="memdesc:ae5967aaf86976295ff42c3e1315ddec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Absolute distance between two real values. <br /></td></tr>
+<tr class="memdesc:ae5967aaf86976295ff42c3e1315ddec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Absolute distance between two values which have an ordering with respect to zero. <br /></td></tr>
 <tr class="separator:ae5967aaf86976295ff42c3e1315ddec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7e7aeceaf66892e39e72449337895f3" id="r_aa7e7aeceaf66892e39e72449337895f3"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &gt; </td></tr>
+<tr class="memitem:aa7e7aeceaf66892e39e72449337895f3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacechebyshev_1_1prec_1_1distance.html#aa7e7aeceaf66892e39e72449337895f3">euclidean</a> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">v1</a>, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">v2</a>)</td></tr>
+<tr class="memdesc:aa7e7aeceaf66892e39e72449337895f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Euclidean distance between vectors (any type with a <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06" title="Get a quiet NaN of the specified floating point type.">size()</a> method and [] operator).  <br /></td></tr>
+<tr class="separator:aa7e7aeceaf66892e39e72449337895f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f88d52752d89dc52ea1c45a63e6a5fe" id="r_a1f88d52752d89dc52ea1c45a63e6a5fe"><td class="memItemLeft" align="right" valign="top"><a id="a1f88d52752d89dc52ea1c45a63e6a5fe" name="a1f88d52752d89dc52ea1c45a63e6a5fe"></a>
 <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">unsigned</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">int</a>&#160;</td><td class="memItemRight" valign="bottom"><b>hamming</b> (<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> std::string &amp;a, <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> std::string &amp;b)</td></tr>
 <tr class="memdesc:a1f88d52752d89dc52ea1c45a63e6a5fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hamming distance between two strings, defined as the number of positions at which the corresponding characters are different. <br /></td></tr>
@@ -122,13 +126,55 @@ template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Distance functions for use in <a class="el" href="classchebyshev_1_1prec_1_1prec__context.html#a0e540895d72dfc6aaa71d2b4d97a8aea" title="Test an equivalence up to a tolerance, with the given options (e.g.">prec_context::equals()</a> </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="aa7e7aeceaf66892e39e72449337895f3" name="aa7e7aeceaf66892e39e72449337895f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7e7aeceaf66892e39e72449337895f3">&#9670;&#160;</a></span>euclidean()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">typename</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="common_8h.html#a66366fa662e4cc69622c5b058d2a6d6e">prec_t</a> chebyshev::prec::distance::euclidean </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;&#160;</td>
+          <td class="paramname"><em>v1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">const</a> <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06">Vector</a> &amp;&#160;</td>
+          <td class="paramname"><em>v2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Euclidean distance between vectors (any type with a <a class="el" href="namespacechebyshev.html#a62181021524138fb26d708e15a8feb06" title="Get a quiet NaN of the specified floating point type.">size()</a> method and [] operator). </p>
+<p>If the size of the vectors is different, NaN is returned. </p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacechebyshev.html">chebyshev</a></li><li class="navelem"><b>prec</b></li><li class="navelem"><a class="el" href="namespacechebyshev_1_1prec_1_1distance.html">distance</a></li>
-    <li class="footer">Generated on Sat Feb 14 2026 11:48:03 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sun Feb 22 2026 11:09:41 for Chebyshev by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

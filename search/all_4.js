@@ -23,10 +23,11 @@ var searchData=
   ['estimateoutputfiles_20',['estimateOutputFiles',['../structchebyshev_1_1prec_1_1prec__settings.html#a65bf09dd17a8237a5fc2065acca4a0eb',1,'chebyshev::prec::prec_settings']]],
   ['estimator_21',['estimator',['../structchebyshev_1_1prec_1_1estimate__options.html#aaa64fa0be09ec33b8a2536e417c8aecf',1,'chebyshev::prec::estimate_options::estimator'],['../prec__structures_8h.html#a55a645e7fb397ab1a3577999035afaad',1,'chebyshev::prec::Estimator']]],
   ['estimator_2eh_22',['estimator.h',['../estimator_8h.html',1,'']]],
-  ['evaluated_23',['evaluated',['../structchebyshev_1_1err_1_1assert__result.html#a803b358a1bea0d77b7a301d1436f3655',1,'chebyshev::err::assert_result::evaluated'],['../structchebyshev_1_1err_1_1errno__result.html#a8cafe0bc08da6140f3a858781e5840e6',1,'chebyshev::err::errno_result::evaluated'],['../structchebyshev_1_1prec_1_1equation__result.html#a7d5e5fde99f9d79c5b6d74271f6e403d',1,'chebyshev::prec::equation_result::evaluated']]],
-  ['exception_5fresult_24',['exception_result',['../structchebyshev_1_1err_1_1exception__result.html',1,'chebyshev::err']]],
-  ['exceptioncolumns_25',['exceptionColumns',['../structchebyshev_1_1err_1_1err__settings.html#a49fc38394d469d54eef264bc4d254d59',1,'chebyshev::err::err_settings']]],
-  ['exceptionoutputfiles_26',['exceptionOutputFiles',['../structchebyshev_1_1err_1_1err__settings.html#a2f4daac7e39b181e49a601eaa05d2679',1,'chebyshev::err::err_settings']]],
-  ['expected_27',['expected',['../structchebyshev_1_1prec_1_1equation__result.html#ae5cd8b446171b27e228fcb164d768474',1,'chebyshev::prec::equation_result']]],
-  ['expectedflags_28',['expectedFlags',['../structchebyshev_1_1err_1_1errno__result.html#ab0d951381767858527fb7ceb15a7c99c',1,'chebyshev::err::errno_result']]]
+  ['euclidean_23',['euclidean',['../namespacechebyshev_1_1prec_1_1distance.html#aa7e7aeceaf66892e39e72449337895f3',1,'chebyshev::prec::distance']]],
+  ['evaluated_24',['evaluated',['../structchebyshev_1_1err_1_1assert__result.html#a803b358a1bea0d77b7a301d1436f3655',1,'chebyshev::err::assert_result::evaluated'],['../structchebyshev_1_1err_1_1errno__result.html#a8cafe0bc08da6140f3a858781e5840e6',1,'chebyshev::err::errno_result::evaluated'],['../structchebyshev_1_1prec_1_1equation__result.html#a7d5e5fde99f9d79c5b6d74271f6e403d',1,'chebyshev::prec::equation_result::evaluated']]],
+  ['exception_5fresult_25',['exception_result',['../structchebyshev_1_1err_1_1exception__result.html',1,'chebyshev::err']]],
+  ['exceptioncolumns_26',['exceptionColumns',['../structchebyshev_1_1err_1_1err__settings.html#a49fc38394d469d54eef264bc4d254d59',1,'chebyshev::err::err_settings']]],
+  ['exceptionoutputfiles_27',['exceptionOutputFiles',['../structchebyshev_1_1err_1_1err__settings.html#a2f4daac7e39b181e49a601eaa05d2679',1,'chebyshev::err::err_settings']]],
+  ['expected_28',['expected',['../structchebyshev_1_1prec_1_1equation__result.html#ae5cd8b446171b27e228fcb164d768474',1,'chebyshev::prec::equation_result']]],
+  ['expectedflags_29',['expectedFlags',['../structchebyshev_1_1err_1_1errno__result.html#ab0d951381767858527fb7ceb15a7c99c',1,'chebyshev::err::errno_result']]]
 ];
