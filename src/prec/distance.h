@@ -5,27 +5,39 @@
 
 #ifndef CHEBYSHEV_DISTANCE_H
 #define CHEBYSHEV_DISTANCE_H
+#include <cmath>
 
 
 namespace chebyshev {
-
-namespace _internal {
-
-	template<typename Type>
-	inline Type abs(Type x) {
-		return (x > 0) ? x : -x;
-	}
-}
-
 namespace prec {
 
 	/// @namespace chebyshev::prec::distance Distance functions for use in prec_context::equals()
 	namespace distance {
 
-		/// Absolute distance between two real values.
+
+		/// Absolute distance between two values
+		/// which have an ordering with respect to zero.
 		template<typename Type = real_t>
 		inline prec_t absolute(Type a, Type b) {
-			return prec_t(_internal::abs(b - a));
+			const Type diff = b - a;
+			return prec_t(diff > Type(0.0) ? diff : -diff);
+		}
+
+
+		/// Euclidean distance between vectors (any type with a size() method and [] operator).
+		/// If the size of the vectors is different, NaN is returned.
+		template<typename Vector>
+		inline prec_t euclidean(const Vector& v1, const Vector& v2) {
+
+			if (v1.size() != v2.size() || !v1.size())
+				return get_nan();
+
+			auto sum = (v1[0] - v2[0]) * (v1[0] - v2[0]);
+			for (size_t i = 1; i < v1.size(); i++) {
+				sum += (v1[i] - v2[i]) * (v1[i] - v2[i]);
+			}
+
+			return std::sqrt(sum);
 		}
 
 
