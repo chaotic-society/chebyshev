@@ -16,6 +16,7 @@
 #include "../prec/prec_structures.h"
 #include "../benchmark/benchmark_structures.h"
 #include "../err/err_structures.h"
+#include "./log.h"
 
 
 namespace chebyshev {
@@ -95,6 +96,9 @@ namespace chebyshev {
 
 			/// Whether the output module was setup.
 			bool wasSetup = false;
+
+			/// Log level for standard output and error messages.
+			LogLevel logLevel = LogLevel::INFO;
 
 		};
 
@@ -669,8 +673,6 @@ namespace chebyshev {
 					value << std::scientific
 						<< std::setprecision(settings.outputPrecision)
 						<< r.tolerance;
-				} else if(fieldName == "iterations") {
-					value << r.iterations;
 				} else if(fieldName == "failed") {
 					value << r.failed;
 				} else {
@@ -999,6 +1001,52 @@ namespace chebyshev {
 
 					std::cout << "Results have been saved in: " << filename << std::endl;
 				}
+			}
+
+
+			/// Log a message to standard output according to the set log level.
+			///
+			/// @param message The message to log
+			/// @param level The log level of the message
+			inline void log(const std::string& message, LogLevel level) {
+
+				if (level < settings.logLevel)
+					return;
+
+				if (level == LogLevel::ERROR) {
+					std::cerr << "[ERROR] " << message << std::endl;
+				} else {
+					std::cout << "[" << loglevel_to_string(level) << "] " << message << std::endl;
+				}
+			}
+
+
+			/// Write debug information to standard output according to the set log level.
+			///
+			/// @param message The debug message to write
+			inline void debug(const std::string& message) {
+				log(message, LogLevel::DEBUG);
+			}
+
+			/// Write runtime information to standard output according to the set log level.
+			///
+			/// @param message The information message to write
+			inline void info(const std::string& message) {
+				log(message, LogLevel::INFO);
+			}
+
+			/// Write a warning to standard output according to the set log level.
+			///
+			/// @param message The warning message to write
+			inline void warning(const std::string& message) {
+				log(message, LogLevel::WARNING);
+			}
+
+			/// Write an error message to standard error according to the set log level.
+			///
+			/// @param message The error message to write
+			inline void error(const std::string& message) {
+				log(message, LogLevel::ERROR);
 			}
 		};
 	}
