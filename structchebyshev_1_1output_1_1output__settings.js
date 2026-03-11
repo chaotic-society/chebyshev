@@ -5,6 +5,7 @@ var structchebyshev_1_1output_1_1output__settings =
     [ "fieldNames", "structchebyshev_1_1output_1_1output__settings.html#ac40b0c2a7de09b985e9e8ee712512985", null ],
     [ "fieldOptions", "structchebyshev_1_1output_1_1output__settings.html#a8ce0e35c1320a267bc94fa1c1eecf72d", null ],
     [ "fileOutputFormat", "structchebyshev_1_1output_1_1output__settings.html#a33e8d4edfab32252e7d0ed5b611c0150", null ],
+    [ "logLevel", "structchebyshev_1_1output_1_1output__settings.html#aa048eed09914633509796670e23d7d78", null ],
     [ "openFiles", "structchebyshev_1_1output_1_1output__settings.html#ad07a0d17bc79e1c17c039c967a4b401e", null ],
     [ "outputFiles", "structchebyshev_1_1output_1_1output__settings.html#a3cf8a0a76e4c1c25b5605ab4aa486840", null ],
     [ "outputFormat", "structchebyshev_1_1output_1_1output__settings.html#a94f3dbde74f2118f35c9ec69d83d5db1", null ],

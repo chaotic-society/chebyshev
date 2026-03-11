@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['pi_5fconst_0',['PI_CONST',['../namespacechebyshev.html#aaa08adef34e5995110a4902503269be8',1,'chebyshev']]],
-  ['pickedbenchmarks_1',['pickedBenchmarks',['../structchebyshev_1_1benchmark_1_1benchmark__settings.html#a1c6c57c3fcc66e28c500782235b68878',1,'chebyshev::benchmark::benchmark_settings']]],
-  ['pickedchecks_2',['pickedChecks',['../structchebyshev_1_1err_1_1err__settings.html#a4c1e672fae00f38318a9bd246ca287eb',1,'chebyshev::err::err_settings']]],
-  ['pickedtests_3',['pickedTests',['../structchebyshev_1_1prec_1_1prec__settings.html#a0aae58d83eb64ce64b188f398ae6308b',1,'chebyshev::prec::prec_settings']]]
+  ['openfiles_0',['openFiles',['../structchebyshev_1_1output_1_1output__settings.html#ad07a0d17bc79e1c17c039c967a4b401e',1,'chebyshev::output::output_settings']]],
+  ['output_1',['output',['../classchebyshev_1_1benchmark_1_1benchmark__context.html#ae7e2952687bcaa84aa6b46d54729f0b5',1,'chebyshev::benchmark::benchmark_context::output'],['../classchebyshev_1_1err_1_1err__context.html#aa6fb8a7791bd18c9aa993ac627bf9f3c',1,'chebyshev::err::err_context::output'],['../classchebyshev_1_1prec_1_1prec__context.html#adf242b5cb85536cd1bc824deb3d0d672',1,'chebyshev::prec::prec_context::output']]],
+  ['outputfiles_2',['outputfiles',['../structchebyshev_1_1benchmark_1_1benchmark__settings.html#aaf67d76e37a4b69d3943824c74318938',1,'chebyshev::benchmark::benchmark_settings::outputFiles'],['../structchebyshev_1_1output_1_1output__settings.html#a3cf8a0a76e4c1c25b5605ab4aa486840',1,'chebyshev::output::output_settings::outputFiles'],['../structchebyshev_1_1err_1_1err__settings.html#a16d9849d9b9fa7581acafc7d38ecc75a',1,'chebyshev::err::err_settings::outputFiles'],['../structchebyshev_1_1prec_1_1prec__settings.html#a8030d4fc5cb2db1d0f114260cc99ecf6',1,'chebyshev::prec::prec_settings::outputFiles']]],
+  ['outputformat_3',['outputFormat',['../structchebyshev_1_1output_1_1output__settings.html#a94f3dbde74f2118f35c9ec69d83d5db1',1,'chebyshev::output::output_settings']]],
+  ['outputprecision_4',['outputPrecision',['../structchebyshev_1_1output_1_1output__settings.html#ad8e7b72c67060f1f24f171fa84a75fe3',1,'chebyshev::output::output_settings']]],
+  ['outputtofile_5',['outputtofile',['../structchebyshev_1_1output_1_1output__settings.html#a50a959ee893f31df422ae9ebd9ae969e',1,'chebyshev::output::output_settings::outputToFile'],['../structchebyshev_1_1err_1_1err__settings.html#ae7f3a3204976935e77ff232a9aa50b75',1,'chebyshev::err::err_settings::outputToFile']]]
 ];
