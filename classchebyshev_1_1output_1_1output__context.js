@@ -17,6 +17,6 @@ var classchebyshev_1_1output_1_1output__context =
     [ "resolve_field", "classchebyshev_1_1output_1_1output__context.html#ac8b57e8ca93e19b109f8662b7ec9af9d", null ],
     [ "setup", "classchebyshev_1_1output_1_1output__context.html#a712b365326da10e17a148330a68af3d9", null ],
     [ "terminate", "classchebyshev_1_1output_1_1output__context.html#a56128c15c3fb8274cc5b9b1665e6bd47", null ],
-    [ "warning", "classchebyshev_1_1output_1_1output__context.html#aab491395adb83e4a9bf940eb094bfa2b", null ],
+    [ "warn", "classchebyshev_1_1output_1_1output__context.html#a1a928403d399c6d341b514344705fd1f", null ],
     [ "settings", "classchebyshev_1_1output_1_1output__context.html#af413afc52b9100e7e5f0d5fda0a02a2d", null ]
 ];
