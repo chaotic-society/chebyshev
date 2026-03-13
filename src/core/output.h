@@ -964,7 +964,7 @@ namespace chebyshev {
 				for (const auto& filename : filenames) {
 
 					if (!open_file(filename)) {
-						std::cout << "Unable to write to output file: " << filename << std::endl;
+						error("Unable to write to output file: " + filename);
 						continue;
 					}
 
@@ -978,14 +978,14 @@ namespace chebyshev {
 					else
 						file << settings.defaultFileOutputFormat(table, fields, settings);
 
-					std::cout << "Results have been saved in: " << filename << std::endl;
+					info("Results have been saved in: " + filename);
 				}
 
 				// Write to the generic output files
 				for (const auto& filename : settings.outputFiles) {
 
 					if (!open_file(filename)) {
-						std::cout << "Unable to write to output file: " << filename << std::endl;
+						error("Unable to write to output file: " + filename);
 						continue;
 					}
 
@@ -999,7 +999,7 @@ namespace chebyshev {
 					else
 						file << settings.defaultFileOutputFormat(table, fields, settings);
 
-					std::cout << "Results have been saved in: " << filename << std::endl;
+					info("Results have been saved in: " + filename);
 				}
 			}
 
@@ -1014,9 +1014,9 @@ namespace chebyshev {
 					return;
 
 				if (level == LogLevel::ERROR) {
-					std::cerr << "[ERROR] " << message << std::endl;
+					std::cerr << "ERROR: " << message << std::endl;
 				} else {
-					std::cout << "[" << loglevel_to_string(level) << "] " << message << std::endl;
+					std::cout << loglevel_to_string(level) << ": " << message << std::endl;
 				}
 			}
 
@@ -1038,7 +1038,7 @@ namespace chebyshev {
 			/// Write a warning to standard output according to the set log level.
 			///
 			/// @param message The warning message to write
-			inline void warning(const std::string& message) {
+			inline void warn(const std::string& message) {
 				log(message, LogLevel::WARNING);
 			}
 

@@ -135,8 +135,7 @@ namespace err {
 				for (int i = 1; i < argc; ++i)
 					settings.pickedChecks[argv[i]] = true;
 
-			std::cout << "Starting error checking on ";
-			std::cout << moduleName << " module ..." << std::endl;
+			output->info("Starting error checking on the " + moduleName + " module ...");
 
 			settings.moduleName = moduleName;
 			wasTerminated = false;
@@ -232,19 +231,15 @@ namespace err {
 			);
 
 			// Print overall checks results
-			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << totalChecks << " total checks, ";
-			std::cout << failedChecks << " failed";
+			double percent = totalChecks > 0 ? (failedChecks / (double) totalChecks) * 100 : 0.0;
+			output->info("Finished error checking on the " + settings.moduleName + " module ...");
+			output->info(
+				std::to_string(totalChecks) + " total checks, " + std::to_string(failedChecks) +
+				" failed (" + std::to_string(percent).substr(0, 4) + "%)"
+			);
 
-			// Print proportion of failed checks, avoiding division by zero
-			if (totalChecks > 0) {
-
-				const double percent = (failedChecks / (double) totalChecks) * 100;
-				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
-				
-			} else {
-				std::cout << "\nNo checks were run!" << std::endl;
-			}
+			if (totalChecks == 0)
+				output->warn("No checks were executed!");
 
 			if(exit) {
 				output->terminate();
@@ -283,8 +278,9 @@ namespace err {
 			std::string description = "",
 			bool quiet = false) {
 
-			assert_result res {};
+			output->debug("Checking assertion: " + name);
 
+			assert_result res {};
 			res.name = name;
 			res.evaluated = exp;
 			res.failed = !exp;
@@ -308,6 +304,8 @@ namespace err {
 			InputType x,
 			int expected_errno,
 			bool quiet = false) {
+
+			output->debug("Checking errno value for: " + name);
 
 			errno_result res {};
 			errno = 0;
@@ -360,6 +358,7 @@ namespace err {
 			std::vector<int>& expected_flags,
 			bool quiet = false) {
 
+			output->debug("Checking errno flags for: " + name);
 
 			errno_result res {};
 			errno = 0;
@@ -415,6 +414,8 @@ namespace err {
 			InputType x,
 			bool quiet = false) {
 
+			output->debug("Checking exception for: " + name);
+
 			exception_result res {};
 			bool thrown = false;
 
@@ -467,6 +468,8 @@ namespace err {
 			Function f,
 			InputType x,
 			bool quiet = false) {
+
+			output->debug("Checking exception for: " + name);
 
 			exception_result res {};
 			bool thrown = false;

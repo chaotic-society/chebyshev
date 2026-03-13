@@ -132,8 +132,7 @@ namespace prec {
 				for (int i = 1; i < argc; ++i)
 					settings.pickedTests[argv[i]] = true;
 
-			std::cout << "Starting precision testing of the ";
-			std::cout << moduleName << " module ..." << std::endl;
+			output->info("Starting precision testing of the " + moduleName + " module ...");
 
 			settings.moduleName = moduleName;
 			wasTerminated = false;
@@ -208,19 +207,16 @@ namespace prec {
 
 
 			// Print overall test results
-			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << totalTests << " total tests, ";
-			std::cout << failedTests << " failed";
+			double percent = totalTests > 0 ? (failedTests / (double) totalTests) * 100 : 0;
+			
+			output->info("Finished testing " + settings.moduleName);
+			output->info(
+				std::to_string(totalTests) + " total tests, " + std::to_string(failedTests) +
+				" failed (" + std::to_string(percent).substr(0, 4) + "%)"
+			);
 
-			// Print proportion of failed test, avoiding division by zero
-			if (totalTests > 0) {
-
-				const double percent = (failedTests / (double) totalTests) * 100;
-				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
-				
-			} else {
-				std::cout << "\nNo tests were run!" << std::endl;
-			}
+			if (totalTests == 0)
+				output->warn("No tests were executed!");
 
 			if(exit) {
 				output->terminate();
@@ -297,6 +293,8 @@ namespace prec {
 			if(settings.pickedTests.size())
 				if(settings.pickedTests.find(name) == settings.pickedTests.end())
 					return;
+
+			output->debug("Running estimate case: " + name);
 
 			auto task = [this, name, funcApprox, funcExpected, opt]() {
 
@@ -546,8 +544,9 @@ namespace prec {
 				if(settings.pickedTests.find(name) == settings.pickedTests.end())
 					return;
 
-			equation_result res {};
+			output->debug("Running equation case: " + name);
 
+			equation_result res {};
 			prec_t diff = opt.distance(evaluated, expected);
 
 			// Mark the test as failed if the
@@ -614,8 +613,9 @@ namespace prec {
 				if(settings.pickedTests.find(name) == settings.pickedTests.end())
 					return;
 
-			equation_result res {};
+			output->debug("Running equation case: " + name);
 
+			equation_result res {};
 			prec_t diff = distance::absolute(evaluated, expected);
 
 			// Mark the test as failed if the

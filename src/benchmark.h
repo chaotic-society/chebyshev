@@ -152,8 +152,7 @@ namespace benchmark {
 				for (int i = 1; i < argc; ++i)
 					settings.pickedBenchmarks[argv[i]] = true;
 
-			std::cout << "Starting benchmarks of the ";
-			std::cout << moduleName << " module ..." << std::endl;
+			output->info("Starting benchmarks of the " + moduleName + " module ...");
 
 			settings.moduleName = moduleName;
 			benchmarkResults.clear();
@@ -210,19 +209,15 @@ namespace benchmark {
 
 
 			// Print overall test results
-			std::cout << "Finished testing " << settings.moduleName << '\n';
-			std::cout << totalBenchmarks << " total tests, ";
-			std::cout << failedBenchmarks << " failed";
+			double percent = totalBenchmarks > 0 ? (failedBenchmarks / (double) totalBenchmarks) * 100 : 0;
+			output->info("Finished benchmarks of the " + settings.moduleName);
+			output->info(
+				std::to_string(totalBenchmarks) + " total benchmarks, " +
+				std::to_string(failedBenchmarks) + " failed (" + std::to_string(percent).substr(0, 4) + "%)"
+			);
 
-			// Print proportion of failed test, avoiding division by zero
-			if (totalBenchmarks > 0) {
-
-				const double percent = (failedBenchmarks / (double) totalBenchmarks) * 100;
-				std::cout << " (" << std::setprecision(3) << percent << "%)" << std::endl;
-				
-			} else {
-				std::cout << "\nNo benchmarks were run!" << std::endl;
-			}
+			if (totalBenchmarks == 0)
+				output->warn("No benchmarks were executed!");
 
 			if(exit) {
 				output->terminate();
@@ -294,6 +289,8 @@ namespace benchmark {
 
 			if (runs == 0)
 				runs = settings.defaultRuns;
+
+			output->debug("Running benchmark: " + name);
 
 			auto task = [this, name, func, input, runs, quiet]() {
 
@@ -373,6 +370,8 @@ namespace benchmark {
 
 			if (opt.runs == 0)
 				opt.runs = settings.defaultRuns;
+
+			output->debug("Running benchmark: " + name);
 
 			// Generate input set
 			random::random_source rnd (opt.seed);
