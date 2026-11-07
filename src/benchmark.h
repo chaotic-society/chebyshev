@@ -447,8 +447,10 @@ namespace benchmark {
 				benchmarkResults[name].push_back(res);
 			};
 
-			settings.multithreading ?
-				benchmarkThreads.emplace_back(task) : task();
+			if (settings.multithreading)
+				benchmarkThreads.emplace_back(task);
+			else
+				task();
 		}
 
 

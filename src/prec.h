@@ -314,8 +314,10 @@ namespace prec {
 				estimateResults[name].push_back(res);
 			};
 
-			settings.multithreading ?
-				estimateThreads.emplace_back(task) : task();
+			if (settings.multithreading)
+				estimateThreads.emplace_back(task);
+			else
+				task();
 		}
 
 
