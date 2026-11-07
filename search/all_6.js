@@ -13,5 +13,5 @@ var searchData=
   ['get_5fnan_10',['get_nan',['../namespacechebyshev.html#a62181021524138fb26d708e15a8feb06',1,'chebyshev']]],
   ['get_5frnd_11',['get_rnd',['../classchebyshev_1_1random_1_1random__context.html#ad457ad848edde5711741b8860558c6bb',1,'chebyshev::random::random_context']]],
   ['get_5fseed_12',['get_seed',['../structchebyshev_1_1random_1_1random__source.html#a1eb21154df7a43ff5bdd13ca57b59f21',1,'chebyshev::random::random_source']]],
-  ['getting_20started_13',['Getting Started',['../index.html#autotoc_md8',1,'']]]
+  ['getting_20started_13',['Getting started',['../index.html#autotoc_md5',1,'']]]
 ];

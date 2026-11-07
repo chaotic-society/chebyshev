@@ -106,50 +106,49 @@ $(function(){initNavTree('index.html','',''); });
 <blockquote class="doxtable">
 <p>A C++ testing framework designed for scientific software </p>
 </blockquote>
-<p>Chebyshev is a header-only C++ testing framework specialized in testing scientific software and scientific computing libraries. It was originally developed to test the larger <a href="https://github.com/chaotic-society/theoretica">Theoretica</a> project. The framework is composed of three modules: a <span class="tt">prec</span> module for precision testing, a <span class="tt">benchmark</span> module for benchmarks, and the <span class="tt">err</span> module for error checking.</p>
+<p>Chebyshev is a header-only C++ testing framework specifically designed for scientific computing and numerical software. The framework is made up of different modules which handle specific types of testing: the <span class="tt">prec</span> module estimates the precision of numerical methods, <span class="tt">benchmark</span> module benchmarks code performance, the <span class="tt">err</span> module controls proper error handling. In addition, the <span class="tt">output</span> module controls output of test results in a fully customizable way, and <span class="tt">random</span> provides simple, thread-safe random numbers and distribution sampling.</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
 Features</h1>
-<p>Chebyshev provides a robust and flexible way to ensure the accuracy, performance, and reliability of scientific computing applications:</p>
 <ul>
-<li><b>Header-only:</b> Chebyshev is a header-only library, making it easy to integrate into existing projects without requiring additional dependencies or build steps.</li>
-<li><b>Error integral approximation:</b> Chebyshev provides estimators for the precision of functions over their domain.</li>
-<li><b>Modular design:</b> The framework is composed of three independent modules, allowing developers to use only the components they need.</li>
-<li><b>Flexible testing:</b> Chebyshev provides a range of testing functions and is implemented using templates, making it easy to write custom tests for specific use cases.</li>
-<li><b>Many output formats:</b> The framework supports multiple output formats, such as Markdown and LaTeX tables, and is fully extensible with custom formats.</li>
-<li><b>Multi-platform support:</b> Chebyshev is designed to work on various platforms, including Windows, Linux, and MacOS, and is fully platform-independent.</li>
+<li><b>Standalone:</b> Chebyshev is header-only and works out of the box, with no dependencies or installation required.</li>
+<li><b>Modular:</b> The framework is lightweight and modular, with high customization capabilities.</li>
+<li><b>Error estimation:</b> Chebyshev is built to estimate numerical errors with deterministic or stochastic methods out of the box.</li>
+<li><b>Flexibility:</b> Since numerical methods take many forms, Chebyshev provides a unified interface to tackle many different problems.</li>
+<li><b>Many output formats</b>: The <span class="tt">output</span> module supports different output formats (including Latex and Markdown for visualization) and custom format support.</li>
 </ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
-Interface</h1>
-<p>The different modules are used through <em>contexts</em>, which handle requests and the underlying logic. You can create a context for a certain module using <span class="tt">&lt;module&gt;::make_context()</span>, which will return a <span class="tt">&lt;module&gt;_context</span> class which provides all relevant methods. The behavior of a module may be customized and extended by modifying its <span class="tt">settings</span> structure inside the context class. When the destructor of a context or <span class="tt">terminate()</span> is called, the results of testing are output to standard output and to file in CSV or other formats for easy analysis, manipulation and visualization.</p>
+Usage</h1>
+<p>The three modules <span class="tt">prec</span>, <span class="tt">benchmark</span> and <span class="tt">err</span> are used through <em>contexts</em>, which are simply objects that handle requests and settings:</p>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> ctx = <a class="code hl_function" href="prec_8h.html#a9d0d7a6c876187e0421b84a5489573d7">ch::prec::make_context</a>(<span class="stringliteral">&quot;myTestUnit&quot;</span>);</div>
+<div class="line">ctx.settings.multithreading = <span class="keyword">true</span>;</div>
+<div class="ttc" id="aprec_8h_html_a9d0d7a6c876187e0421b84a5489573d7"><div class="ttname"><a href="prec_8h.html#a9d0d7a6c876187e0421b84a5489573d7">chebyshev::prec::make_context</a></div><div class="ttdeci">prec_context make_context(const std::string &amp;moduleName, int argc=0, const char **argv=nullptr)</div><div class="ttdoc">Construct a precision testing context with the given parameters.</div><div class="ttdef"><b>Definition</b> prec.h:725</div></div>
+</div><!-- fragment --><p>Tests are run through the context and are automatically executed, either sequentially or in parallel, according to the set policy (<span class="tt">ctx.settings.multithreading</span>). Once a call to <span class="tt">ctx.terminate()</span> is reached or the context is destroyed, it waits for test results and outputs the results according to settings (<span class="tt">ctx.settings</span> and <span class="tt">ctx.output-&gt;settings</span>).</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
 Precision testing</h2>
-<p>The precision testing module, implemented in the <span class="tt">prec</span> namespace, is designed to verify the accuracy of scientific computing algorithms. It provides a set of functions to compare the results of different implementations, ensuring that they produce identical or equivalent results within a specified tolerance. In addition to checking single equivalences, Chebyshev implements precision estimation techniques, which consist in estimating error integrals of functions over a certain domain. This generally consists in estimating, either with deterministic quadrature methods or Monte Carlo methods, error integrals such as the following:</p>
-<p>$$\epsilon_{mean} = \frac{1}{\mu(\Omega)} \int_\Omega |\tilde{f}(x) - f(x)| dx$$</p>
-<p>$$\epsilon_{max} = \max_{\Omega} |\tilde{f}(x) - f(x)|$$</p>
-<p>The implementation is generalized using templates, making it possible to test quite generic types of functions, from real functions to functions of matrices and vectors or complex numbers. The estimates are computed and the single test cases are validated through a <em>fail function</em>, which determines whether the test failed, depending on its results.</p>
+<p>The <span class="tt">prec</span> module uses deterministic and stochastic methods to estimate the numerical errors of the functions you want to test. This is done by calling <span class="tt">ctx.equals()</span> to check a simple equivalence (e.g. <span class="tt">sqrt(4) == 2</span>) or by calling <span class="tt">ctx.estimate()</span> to use an <span class="tt">estimator</span> to get a more detailed error estimation over a discrete or continuous domain (e.g. checking that <span class="tt">sqrt(x)</span> works correctly over the positive real numbers):</p>
+<div class="fragment"><div class="line"><span class="comment">// Check an equivalence</span></div>
+<div class="line">ctx.equals(<span class="stringliteral">&quot;mySqrt(4)&quot;</span>, mySqrt(4.0), 2.0);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Estimate error on a continuous domain</span></div>
+<div class="line">ctx.estimate(<span class="stringliteral">&quot;mySqrt&quot;</span>, mySqrt, std::sqrt, prec::interval(0, 1E+06));</div>
+</div><!-- fragment --><p>This <span class="tt">ctx.estimate()</span> call will estimate relevant error integrals such as the mean and max error:</p>
+<p>$$ \varepsilon_{\text{avg}} = \frac{1}{\mu(\Omega)} \int_\Omega |\tilde f(x) - f(x)| dx, \ \ \ \ \ \ \ \ \ \ \ \varepsilon_{\text{max}} = \max_\Omega |\tilde f(x) - f(x)| $$</p>
+<p>These results are stored and written to file, according to the settings. You can also implement fully customized <em>estimators</em> for your own use cases. Other than comparing to a more precise implementation, you can check for properties of your method (e.g. homogeneity, involution, idempotence).</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
 Benchmarks</h2>
-<p>The <span class="tt">benchmark</span> module is used to measure the performance of algorithms and functions in general. It provides a set of macros and functions to time and profile the execution of code, allowing developers to optimize their implementations for speed and efficiency. The <span class="tt">benchmark()</span> method works by running the function under consideration for multiple <em>runs</em> and <em>iterations</em>, where runs use the same input, while different iterations use different inputs. The average runtime is then computed and registered. The input to feed the function can be fully customized using, for example, randomized input over the domain of the function.</p>
+<p>The <span class="tt">benchmark</span> module provides the <span class="tt">ctx.benchmark()</span> method which allows to estimate the average runtime and other statistics of any given function. The function under benchmark is run multiple times over many <em>runs</em> and <em>iterations</em>, where different runs use the same set of inputs and iterations run over different inputs. The input sets can be fully customized, allowing for deterministic or randomized samples over a function's domain, using the <span class="tt">random</span> module (e.g. what is the average runtime of my <span class="tt">sqrt(x)</span> implementation on the real numbers?).</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
-Error checking</h2>
-<p>The <span class="tt">err</span> module makes it possible to test that functions correctly set <span class="tt">errno</span> or throw exceptions. This is achieved for example by calling the functions with values outside of their domain, checking that they report the error correctly. The methods <span class="tt">check_errno</span> and <span class="tt">check_exception()</span> are used for these type of checks.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
-Output customization</h2>
-<p>The additional <span class="tt">output</span> module, not directly used for testing, makes it possible to customize the output of the tests, such as which fields to print and how to display them. Customization options are available through the <span class="tt">settings</span> structure.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
-Randomized tests</h2>
-<p>The <span class="tt">random</span> module works in conjunction with the three testing modules to randomize test inputs and provide distribution sampling capabilities for your test units.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
-Getting Started</h1>
-<p>To use Chebyshev, simply include the relevant header file for the module that you need in your project and start writing tests. You can alternatively include the <span class="tt"><a class="el" href="chebyshev_8h.html" title="Main include header of the test framework.">chebyshev.h</a></span> header file which automatically includes all functionalities. The framework is designed to be easy to use, with a minimal learning curve and customization options to shape it according to your needs. This example code sets up precision testing for the "example" test unit and estimates the error over a fictitious function with respect to an exact function:</p>
+Getting started</h2>
+<p>To use Chebyshev, simply download the code and include the relevant header file for the module you need (e.g. <span class="tt"><a class="el" href="prec_8h.html" title="Precision testing module.">prec.h</a></span>) and start writing tests! You can also include <span class="tt"><a class="el" href="chebyshev_8h.html" title="Main include header of the test framework.">chebyshev.h</a></span> to include all modules and functionalities. The framework is designed to be <b>easy to use</b>, with a minimal learning curve and many <b>customization options</b>.</p>
+<p>Here is a simple snippet:</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> ctx = prec::make_context(<span class="stringliteral">&quot;example&quot;</span>, argc, argv);</div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// Estimate errors on f on [0, 100]</span></div>
-<div class="line">ctx.estimate(<span class="stringliteral">&quot;f&quot;</span>, f, g, prec::interval(0, 100));</div>
+<div class="line"><span class="comment">// Estimate errors on f() on [0, 10] comparing to an &quot;exact&quot; g()</span></div>
+<div class="line">ctx.estimate(<span class="stringliteral">&quot;f&quot;</span>, f, g, prec::interval(0, 10));</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Check that two values are equal up to a tolerance</span></div>
 <div class="line">ctx.equals(<span class="stringliteral">&quot;f&quot;</span>, f(1), 1, 0.2);</div>
-</div><!-- fragment --><p>The output of this simple code, using default options, is:</p>
+</div><!-- fragment --><p>The output of this code is something like this:</p>
 <div class="fragment"><div class="line">Starting precision testing of the example module ...</div>
 <div class="line"> </div>
 <div class="line"> ┌──────────────────────────────────────────────────────────────────────────────┐</div>
@@ -169,12 +168,9 @@ Getting Started</h1>
 <div class="line">Results have been saved in: example_results</div>
 <div class="line">Finished testing example</div>
 <div class="line">2 total tests, 0 failed (0%)</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
-Setup and Usage</h1>
-<p>Chebyshev is a header-only library, so there is no need to build or install it separately. Simply include the relevant header files in your project and start using the framework straightaway. Only a compiler with C++14 support is needed to use the framework. To use the library, simply include <span class="tt"><a class="el" href="chebyshev_8h.html" title="Main include header of the test framework.">chebyshev.h</a></span> or a specific <span class="tt">&lt;module&gt;.h</span> header (e.g. <span class="tt"><a class="el" href="benchmark_8h.html" title="Benchmark module.">benchmark.h</a></span>).</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
-Contributing</h1>
-<p>Chebyshev is a collaborative open-source project, and contributions are welcome. If you'd like to contribute to the framework, please submit a pull request. </p>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+Dependencies</h2>
+<p>Chebyshev has no dependencies, and only a C++14 compiler is needed to use it. Simply include the module headers in your code and start writing tests. </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

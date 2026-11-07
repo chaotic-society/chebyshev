@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['output_20customization_0',['Output customization',['../index.html#autotoc_md6',1,'']]]
+  ['test_0',['Chebyshev Test',['../index.html',1,'']]],
+  ['testing_1',['Precision testing',['../index.html#autotoc_md3',1,'']]]
 ];

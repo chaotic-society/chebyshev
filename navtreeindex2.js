@@ -1,9 +1,5 @@
 var NAVTREEINDEX2 =
 {
-"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1":[2,0,0,4,6,5],
-"structchebyshev_1_1prec_1_1equation__options.html#ad3feaa691b3a8e7b0b0cd182e03e5816":[1,0,0,4,9,0],
-"structchebyshev_1_1prec_1_1equation__options.html#ad3feaa691b3a8e7b0b0cd182e03e5816":[2,0,0,4,6,0],
-"structchebyshev_1_1prec_1_1equation__options.html#aed953669f7714b838466008725054a5c":[1,0,0,4,9,3],
 "structchebyshev_1_1prec_1_1equation__options.html#aed953669f7714b838466008725054a5c":[2,0,0,4,6,3],
 "structchebyshev_1_1prec_1_1equation__result.html":[1,0,0,4,8],
 "structchebyshev_1_1prec_1_1equation__result.html":[2,0,0,4,5],

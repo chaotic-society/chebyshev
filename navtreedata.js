@@ -60,7 +60,7 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "functions_vars.html",
-"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1"
+"structchebyshev_1_1prec_1_1equation__options.html#aed953669f7714b838466008725054a5c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

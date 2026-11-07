@@ -11,15 +11,11 @@ var NAVTREEINDEX1 =
 "index.html":[],
 "index.html":[0],
 "index.html#autotoc_md1":[0,0],
-"index.html#autotoc_md10":[0,4],
 "index.html#autotoc_md2":[0,1],
 "index.html#autotoc_md3":[0,1,0],
 "index.html#autotoc_md4":[0,1,1],
 "index.html#autotoc_md5":[0,1,2],
 "index.html#autotoc_md6":[0,1,3],
-"index.html#autotoc_md7":[0,1,4],
-"index.html#autotoc_md8":[0,2],
-"index.html#autotoc_md9":[0,3],
 "interval_8h.html":[3,0,4,3],
 "interval_8h_source.html":[3,0,4,3],
 "log_8h.html":[3,0,1,1],
@@ -249,5 +245,9 @@ var NAVTREEINDEX1 =
 "structchebyshev_1_1prec_1_1equation__options.html#a411b0fd3c2c1c3712d1098ce8fa703eb":[2,0,0,4,6,4],
 "structchebyshev_1_1prec_1_1equation__options.html#ab0967ae004fbc8df4c8e3cc7bc5ab12c":[1,0,0,4,9,1],
 "structchebyshev_1_1prec_1_1equation__options.html#ab0967ae004fbc8df4c8e3cc7bc5ab12c":[2,0,0,4,6,1],
-"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1":[1,0,0,4,9,5]
+"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1":[1,0,0,4,9,5],
+"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1":[2,0,0,4,6,5],
+"structchebyshev_1_1prec_1_1equation__options.html#ad3feaa691b3a8e7b0b0cd182e03e5816":[1,0,0,4,9,0],
+"structchebyshev_1_1prec_1_1equation__options.html#ad3feaa691b3a8e7b0b0cd182e03e5816":[2,0,0,4,6,0],
+"structchebyshev_1_1prec_1_1equation__options.html#aed953669f7714b838466008725054a5c":[1,0,0,4,9,3]
 };

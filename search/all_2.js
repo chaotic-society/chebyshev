@@ -17,11 +17,8 @@ var searchData=
   ['chebyshev_5foutput_5fwidth_14',['CHEBYSHEV_OUTPUT_WIDTH',['../common_8h.html#a3b5334414e528c1283f0beb5cf1afc89',1,'common.h']]],
   ['chebyshev_5fprec_5fiter_15',['CHEBYSHEV_PREC_ITER',['../common_8h.html#a2a491d0f6b10fde5a05b94541e77ff69',1,'common.h']]],
   ['chebyshev_5fprec_5ftolerance_16',['CHEBYSHEV_PREC_TOLERANCE',['../common_8h.html#a576ec61e254323459fe7f7e6ef22e5fc',1,'common.h']]],
-  ['checking_17',['Error checking',['../index.html#autotoc_md5',1,'']]],
-  ['columnwidth_18',['columnWidth',['../structchebyshev_1_1output_1_1field__options.html#a2448131f826229e1cc2573d6473ed4a7',1,'chebyshev::output::field_options']]],
-  ['common_2eh_19',['common.h',['../common_8h.html',1,'']]],
-  ['contributing_20',['Contributing',['../index.html#autotoc_md10',1,'']]],
-  ['correcttype_21',['correctType',['../structchebyshev_1_1err_1_1exception__result.html#a31e71e069c79ef29722d88d973721c0c',1,'chebyshev::err::exception_result']]],
-  ['csv_22',['csv',['../namespacechebyshev_1_1output_1_1format.html#affbebddca646be0120a09ca36e62f8fa',1,'chebyshev::output::format']]],
-  ['customization_23',['Output customization',['../index.html#autotoc_md6',1,'']]]
+  ['columnwidth_17',['columnWidth',['../structchebyshev_1_1output_1_1field__options.html#a2448131f826229e1cc2573d6473ed4a7',1,'chebyshev::output::field_options']]],
+  ['common_2eh_18',['common.h',['../common_8h.html',1,'']]],
+  ['correcttype_19',['correctType',['../structchebyshev_1_1err_1_1exception__result.html#a31e71e069c79ef29722d88d973721c0c',1,'chebyshev::err::exception_result']]],
+  ['csv_20',['csv',['../namespacechebyshev_1_1output_1_1format.html#affbebddca646be0120a09ca36e62f8fa',1,'chebyshev::output::format']]]
 ];

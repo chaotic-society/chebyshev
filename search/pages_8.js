@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['precision_20testing_0',['Precision testing',['../index.html#autotoc_md3',1,'']]]
+  ['usage_0',['Usage',['../index.html#autotoc_md2',1,'']]]
 ];
