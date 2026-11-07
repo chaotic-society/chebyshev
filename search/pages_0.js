@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['chebyshev_20test_0',['Chebyshev Test',['../index.html',1,'']]]
+  ['and_20usage_0',['Setup and Usage',['../index.html#autotoc_md9',1,'']]]
 ];

@@ -15,10 +15,10 @@ var classchebyshev_1_1err_1_1err__context =
     [ "get_exception", "classchebyshev_1_1err_1_1err__context.html#ad12c52b8466556c4062deb0f493548b8", null ],
     [ "setup", "classchebyshev_1_1err_1_1err__context.html#a57d60eb68afc25615155ee48f2e5c48c", null ],
     [ "terminate", "classchebyshev_1_1err_1_1err__context.html#ae19504b0a46794dc3eb5825725238d26", null ],
-    [ "throws", "classchebyshev_1_1err_1_1err__context.html#aeb6bc7bde45f05129cef51037f4f23b9", null ],
     [ "throws", "classchebyshev_1_1err_1_1err__context.html#a095c5f96e1068b649a448d8a49dfa422", null ],
-    [ "throws", "classchebyshev_1_1err_1_1err__context.html#ab8926933aad97fadd6e01cc50a01f11a", null ],
+    [ "throws", "classchebyshev_1_1err_1_1err__context.html#aeb6bc7bde45f05129cef51037f4f23b9", null ],
     [ "throws", "classchebyshev_1_1err_1_1err__context.html#a3e86bb6221ff10f898a52e4f1a1c4c93", null ],
+    [ "throws", "classchebyshev_1_1err_1_1err__context.html#ab8926933aad97fadd6e01cc50a01f11a", null ],
     [ "output", "classchebyshev_1_1err_1_1err__context.html#aa6fb8a7791bd18c9aa993ac627bf9f3c", null ],
     [ "random", "classchebyshev_1_1err_1_1err__context.html#a5dcfc520a1bce39313d022c35fe002ef", null ],
     [ "settings", "classchebyshev_1_1err_1_1err__context.html#aa18b7784f2739f65c690d9663801c717", null ]

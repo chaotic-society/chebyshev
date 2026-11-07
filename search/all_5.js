@@ -7,7 +7,7 @@ var searchData=
   ['fail_5fon_5frel_5ferr_4',['fail_on_rel_err',['../namespacechebyshev_1_1prec_1_1fail.html#a67f9c1527640b8a8156f3f2fca702e97',1,'chebyshev::prec::fail']]],
   ['fail_5fon_5frms_5ferr_5',['fail_on_rms_err',['../namespacechebyshev_1_1prec_1_1fail.html#adf88360c8f076b6b9f0089a8617ef046',1,'chebyshev::prec::fail']]],
   ['failed_6',['failed',['../structchebyshev_1_1benchmark_1_1benchmark__result.html#a43ea920f1ef1d52ef78bf0115dbe6d4b',1,'chebyshev::benchmark::benchmark_result::failed'],['../structchebyshev_1_1err_1_1assert__result.html#ac89dbe55cc7fd23d9990e4910188cccf',1,'chebyshev::err::assert_result::failed'],['../structchebyshev_1_1err_1_1errno__result.html#aec29a9cb40bff55397ce6988417db619',1,'chebyshev::err::errno_result::failed'],['../structchebyshev_1_1err_1_1exception__result.html#ae4cbe15826baac7b2b9a93460344878f',1,'chebyshev::err::exception_result::failed'],['../structchebyshev_1_1prec_1_1estimate__result.html#a89a7d2451632a13412d7b41df3311641',1,'chebyshev::prec::estimate_result::failed'],['../structchebyshev_1_1prec_1_1equation__result.html#a4b3d1031d612460e6749b47fdd9468a7',1,'chebyshev::prec::equation_result::failed']]],
-  ['failfunction_7',['FailFunction',['../prec__structures_8h.html#a5022ef665cb15b39272380050636962f',1,'chebyshev::prec']]],
+  ['failfunction_7',['FailFunction',['../prec__structures_8h.html#a35209cd84e1666e67ab7c286630d1324',1,'chebyshev::prec']]],
   ['fancy_8',['fancy',['../namespacechebyshev_1_1output_1_1format.html#a6239ee7d20c0129acb5da46f156c58e1',1,'chebyshev::output::format']]],
   ['features_9',['Features',['../index.html#autotoc_md1',1,'']]],
   ['field_5foptions_10',['field_options',['../structchebyshev_1_1output_1_1field__options.html',1,'chebyshev::output']]],

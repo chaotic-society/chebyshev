@@ -59,9 +59,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"globals.html",
-"structchebyshev_1_1prec_1_1equation__result.html#aaab582a03f40536274d16addcb08e432"
+"functions_vars.html",
+"structchebyshev_1_1prec_1_1equation__options.html#ab8fed335617b47091af6da6f4901bba1"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';

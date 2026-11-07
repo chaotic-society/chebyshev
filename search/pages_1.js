@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['test_0',['Chebyshev Test',['../index.html',1,'']]]
+  ['benchmarks_0',['Benchmarks',['../index.html#autotoc_md4',1,'']]]
 ];
