@@ -19,8 +19,12 @@ namespace prec {
 		/// which have an ordering with respect to zero.
 		template<typename Type = real_t>
 		inline prec_t absolute(Type a, Type b) {
+
 			const Type diff = b - a;
-			return prec_t(diff > Type(0.0) ? diff : -diff);
+			const prec_t result = prec_t(diff < Type(0.0) ? -diff : diff);
+
+			// Avoid zero values with negative sign
+			return result != prec_t(0.0) ? result : prec_t(0.0);
 		}
 
 
